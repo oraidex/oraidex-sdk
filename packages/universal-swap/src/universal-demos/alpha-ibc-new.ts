@@ -4,28 +4,28 @@ import { UniversalSwapHandler } from "../handler";
 import { cosmosTokens, flattenTokens, generateError, getTokenOnOraichain, toAmount } from "@oraichain/oraidex-common";
 
 const router = {
-  swapAmount: "1000000",
-  returnAmount: "166770",
+  swapAmount: "100000",
+  returnAmount: "16677",
   routes: [
     {
-      swapAmount: "1000000",
-      returnAmount: "166770",
+      swapAmount: "100000",
+      returnAmount: "16677",
       paths: [
         {
           chainId: "Oraichain",
           tokenIn: "orai12hzjxfh77wl572gdzct2fxv2arxcwh6gykc7qh",
-          tokenInAmount: "1000000",
+          tokenInAmount: "100000",
           tokenOut: "orai",
-          tokenOutAmount: "166770",
+          tokenOutAmount: "16677",
           tokenOutChainId: "Oraichain",
           actions: [
             {
               type: "Swap",
               protocol: "OraidexV3",
               tokenIn: "orai12hzjxfh77wl572gdzct2fxv2arxcwh6gykc7qh",
-              tokenInAmount: "1000000",
+              tokenInAmount: "100000",
               tokenOut: "orai15un8msx3n5zf9ahlxmfeqd2kwa5wm0nrpxer304m9nd5q6qq0g6sku5pdd",
-              tokenOutAmount: "997526",
+              tokenOutAmount: "99752",
               swapInfo: [
                 {
                   poolId:
@@ -43,9 +43,9 @@ const router = {
               type: "Swap",
               protocol: "Oraidex",
               tokenIn: "orai15un8msx3n5zf9ahlxmfeqd2kwa5wm0nrpxer304m9nd5q6qq0g6sku5pdd",
-              tokenInAmount: "997526",
+              tokenInAmount: "99752",
               tokenOut: "orai",
-              tokenOutAmount: "166770",
+              tokenOutAmount: "16677",
               swapInfo: [
                 {
                   poolId: "orai19ttg0j7w5kr83js32tmwnwxxdq9rkmw4m3d7mn2j2hkpugwwa4tszwsnkg",

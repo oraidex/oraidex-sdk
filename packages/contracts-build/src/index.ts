@@ -1,4 +1,4 @@
-import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
+import { InstantiateResult, SigningCosmWasmClient, UploadResult } from "@cosmjs/cosmwasm-stargate";
 import { readFileSync } from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -25,13 +25,14 @@ export const getContractDir = (name: ContractName = "oraiswap-orderbook") => {
   return path.join(contractDir, name + ".wasm");
 };
 
+export type DeployContractResult = UploadResult & InstantiateResult;
 export const deployContract = async <T>(
   client: SigningCosmWasmClient,
   senderAddress: string,
   msg?: T,
   label?: string,
   contractName?: ContractName
-) => {
+): Promise<DeployContractResult> => {
   // upload and instantiate the contract
   const wasmBytecode = readFileSync(getContractDir(contractName));
   const uploadRes = await client.upload(senderAddress, wasmBytecode, "auto");

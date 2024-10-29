@@ -638,7 +638,8 @@ export class UniversalSwapHandler {
 
     const routesFlatten = UniversalSwapHelper.flattenSmartRouters(alphaSmartRoutes.routes);
     const [oraiAddress, injAddress] = await Promise.all([
-      this.config.cosmosWallet.getKeplrAddr("Oraichain"),
+      this.config.cosmosWallet.getKeplrAddr("Oraichain-fork" as any),
+      // this.config.cosmosWallet.getKeplrAddr("Oraichain"),
       this.config.cosmosWallet.getKeplrAddr("injective-1")
     ]);
 
@@ -723,10 +724,14 @@ export class UniversalSwapHandler {
   // TODO: write test cases
   async swap(): Promise<ExecuteResult> {
     const messages = this.generateMsgsSwap();
+    const { originalFromToken, originalToToken } = this.swapData;
     const { client } = await this.config.cosmosWallet.getCosmWasmClient(
-      { chainId: "Oraichain", rpc: network.rpc },
+      { chainId: "Oraichain-fork" as any, rpc: originalFromToken.rpc },
+      // { chainId: "Oraichain", rpc: originalFromToken.rpc },
       { gasPrice: GasPrice.fromString(`${network.fee.gasPrice}${network.denom}`) }
     );
+
+    console.dir({ messages }, { depth: null });
     const result = await client.executeMultiple(this.swapData.sender.cosmos, messages, "auto");
     return result;
   }
@@ -1194,7 +1199,8 @@ export class UniversalSwapHandler {
     const { swapOptions } = this.config;
 
     const toAddress = await this.getToAddressUniversalSwap(evm, tron, this.swapData.recipientAddress, originalToToken);
-    const oraiAddress = await this.config.cosmosWallet.getKeplrAddr(COSMOS_CHAIN_IDS.ORAICHAIN);
+    // const oraiAddress = await this.config.cosmosWallet.getKeplrAddr(COSMOS_CHAIN_IDS.ORAICHAIN);
+    const oraiAddress = await this.config.cosmosWallet.getKeplrAddr("Oraichain-fork" as any);
     if (!oraiAddress) throw generateError("orai address and obridge address invalid!");
     const isValidRecipientOraichain = checkValidateAddressWithNetwork(oraiAddress, COSMOS_CHAIN_IDS.ORAICHAIN);
     if (!isValidRecipientOraichain.isValid) throw generateError("orai get address invalid!");

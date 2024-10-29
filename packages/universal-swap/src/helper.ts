@@ -248,6 +248,7 @@ export class UniversalSwapHelper {
    * @returns destination in the format <dest-channel>/<dest-destReceiver>:<dest-denom>
    */
   static getRoute = (fromToken?: TokenItemType, toToken?: TokenItemType, destReceiver?: string): SwapRoute => {
+    return { swapRoute: "", universalSwapType: "oraichain-to-oraichain", isSmartRouter: false };
     if (!fromToken || !toToken || !destReceiver)
       return { swapRoute: "", universalSwapType: "other-networks-to-oraichain", isSmartRouter: false };
     // this is the simplest case. Both tokens on the same Oraichain network => simple swap with to token denom

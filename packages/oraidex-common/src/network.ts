@@ -550,9 +550,251 @@ export const oraichainNetwork: CustomChainInfo = {
   ]
 };
 
+export const oraichainForkNetwork: CustomChainInfo = {
+  rpc: "https://testnet-v2.rpc.orai.io",
+  rest: "https://testnet-v2.lcd.orai.io",
+  chainId: "Oraichain-fork" as any,
+  chainName: "Oraichain-fork" as any,
+  networkType: "cosmos",
+  stakeCurrency: OraiToken,
+  feeCurrencies: [OraiToken],
+  bip44: {
+    coinType: 118
+  },
+  bech32Config: defaultBech32Config("orai"),
+
+  features: ["stargate", "ibc-transfer", "cosmwasm", "wasmd_0.24+", "no-legacy-stdTx"],
+  txExplorer: {
+    name: "Oraiscan",
+    txUrl: "https://scan.orai.io/txs/{txHash}",
+    accountUrl: "https://scan.orai.io/account/{address}"
+  },
+  currencies: [
+    OraiToken,
+    {
+      coinDenom: "PEPE",
+      coinGeckoId: "pepe",
+      coinMinimalDenom: PEPE_ORAICHAIN_DENOM,
+      bridgeTo: ["0x38", "0x01"],
+      coinDecimals: 6,
+      coinImageUrl: "https://assets.coingecko.com/coins/images/29850/standard/pepe-token.jpeg?1696528776"
+    },
+    // {
+    //   coinDenom: "CAT",
+    //   coinMinimalDenom: CAT_ORAICHAIN_DENOM,
+    //   coinDecimals: 6,
+    //   bridgeTo: ["0x38"],
+    //   coinGeckoId: "simon-s-cat",
+    //   coinImageUrl: "https://assets.coingecko.com/coins/images/39765/standard/Simon's_Cat_Logo.png?1724017505"
+    // },
+    {
+      coinDenom: "ATOM",
+      coinGeckoId: "cosmos",
+      coinMinimalDenom: ATOM_ORAICHAIN_DENOM,
+      bridgeTo: ["cosmoshub-4"],
+      coinDecimals: 6,
+      coinImageUrl: "https://dhj8dql1kzq2v.cloudfront.net/white/atom.png"
+    },
+    {
+      coinDenom: "NTMPI",
+      coinGeckoId: "neutaro",
+      coinMinimalDenom: NEUTARO_ORAICHAIN_DENOM,
+      bridgeTo: ["Neutaro-1"],
+      coinDecimals: 6,
+      coinImageUrl: "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/Neutaro/chain.png"
+    },
+    // {
+    //   coinDenom: 'BEP20 AIRI',
+    //   coinGeckoId: 'airight',
+    //   coinMinimalDenom: AIRIBSC_ORAICHAIN_DENOM,
+    //   coinDecimals: 18,
+    //   Icon: AiriIcon
+    // },
+    {
+      coinDenom: "AIRI",
+      coinGeckoId: "airight",
+      coinMinimalDenom: "airi",
+      type: "cw20",
+      contractAddress: AIRI_CONTRACT,
+      bridgeTo: ["0x38"],
+      coinDecimals: 6,
+      coinImageUrl: "https://i.ibb.co/m8mCyMr/airi.png"
+    },
+    {
+      coinDenom: "USDT",
+      coinGeckoId: "tether",
+      coinMinimalDenom: "usdt",
+      type: "cw20",
+      contractAddress: USDT_CONTRACT,
+      bridgeTo: ["0x38", "0x2b6653dc", "0x01"],
+      coinDecimals: 6,
+      coinImageUrl: "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png"
+    },
+    {
+      coinDenom: "USDC",
+      coinGeckoId: "usd-coin",
+      coinMinimalDenom: "usdc",
+      type: "cw20",
+      contractAddress: USDC_CONTRACT,
+      bridgeTo: ["0x01", "noble-1"],
+      coinDecimals: 6,
+      coinImageUrl: "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
+    },
+    {
+      coinDenom: "OSMO",
+      coinMinimalDenom: OSMOSIS_ORAICHAIN_DENOM,
+      coinDecimals: 6,
+      coinGeckoId: "osmosis",
+      bridgeTo: ["osmosis-1"],
+      coinImageUrl: "https://dhj8dql1kzq2v.cloudfront.net/white/osmo.png"
+    },
+    {
+      coinDenom: "BEP20 KWT",
+      coinGeckoId: "kawaii-islands",
+      coinMinimalDenom: KWTBSC_ORAICHAIN_DENOM,
+      coinDecimals: 18,
+      coinImageUrl: "https://s2.coinmarketcap.com/static/img/coins/64x64/12313.png"
+    },
+    {
+      coinDenom: "KWT",
+      coinGeckoId: "kawaii-islands",
+      coinMinimalDenom: "kwt",
+      type: "cw20",
+      contractAddress: KWT_CONTRACT,
+      bridgeTo: ["kawaii_6886-1", "0x38"],
+      coinDecimals: 6,
+      coinImageUrl: "https://s2.coinmarketcap.com/static/img/coins/64x64/12313.png"
+    },
+    {
+      coinDenom: "BEP20 MILKY",
+      coinGeckoId: "milky-token",
+      coinMinimalDenom: MILKYBSC_ORAICHAIN_DENOM,
+      coinDecimals: 18,
+      coinImageUrl: "https://s2.coinmarketcap.com/static/img/coins/64x64/14418.png"
+    },
+    {
+      coinDenom: "MILKY",
+      coinGeckoId: "milky-token",
+      coinMinimalDenom: "milky",
+      type: "cw20",
+      contractAddress: MILKY_CONTRACT,
+      bridgeTo: ["kawaii_6886-1", "0x38"],
+      coinDecimals: 6,
+      coinImageUrl: "https://s2.coinmarketcap.com/static/img/coins/64x64/14418.png"
+    },
+    {
+      coinDenom: "ORAIX",
+      coinMinimalDenom: "oraix",
+      type: "cw20",
+      contractAddress: ORAIX_CONTRACT,
+      bridgeTo: ["0x01"],
+      coinGeckoId: "oraidex",
+      coinDecimals: 6,
+      coinImageUrl: "https://i.ibb.co/VmMJtf7/oraix.png"
+    },
+    {
+      coinDenom: "scORAI",
+      coinMinimalDenom: "scorai",
+      type: "cw20",
+      contractAddress: SCORAI_CONTRACT,
+      coinGeckoId: "scorai",
+      coinDecimals: 6
+    },
+    {
+      coinDenom: "wTRX",
+      coinGeckoId: "tron",
+      coinMinimalDenom: "trx",
+      type: "cw20",
+      contractAddress: TRX_CONTRACT,
+      bridgeTo: ["0x2b6653dc"],
+      coinDecimals: 6,
+      coinImageUrl: "https://s2.coinmarketcap.com/static/img/coins/64x64/1958.png"
+    },
+    {
+      coinDenom: "scATOM",
+      coinMinimalDenom: "scatom",
+      type: "cw20",
+      contractAddress: SCATOM_CONTRACT,
+      coinGeckoId: "scatom",
+      coinDecimals: 6
+    },
+    {
+      coinDenom: "IBC INJ",
+      coinGeckoId: "injective-protocol",
+      coinMinimalDenom: INJECTIVE_ORAICHAIN_DENOM,
+      coinDecimals: 18,
+      coinImageUrl: "https://s2.coinmarketcap.com/static/img/coins/64x64/7226.png"
+    },
+    {
+      coinDenom: "INJ",
+      coinGeckoId: "injective-protocol",
+      coinMinimalDenom: "injective",
+      contractAddress: INJECTIVE_CONTRACT,
+      bridgeTo: ["injective-1"],
+      type: "cw20",
+      coinDecimals: 6,
+      coinImageUrl: "https://s2.coinmarketcap.com/static/img/coins/64x64/7226.png"
+    },
+    {
+      coinDenom: "WETH",
+      coinGeckoId: "weth",
+      coinMinimalDenom: "weth",
+      type: "cw20",
+      contractAddress: WETH_CONTRACT,
+      bridgeTo: ["0x01"],
+      coinDecimals: 6,
+      coinImageUrl: "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png"
+    },
+    {
+      coinDenom: "BTC (Legacy)",
+      coinGeckoId: "bitcoin",
+      coinMinimalDenom: "usat",
+      type: "cw20",
+      contractAddress: BTC_CONTRACT,
+      bridgeTo: ["bitcoin"] as any,
+      coinDecimals: 6,
+      coinImageUrl: "https://s2.coinmarketcap.com/static/img/coins/64x64/1.png"
+    },
+    {
+      coinDenom: "BTC",
+      coinGeckoId: "bitcoin",
+      coinMinimalDenom: OBTC_ORAICHAIN_EXT_DENOM,
+      bridgeTo: ["bitcoin"] as any,
+      coinDecimals: 14,
+      coinImageUrl: "https://s2.coinmarketcap.com/static/img/coins/64x64/1.png"
+    },
+    {
+      coinDenom: "OCH",
+      coinGeckoId: "och",
+      coinMinimalDenom: "och",
+      type: "cw20",
+      contractAddress: OCH_CONTRACT,
+      bridgeTo: ["0x01"],
+      coinDecimals: 6,
+      coinImageUrl:
+        "https://assets.coingecko.com/coins/images/34236/standard/orchai_logo_white_copy_4x-8_%281%29.png?1704307670"
+    },
+    {
+      coinDenom: "TON",
+      coinMinimalDenom: TON_ORAICHAIN_DENOM,
+      coinDecimals: 9,
+      coinGeckoId: "the-open-network",
+      coinImageUrl: "https://assets.coingecko.com/coins/images/17980/standard/ton_symbol.png?1696517498"
+    },
+    {
+      coinDenom: "HMSTR",
+      coinMinimalDenom: HMSTR_ORAICHAIN_DENOM,
+      coinDecimals: 9,
+      coinGeckoId: "hamster-kombat",
+      coinImageUrl: "https://assets.coingecko.com/coins/images/39102/standard/hamster-removebg-preview.png?1720514486"
+    }
+  ]
+};
+
 export const chainInfos: CustomChainInfo[] = [
   // networks to add on keplr
   oraichainNetwork,
+  oraichainForkNetwork,
   celestiaNetwork,
   {
     rpc: "https://bridge-v2.rpc.orai.io",
@@ -1202,7 +1444,8 @@ export const chainInfos: CustomChainInfo[] = [
 ];
 
 export const network: CustomChainInfo & NetworkConfig = {
-  ...oraichainNetwork,
+  // ...oraichainNetwork,
+  ...oraichainForkNetwork,
   prefix: oraichainNetwork.bech32Config.bech32PrefixAccAddr,
   denom: "orai",
   coinType: oraichainNetwork.bip44.coinType,

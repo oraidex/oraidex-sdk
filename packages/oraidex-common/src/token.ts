@@ -155,23 +155,19 @@ export const kawaiiTokens = uniqBy(
   (c) => c.denom
 );
 
-export class Token {
-  constructor(private readonly tokenInfo: TokenItemsImpl) {}
-
-  static async init() {
-    const chainInfoReader = new ChainInfoReaderFromOraiCommon("http://localhost:8080/api/v1/chains");
-    const supportedReader = new SupportedChainInfoReaderFromGit("oraidex", "");
-    const tokenInfo = await TokenItemsImpl.create(chainInfoReader, supportedReader);
-    const listDenomOrCw20Addr = oraichainTokens.map((token) =>
-      token.contractAddress ? token.contractAddress : token.denom
-    );
-    tokenInfo.oraichainTokens.forEach((token) => {
-      if (!listDenomOrCw20Addr.includes(token.contractAddress ? token.contractAddress : token.denom)) {
-        oraichainTokens.push({
-          ...token,
-          Icon: undefined
-        } as TokenItemType);
-      }
-    });
-  }
-}
+export const loadOraichainTokens = async () => {
+  const chainInfoReader = new ChainInfoReaderFromOraiCommon("https://oraicommon-staging.oraidex.io/api/v1/chains");
+  const supportedReader = new SupportedChainInfoReaderFromGit("oraidex", "");
+  const tokenInfo = await TokenItemsImpl.create(chainInfoReader, supportedReader);
+  const listDenomOrCw20Addr = oraichainTokens.map((token) =>
+    token.contractAddress ? token.contractAddress : token.denom
+  );
+  tokenInfo.oraichainTokens.forEach((token) => {
+    if (!listDenomOrCw20Addr.includes(token.contractAddress ? token.contractAddress : token.denom)) {
+      oraichainTokens.push({
+        ...token,
+        Icon: undefined
+      } as TokenItemType);
+    }
+  });
+};

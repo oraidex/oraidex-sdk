@@ -11,7 +11,12 @@ import {
   chainInfos,
   oraichainNetwork
 } from "./network";
-import { ChainInfoReaderFromOraiCommon, SupportedChainInfoReaderFromGit, TokenItems, TokenItemsImpl } from "oraichain-common-test";
+import {
+  ChainInfoReaderFromOraiCommon,
+  SupportedChainInfoReaderFromGit,
+  TokenItems,
+  TokenItemsImpl
+} from "oraichain-common-test";
 
 export type EvmDenom = "bep20_orai" | "bep20_airi" | "erc20_orai" | "kawaii_orai";
 export type AmountDetails = { [denom: string]: string };
@@ -151,97 +156,22 @@ export const kawaiiTokens = uniqBy(
 );
 
 export class Token {
-  constructor(
-    private readonly tokenInfo: TokenItemsImpl
-  ) {}
+  constructor(private readonly tokenInfo: TokenItemsImpl) {}
 
   static async init() {
     const chainInfoReader = new ChainInfoReaderFromOraiCommon("http://localhost:8080/api/v1/chains");
     const supportedReader = new SupportedChainInfoReaderFromGit("oraidex", "");
     const tokenInfo = await TokenItemsImpl.create(chainInfoReader, supportedReader);
-    const token = new Token(tokenInfo);
-    return token;
-  }
-
-  get otherChainTokens() {
-    return otherChainTokens;
-  }
-
-  get oraichainTokens() {
-    return this.tokenInfo.oraichainTokens.map((token) => {
-      return {
-        ...token,
-        org: 'Oraichain',
-        Icon: undefined,
-      } as TokenItemType;
+    const listDenomOrCw20Addr = oraichainTokens.map((token) =>
+      token.contractAddress ? token.contractAddress : token.denom
+    );
+    tokenInfo.oraichainTokens.forEach((token) => {
+      if (!listDenomOrCw20Addr.includes(token.contractAddress ? token.contractAddress : token.denom)) {
+        oraichainTokens.push({
+          ...token,
+          Icon: undefined
+        } as TokenItemType);
+      }
     });
-  }
-
-  get tokens() {
-    return [otherChainTokens, this.oraichainTokens]
-  }
-
-  get flattenTokens() {
-    return flatten(this.tokens);
-  }
-
-  get tokenMap() {
-    return Object.fromEntries(this.flattenTokens.map((c) => [c.denom, c]));
-  }
-
-  get assetInfoMap() {
-    return Object.fromEntries(
-      this.flattenTokens.map((c) => [c.contractAddress || c.denom, c])
-    );
-  }
-
-  get cosmosTokens() {
-    return uniqBy(
-      this.flattenTokens.filter(
-        (token) =>
-          // !token.contractAddress &&
-          token.denom && token.cosmosBased && token.coinGeckoId
-      ),
-      (c) => c.denom
-    );
-  }
-
-  get cw20Tokens() {
-    return uniqBy(
-      this.cosmosTokens.filter(
-        // filter cosmos based tokens to collect tokens that have contract addresses
-        (token) =>
-          // !token.contractAddress &&
-          token.contractAddress
-      ),
-      (c) => c.denom
-    );
-  }
-
-  get cw20TokenMap() {
-    return Object.fromEntries(
-      this.cw20Tokens.map((c) => [c.contractAddress, c])
-    );
-  }
-
-  get evmTokens() {
-    return uniqBy(
-      this.flattenTokens.filter(
-        (token) =>
-          // !token.contractAddress &&
-          token.denom &&
-          !token.cosmosBased &&
-          token.coinGeckoId &&
-          token.chainId !== "kawaii_6886-1"
-      ),
-      (c) => c.denom
-    );
-  }
-
-  get kawaiiTokens() {
-    return uniqBy(
-      this.cosmosTokens.filter((token) => token.chainId === "kawaii_6886-1"),
-      (c) => c.denom
-    );
   }
 }

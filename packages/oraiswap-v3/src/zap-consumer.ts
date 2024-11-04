@@ -1,4 +1,4 @@
-import { BigDecimal, oraichainTokens, TokenItemType } from "@oraichain/oraidex-common";
+import { BigDecimal, Token, TokenItemType } from "@oraichain/oraidex-common";
 import { OraiswapV3Handler } from "./handler";
 import {
   ActionRoute,
@@ -553,6 +553,9 @@ export class ZapConsumer {
       const pool = await this._handler.getPool(position.pool_key);
       const { amountX, amountY } = calculateRewardAmounts(pool, position, zapFee);
 
+      // TODO: need to get oraichainTokens from client
+      const token = await Token.init();
+      const oraichainTokens = token.oraichainTokens;
       const tokenX = oraichainTokens.find((t) => extractAddress(t) === pool.pool_key.token_x) as TokenItemType;
       const tokenY = oraichainTokens.find((t) => extractAddress(t) === pool.pool_key.token_y) as TokenItemType;
 

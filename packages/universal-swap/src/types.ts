@@ -27,6 +27,7 @@ export interface SimulateResponse {
   displayAmount: number;
   routes?: SmartRouterResponse;
   routeSwapOps?: SmartRouteSwapOperations[];
+  error?: any;
 }
 
 export interface SwapData {

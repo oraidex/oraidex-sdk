@@ -910,7 +910,8 @@ export class UniversalSwapHelper {
     return {
       amount,
       displayAmount: toDisplay(amount, toInfo.decimals),
-      routes
+      routes,
+      error: routes.error
     };
   };
 

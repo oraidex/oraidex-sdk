@@ -11,12 +11,12 @@ import {
   chainInfos,
   oraichainNetwork
 } from "./network";
-import {
-  ChainInfoReaderFromOraiCommon,
-  SupportedChainInfoReaderFromGit,
-  TokenItems,
-  TokenItemsImpl
-} from "oraichain-common-test";
+// import {
+//   ChainInfoReaderFromOraiCommon,
+//   SupportedChainInfoReaderFromGit,
+//   TokenItems,
+//   TokenItemsImpl
+// } from "oraichain-common-test";
 
 export type EvmDenom = "bep20_orai" | "bep20_airi" | "erc20_orai" | "kawaii_orai";
 export type AmountDetails = { [denom: string]: string };
@@ -155,19 +155,19 @@ export const kawaiiTokens = uniqBy(
   (c) => c.denom
 );
 
-export const loadOraichainTokens = async () => {
-  const chainInfoReader = new ChainInfoReaderFromOraiCommon("https://oraicommon-staging.oraidex.io/api/v1/chains");
-  const supportedReader = new SupportedChainInfoReaderFromGit("oraidex", "");
-  const tokenInfo = await TokenItemsImpl.create(chainInfoReader, supportedReader);
-  const listDenomOrCw20Addr = oraichainTokens.map((token) =>
-    token.contractAddress ? token.contractAddress : token.denom
-  );
-  tokenInfo.oraichainTokens.forEach((token) => {
-    if (!listDenomOrCw20Addr.includes(token.contractAddress ? token.contractAddress : token.denom)) {
-      oraichainTokens.push({
-        ...token,
-        Icon: undefined
-      } as TokenItemType);
-    }
-  });
-};
+// export const loadOraichainTokens = async () => {
+//   const chainInfoReader = new ChainInfoReaderFromOraiCommon("https://oraicommon-staging.oraidex.io/api/v1/chains");
+//   const supportedReader = new SupportedChainInfoReaderFromGit("oraidex", "");
+//   const tokenInfo = await TokenItemsImpl.create(chainInfoReader, supportedReader);
+//   const listDenomOrCw20Addr = oraichainTokens.map((token) =>
+//     token.contractAddress ? token.contractAddress : token.denom
+//   );
+//   tokenInfo.oraichainTokens.forEach((token) => {
+//     if (!listDenomOrCw20Addr.includes(token.contractAddress ? token.contractAddress : token.denom)) {
+//       oraichainTokens.push({
+//         ...token,
+//         Icon: undefined
+//       } as TokenItemType);
+//     }
+//   });
+// };

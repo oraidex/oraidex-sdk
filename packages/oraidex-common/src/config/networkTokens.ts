@@ -1,5 +1,5 @@
 import { OraiCommon, TokenItemsImpl } from "@oraichain/common";
-import { SupportedChainInfoReaderFromGit } from "src/supported";
+import { SupportedChainInfoReaderFromGit } from "../supported";
 
 export const loadConfigs = async () => {
   const oraiCommon = await OraiCommon.initializeFromBackend();

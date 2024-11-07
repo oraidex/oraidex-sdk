@@ -26,7 +26,8 @@
     "cosmjs-types": "0.8.0",
     "@oraichain/oraidex-contracts-sdk": "latest",
     "@injectivelabs/sdk-ts": "1.12.1",
-    "tronweb": "6.0.0-beta.4"
+    "tronweb": "6.0.0-beta.4",
+    "@oraichain/common": "../oraichain-sdk/packages/common"
   },
   "devDependencies": {},
   "resolutions": {

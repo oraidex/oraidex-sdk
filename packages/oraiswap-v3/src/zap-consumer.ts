@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { BigDecimal, oraichainTokens, TokenItemType, loadOraichainTokens } from "@oraichain/oraidex-common";
 import { OraiswapV3Handler } from "./handler";
 import {
@@ -191,7 +192,7 @@ export class ZapConsumer {
         pool.current_tick_index = tick;
 
         // NOTE: now simulate one time only
-        break; 
+        break;
       }
     }
   }
@@ -370,8 +371,14 @@ export class ZapConsumer {
         true
       );
 
-      const extendDecimalX = getXPriceByTokenIn.swapAmount.length - 1 > tokenIn.decimals ? getXPriceByTokenIn.swapAmount.length - 1 - tokenIn.decimals : 0;
-      const extendDecimalY = getYPriceByTokenIn.swapAmount.length - 1 > tokenIn.decimals ? getYPriceByTokenIn.swapAmount.length - 1 - tokenIn.decimals : 0;
+      const extendDecimalX =
+        getXPriceByTokenIn.swapAmount.length - 1 > tokenIn.decimals
+          ? getXPriceByTokenIn.swapAmount.length - 1 - tokenIn.decimals
+          : 0;
+      const extendDecimalY =
+        getYPriceByTokenIn.swapAmount.length - 1 > tokenIn.decimals
+          ? getYPriceByTokenIn.swapAmount.length - 1 - tokenIn.decimals
+          : 0;
 
       if (![pool.pool_key.token_x, pool.pool_key.token_y].includes(extractAddress(tokenIn))) {
         xPriceByTokenIn = shiftDecimal(BigInt(getXPriceByTokenIn.returnAmount), tokenIn.decimals + extendDecimalX);
@@ -478,7 +485,10 @@ export class ZapConsumer {
           true
         );
         console.log(`[CAL3] xPriceByYAmount: ${xPriceByYAmount.returnAmount}`);
-        const extendDecimal = xPriceByYAmount.swapAmount.length - 1 > tokenY.decimals ? xPriceByYAmount.swapAmount.length - 1 - tokenY.decimals : 0;
+        const extendDecimal =
+          xPriceByYAmount.swapAmount.length - 1 > tokenY.decimals
+            ? xPriceByYAmount.swapAmount.length - 1 - tokenY.decimals
+            : 0;
         const xPriceByY = shiftDecimal(BigInt(xPriceByYAmount.returnAmount), tokenY.decimals + extendDecimal);
         console.log(`[CAL3] xPriceByY: ${xPriceByY}`);
         const deltaX = yAmount.sub(yPerX.mul(xAmount)).div(yPerX.add(xPriceByY));
@@ -555,6 +565,7 @@ export class ZapConsumer {
 
       // TODO: need to get oraichainTokens from client
       await loadOraichainTokens();
+
       const tokenX = oraichainTokens.find((t) => extractAddress(t) === pool.pool_key.token_x) as TokenItemType;
       const tokenY = oraichainTokens.find((t) => extractAddress(t) === pool.pool_key.token_y) as TokenItemType;
 

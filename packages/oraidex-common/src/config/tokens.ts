@@ -9,5 +9,3 @@ export const loadOraichainTokens = async () => {
   const { chainInfos } = await OraiCommon.initializeFromBackend();
   return chainInfos.chainInfos.filter((chain) => chain.chainId === "Oraichain");
 };
-
-// loadOraichainTokens();

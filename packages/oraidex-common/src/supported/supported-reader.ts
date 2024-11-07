@@ -3,7 +3,7 @@ import { fetchRetry } from "../helper";
 
 export const ORAICHAIN_COMMON_GITHUB_API_ENDPOINTS = {
   BASE_URL: "https://api.github.com",
-  SUPPORTED_INFO: "/repos/oraichain/oraidex-sdk/packages/oraidex-common/src/supported/config/"
+  SUPPORTED_INFO: "/repos/oraidex/oraidex-sdk/contents/packages/oraidex-common/src/supported/config/"
 };
 
 export class SupportedChainInfoReaderFromGit implements SupportedChainInfoReader {
@@ -20,6 +20,7 @@ export class SupportedChainInfoReaderFromGit implements SupportedChainInfoReader
       options.headers["Authorization"] = `Bearer ${this.accessToken}`;
       options.headers["X-GitHub-Api-Version"] = "2022-11-28";
     }
+
     const res = await (
       await fetchRetry(
         `${ORAICHAIN_COMMON_GITHUB_API_ENDPOINTS.BASE_URL}${ORAICHAIN_COMMON_GITHUB_API_ENDPOINTS.SUPPORTED_INFO}${this.dex}.json?ref=feat/token_map`,

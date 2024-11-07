@@ -154,6 +154,7 @@ export const isFactoryV1 = (assetInfos: [AssetInfo, AssetInfo]): boolean => {
 };
 
 export const getPoolTokens = (): TokenItemType[] => {
+  // @ts-ignore
   return uniq(flatten(PAIRS.map((pair) => pair.asset_infos)).map((info) => assetInfoMap[parseAssetInfo(info)]));
 };
 

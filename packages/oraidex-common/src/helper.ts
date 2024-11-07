@@ -195,6 +195,7 @@ export const parseAssetInfoFromContractAddrOrDenom = (addressOrDenomToken: strin
       ? cosmosToken.denom.toLowerCase() === addressOrDenomLowerCase
       : cosmosToken.contractAddress.toLowerCase() === addressOrDenomLowerCase;
   });
+  // @ts-ignore
   return tokenItem ? parseTokenInfo(tokenItem).info : null;
 };
 
@@ -249,6 +250,7 @@ export const getTokenOnSpecificChainId = (
   coingeckoId: CoinGeckoId,
   chainId: NetworkChainId
 ): TokenItemType | undefined => {
+  // @ts-ignore
   return flattenTokens.find((t) => t.coinGeckoId === coingeckoId && t.chainId === chainId);
 };
 

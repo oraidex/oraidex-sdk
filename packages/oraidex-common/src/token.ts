@@ -1,22 +1,9 @@
 import { FeeCurrency } from "@keplr-wallet/types";
+import { OraiCommon, TokenItemType as TokenItemTypeCommon } from "@oraichain/common";
 import { PairInfo } from "@oraichain/oraidex-contracts-sdk";
 import { flatten, uniqBy } from "lodash";
 import { INJECTIVE_ORAICHAIN_DENOM, KWTBSC_ORAICHAIN_DENOM, MILKYBSC_ORAICHAIN_DENOM } from "./constant";
-import {
-  CoinGeckoId,
-  CoinIcon,
-  CustomChainInfo,
-  NetworkChainId,
-  NetworkName,
-  chainInfos,
-  oraichainNetwork
-} from "./network";
-// import {
-//   ChainInfoReaderFromOraiCommon,
-//   SupportedChainInfoReaderFromGit,
-//   TokenItems,
-//   TokenItemsImpl
-// } from "oraichain-common-test";
+import { CoinGeckoId, CoinIcon, CustomChainInfo, NetworkChainId, NetworkName, chainInfos } from "./network";
 
 export type EvmDenom = "bep20_orai" | "bep20_airi" | "erc20_orai" | "kawaii_orai";
 export type AmountDetails = { [denom: string]: string };
@@ -28,31 +15,10 @@ export type CoinGeckoPrices<T extends string> = {
   [C in T]: number | null;
 };
 
-export type TokenItemType = {
-  name: string;
-  org: NetworkName;
-  denom: string;
-  prefix?: string;
-  contractAddress?: string;
-  evmDenoms?: string[];
-  bridgeNetworkIdentifier?: NetworkChainId;
-  bridgeTo?: NetworkChainId[];
+export type TokenItemType = TokenItemTypeCommon & {
   Icon: CoinIcon;
   IconLight?: CoinIcon;
-  chainId: NetworkChainId;
-  coinType?: number;
-  rpc: string;
-  decimals: number;
-  maxGas?: number;
   coinGeckoId: CoinGeckoId;
-  cosmosBased: Boolean;
-  minAmountSwap?: number;
-  gasPriceStep?: {
-    readonly low: number;
-    readonly average: number;
-    readonly high: number;
-  };
-  feeCurrencies?: FeeCurrency[];
 };
 
 export type TokenInfo = TokenItemType & {
@@ -110,13 +76,30 @@ export const getTokensFromNetwork = (network: CustomChainInfo): TokenItemType[] 
   }));
 };
 
+let oraiCommon: OraiCommon = null;
+export const init = async () => {
+  if (!oraiCommon) {
+    oraiCommon = await OraiCommon.initializeFromBackend();
+    const { chainInfos, tokenItems } = oraiCommon;
+
+    console.log({
+      chainInfos: chainInfos.chainInfos.length,
+      tokenItems: tokenItems.tokens.length
+    });
+  }
+};
+await init();
+
+export const oraichainTokens = oraiCommon.tokenItems.oraichainTokens;
+
 // other chains, oraichain
 const otherChainTokens = flatten(
   chainInfos.filter((chainInfo) => chainInfo.chainId !== "Oraichain").map(getTokensFromNetwork)
 );
-export const oraichainTokens: TokenItemType[] = getTokensFromNetwork(oraichainNetwork);
+// export const oraichainTokens: TokenItemType[] = getTokensFromNetwork(oraichainNetwork);
 
 export const tokens = [otherChainTokens, oraichainTokens];
+// @ts-ignore
 export const flattenTokens = flatten(tokens);
 export const tokenMap = Object.fromEntries(flattenTokens.map((c) => [c.denom, c]));
 export const assetInfoMap = Object.fromEntries(flattenTokens.map((c) => [c.contractAddress || c.denom, c]));
@@ -154,20 +137,3 @@ export const kawaiiTokens = uniqBy(
   cosmosTokens.filter((token) => token.chainId === "kawaii_6886-1"),
   (c) => c.denom
 );
-
-// export const loadOraichainTokens = async () => {
-//   const chainInfoReader = new ChainInfoReaderFromOraiCommon("https://oraicommon-staging.oraidex.io/api/v1/chains");
-//   const supportedReader = new SupportedChainInfoReaderFromGit("oraidex", "");
-//   const tokenInfo = await TokenItemsImpl.create(chainInfoReader, supportedReader);
-//   const listDenomOrCw20Addr = oraichainTokens.map((token) =>
-//     token.contractAddress ? token.contractAddress : token.denom
-//   );
-//   tokenInfo.oraichainTokens.forEach((token) => {
-//     if (!listDenomOrCw20Addr.includes(token.contractAddress ? token.contractAddress : token.denom)) {
-//       oraichainTokens.push({
-//         ...token,
-//         Icon: undefined
-//       } as TokenItemType);
-//     }
-//   });
-// };

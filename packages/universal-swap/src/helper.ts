@@ -789,7 +789,8 @@ export class UniversalSwapHelper {
       return {
         swapAmount: "0",
         returnAmount: "0",
-        routes: []
+        routes: [],
+        error: error
       };
     }
   };

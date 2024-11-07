@@ -134,6 +134,7 @@ export type SmartRouterResponse = {
   swapAmount: string;
   returnAmount: string;
   routes: Route[];
+  error?: any;
 };
 
 export type ConvertType = Convert | ConvertReverse;

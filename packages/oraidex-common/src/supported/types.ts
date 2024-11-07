@@ -14,5 +14,5 @@ export interface SupportedChainInfoReader {
 }
 
 export interface SupportedTokens {
-  oraichainSupportedTokens: string[];
+  oraichainSupportedTokens: { denom: string; coingecko_id: string }[];
 }

@@ -1,8 +1,4 @@
-import {
-  SupportedChainInfo,
-  SupportedChainInfoReader,
-  SupportedTokens
-} from "./types";
+import { SupportedChainInfo, SupportedChainInfoReader, SupportedTokens } from "./types";
 
 export class SupportChainInfoImpl implements SupportedTokens {
   constructor(public readonly supportedChainInfo: SupportedChainInfo) {}
@@ -14,6 +10,6 @@ export class SupportChainInfoImpl implements SupportedTokens {
   }
 
   get oraichainSupportedTokens() {
-    return Object.values(this.supportedChainInfo["oraichain"].coinDenoms);
+    return Object.values(this.supportedChainInfo["oraichain"].coin);
   }
 }

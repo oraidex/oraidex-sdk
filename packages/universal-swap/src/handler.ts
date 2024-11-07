@@ -1146,12 +1146,39 @@ export class UniversalSwapHandler {
   }
 
   async alphaSmartRouterSwapNewMsg(swapRoute, universalSwapType, receiverAddresses) {
-    const { sender, originalFromToken, alphaSmartRoutes, userSlippage } = this.swapData;
-    if (
-      universalSwapType === "cosmos-to-others" ||
-      universalSwapType === "oraichain-to-oraichain" ||
-      universalSwapType === "oraichain-to-cosmos"
-    ) {
+    const { sender, originalFromToken, originalToToken, simulateAmount, alphaSmartRoutes, userSlippage } =
+      this.swapData;
+
+    const universalSwapTypeFromCosmos = [
+      "oraichain-to-oraichain",
+      "oraichain-to-cosmos",
+      "oraichain-to-evm",
+      "cosmos-to-others"
+    ].includes(universalSwapType);
+
+    if (universalSwapTypeFromCosmos) {
+      const isCheckBalance = ["oraichain-to-evm", "oraichain-to-cosmos"].includes(universalSwapType);
+      if (!this.config?.swapOptions?.isCheckBalanceIbc && isCheckBalance) {
+        const { client } = await this.config.cosmosWallet.getCosmWasmClient(
+          {
+            chainId: originalFromToken.chainId as CosmosChainId,
+            rpc: originalFromToken.rpc
+          },
+          {
+            gasPrice: this.getGasPriceFromToken()
+          }
+        );
+        const ibcInfo = this.getIbcInfo("Oraichain", originalToToken.chainId);
+        await UniversalSwapHelper.checkBalanceChannelIbc(
+          ibcInfo,
+          originalFromToken,
+          originalToToken,
+          simulateAmount,
+          client,
+          this.getCwIcs20ContractAddr()
+        );
+      }
+
       const msgs = alphaSmartRoutes.routes.map((route) => {
         return generateMsgSwap(route, userSlippage / 100, receiverAddresses);
       });

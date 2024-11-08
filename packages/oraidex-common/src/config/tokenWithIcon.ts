@@ -1,4 +1,3 @@
-import { CustomChainInfo, chainInfos as customChainInfos } from "../network";
 import { TokenItemType } from "../token";
 import {
   AiriIcon,
@@ -10,7 +9,6 @@ import {
   InjIcon,
   KwtIcon,
   MilkyIcon,
-  NobleIcon,
   OCHIcon,
   OraiIcon,
   OraiLightIcon,
@@ -27,7 +25,6 @@ import {
 } from "./icon";
 
 export type TokenIcon = Pick<TokenItemType, "coinGeckoId" | "Icon" | "IconLight">;
-export type ChainIcon = Pick<CustomChainInfo, "chainId" | "Icon" | "IconLight">;
 
 export const tokensIcon: TokenIcon[] = [
   {
@@ -137,88 +134,7 @@ export const tokensIcon: TokenIcon[] = [
   }
 ];
 
-export const chainIcons: ChainIcon[] = [
-  {
-    chainId: "Oraichain",
-    Icon: OraiIcon,
-    IconLight: OraiLightIcon
-  },
-  {
-    chainId: "kawaii_6886-1",
-    Icon: KwtIcon,
-    IconLight: KwtIcon
-  },
-  {
-    chainId: "osmosis-1",
-    Icon: OsmoIcon,
-    IconLight: OsmoLightIcon
-  },
-  {
-    chainId: "injective-1",
-    Icon: InjIcon,
-    IconLight: InjIcon
-  },
-  {
-    chainId: "cosmoshub-4",
-    Icon: AtomIcon,
-    IconLight: AtomIcon
-  },
-  {
-    chainId: "0x01",
-    Icon: EthIcon,
-    IconLight: EthIcon
-  },
-  {
-    chainId: "0x2b6653dc",
-    Icon: TronIcon,
-    IconLight: TronIcon
-  },
-  {
-    chainId: "0x38",
-    Icon: BnbIcon,
-    IconLight: BnbIcon
-  },
-  {
-    chainId: "0x1ae6",
-    Icon: KwtIcon,
-    IconLight: KwtIcon
-  },
-  {
-    chainId: "noble-1",
-    Icon: NobleIcon,
-    IconLight: NobleIcon
-  }
-];
-
 export const tokenIconByCoingeckoId: Record<string, TokenIcon> = tokensIcon.reduce((acc, cur) => {
   acc[cur.coinGeckoId] = cur;
   return acc;
 }, {});
-
-export const chainIconByChainId: Record<string, ChainIcon> = chainIcons.reduce((acc, cur) => {
-  acc[cur.chainId] = cur;
-  return acc;
-}, {});
-
-export const mapListWithIcon = (list: any[], listIcon: ChainIcon[] | TokenIcon[], key: "chainId" | "coinGeckoId") => {
-  return list.map((item) => {
-    let Icon = OraiIcon;
-    let IconLight = OraiLightIcon;
-
-    //@ts-ignore
-    const findedItem = listIcon.find((icon) => icon[key] === item[key]);
-    if (findedItem) {
-      Icon = findedItem.Icon;
-      IconLight = findedItem.IconLight;
-    }
-
-    return {
-      ...item,
-      Icon,
-      IconLight
-    };
-  });
-};
-
-// mapped chain info with icon
-export const chainInfosWithIcon = mapListWithIcon(customChainInfos, chainIcons, "chainId");

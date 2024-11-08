@@ -3,13 +3,13 @@ import { SupportedChainInfo, SupportedChainInfoReader, SupportedTokens } from ".
 export class SupportChainInfoImpl implements SupportedTokens {
   constructor(public readonly supportedChainInfo: SupportedChainInfo) {}
 
-  static async create(supportedReader: SupportedChainInfoReader) {
-    const supportedChainInfo = await supportedReader.readSupportedChainInfo();
+  static create(supportedReader: SupportedChainInfoReader) {
+    const supportedChainInfo = supportedReader.readSupportedChainInfo();
     const info = new SupportChainInfoImpl(supportedChainInfo);
     return info;
   }
 
-  get oraichainSupportedTokens() {
-    return Object.values(this.supportedChainInfo["oraichain"].coin);
-  }
+  getSupportedTokensByChain = (chainId: string) => {
+    return this.supportedChainInfo[chainId];
+  };
 }

@@ -1,9 +1,10 @@
-import { FeeCurrency } from "@keplr-wallet/types";
 import { OraiCommon, TokenItemType as TokenItemTypeCommon } from "@oraichain/common";
 import { PairInfo } from "@oraichain/oraidex-contracts-sdk";
 import { flatten, uniqBy } from "lodash";
 import { INJECTIVE_ORAICHAIN_DENOM, KWTBSC_ORAICHAIN_DENOM, MILKYBSC_ORAICHAIN_DENOM } from "./constant";
-import { CoinGeckoId, CoinIcon, CustomChainInfo, NetworkChainId, NetworkName, chainInfos } from "./network";
+import { CoinGeckoId, CoinIcon, CustomChainInfo } from "./network";
+import { SupportChainInfoImpl, SupportedChainInfoReaderFromConfig } from "./supported";
+import { mapListWithIcon, tokenIconByCoingeckoId, tokensIcon } from "./config";
 
 export type EvmDenom = "bep20_orai" | "bep20_airi" | "erc20_orai" | "kawaii_orai";
 export type AmountDetails = { [denom: string]: string };
@@ -77,29 +78,75 @@ export const getTokensFromNetwork = (network: CustomChainInfo): TokenItemType[] 
 };
 
 let oraiCommon: OraiCommon = null;
-export const init = async () => {
-  if (!oraiCommon) {
+let tokenConfig: {
+  oraichainTokens: TokenItemType[];
+  otherChainTokens: TokenItemType[];
+} = {
+  oraichainTokens: [],
+  otherChainTokens: []
+};
+
+export const initOraiCommon = async () => {
+  const isInitial = !oraiCommon || !tokenConfig.otherChainTokens.length || !tokenConfig.oraichainTokens.length;
+  console.log("92", isInitial);
+  if (isInitial) {
     oraiCommon = await OraiCommon.initializeFromBackend();
+    const readerInstance = new SupportedChainInfoReaderFromConfig();
+    const supportedChainIns = SupportChainInfoImpl.create(readerInstance);
+    const tokenListSupports = supportedChainIns.supportedChainInfo;
+
+    const tokenInfos = [];
+    for (const [chainId, coins] of Object.entries(tokenListSupports)) {
+      const orgTokenList = oraiCommon.tokenItems.getSpecificChainTokens(chainId);
+      const listCoinId = Object.values(coins);
+
+      const fmtTokens = listCoinId.reduce((acc, tk) => {
+        const findItem = orgTokenList.find((c) => [c.contractAddress, c.denom].includes(tk.denom));
+
+        if (findItem) {
+          console.log("tokenIconByCoingeckoId", tk.coingecko_id, tokenIconByCoingeckoId[tk.coingecko_id]);
+          acc.push({
+            ...findItem,
+            coinGeckoId: tk.coingecko_id,
+            Icon: tokenIconByCoingeckoId[tk.coingecko_id]?.Icon || "",
+            IconLight: tokenIconByCoingeckoId[tk.coingecko_id]?.IconLight || ""
+          });
+        }
+
+        return acc;
+      }, []);
+
+      tokenInfos.push(...fmtTokens);
+    }
+
+    tokenConfig.oraichainTokens = tokenInfos.filter((tk) => tk.chainId === "Oraichain");
+    tokenConfig.otherChainTokens = tokenInfos.filter((tk) => tk.chainId !== "Oraichain");
+
     const { chainInfos, tokenItems } = oraiCommon;
 
     console.log({
       chainInfos: chainInfos.chainInfos.length,
-      tokenItems: tokenItems.tokens.length
+      tokenItems: tokenItems.tokens.length,
+      tokenConfig
     });
   }
-};
-await init();
 
-export const oraichainTokens = oraiCommon.tokenItems.oraichainTokens;
+  return { tokenConfig, oraiCommon };
+};
+await initOraiCommon();
 
 // other chains, oraichain
-const otherChainTokens = flatten(
-  chainInfos.filter((chainInfo) => chainInfo.chainId !== "Oraichain").map(getTokensFromNetwork)
-);
+export const oraichainTokens = tokenConfig.oraichainTokens;
+export const otherChainTokens = tokenConfig.otherChainTokens;
+
+// const otherChainTokens = flatten(
+//   chainInfos.filter((chainInfo) => chainInfo.chainId !== "Oraichain").map(getTokensFromNetwork)
+// );
 // export const oraichainTokens: TokenItemType[] = getTokensFromNetwork(oraichainNetwork);
 
 export const tokens = [otherChainTokens, oraichainTokens];
-// @ts-ignore
+console.log("first", { tokens, oraichainTokens, otherChainTokens });
+
 export const flattenTokens = flatten(tokens);
 export const tokenMap = Object.fromEntries(flattenTokens.map((c) => [c.denom, c]));
 export const assetInfoMap = Object.fromEntries(flattenTokens.map((c) => [c.contractAddress || c.denom, c]));
@@ -137,3 +184,10 @@ export const kawaiiTokens = uniqBy(
   cosmosTokens.filter((token) => token.chainId === "kawaii_6886-1"),
   (c) => c.denom
 );
+
+// mapped token with icon
+export const oraichainTokensWithIcon = mapListWithIcon(oraichainTokens, tokensIcon, "coinGeckoId");
+export const otherTokensWithIcon = mapListWithIcon(otherChainTokens, tokensIcon, "coinGeckoId");
+
+export const tokensWithIcon = [otherTokensWithIcon, oraichainTokensWithIcon];
+export const flattenTokensWithIcon = flatten(tokensWithIcon);

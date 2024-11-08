@@ -1,18 +1,16 @@
 export type SupportedChainInfo = {
-  [chainId: string]: {
-    coin: {
-      [name: string]: {
-        denom: string;
-        coingecko_id: string;
-      };
-    };
-  };
+  [chainId: string]: Record<string, SupportedTokenInfo>;
+};
+
+export type SupportedTokenInfo = {
+  denom: string;
+  coingecko_id: string;
 };
 
 export interface SupportedChainInfoReader {
-  readSupportedChainInfo(): Promise<SupportedChainInfo>;
+  readSupportedChainInfo(): SupportedChainInfo;
 }
 
 export interface SupportedTokens {
-  oraichainSupportedTokens: { denom: string; coingecko_id: string }[];
+  getSupportedTokensByChain: (chainId: string) => Record<string, SupportedTokenInfo>;
 }

@@ -1,2 +1,2 @@
 export * from "./chainInfosWithIcon";
-export * from "./networkTokens";
+export * from "./icon";

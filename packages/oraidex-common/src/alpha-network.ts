@@ -65,4 +65,4 @@ export const InjOsmosisToken: BridgeAppCurrency = {
   }
 };
 
-export const listOsmosisToken = [AtomOsmosisToken, OraiOsmosisToken, TiaOsmosisToken, InjOsmosisToken];
+export const listOsmosisToken: any = [AtomOsmosisToken, OraiOsmosisToken, TiaOsmosisToken, InjOsmosisToken];

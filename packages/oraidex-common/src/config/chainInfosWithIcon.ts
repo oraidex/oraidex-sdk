@@ -27,7 +27,11 @@ import {
 } from "./icon";
 
 export type TokenIcon = Pick<TokenItemType, "coinGeckoId" | "Icon" | "IconLight">;
-export type ChainIcon = Pick<CustomChainInfo, "chainId" | "Icon" | "IconLight">;
+export type ChainIcon = {
+  Icon: any;
+  IconLight?: any;
+  chainId: string;
+};
 
 export const tokensIcon: TokenIcon[] = [
   {

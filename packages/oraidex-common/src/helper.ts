@@ -545,7 +545,6 @@ export const validateAndIdentifyCosmosAddress = (address: string, network: strin
       throw new Error("Unsupported address network");
     }
   } catch (error) {
-    console.log("error:", error);
     return {
       isValid: false,
       error: error.message

@@ -72,9 +72,10 @@ export const getTokensFromNetwork = (network: CustomChainInfo): TokenItemType[] 
     feeCurrencies: network.feeCurrencies,
     minAmountSwap: minAmountSwapMap[currency.coinMinimalDenom],
     evmDenoms: evmDenomsMap[currency.coinMinimalDenom],
-    Icon: currency.Icon,
-    IconLight: currency?.IconLight
-  }));
+    Icon: currency.coinImageUrl,
+    IconLight: currency.coinImageUrl,
+    icon: currency.coinImageUrl
+  })) as any;
 };
 
 let oraiCommon: OraiCommon = null;
@@ -86,14 +87,14 @@ let tokenConfig: {
   otherChainTokens: []
 };
 
+const readerInstance = new SupportedChainInfoReaderFromConfig();
+const supportedChainIns = SupportChainInfoImpl.create(readerInstance);
+const tokenListSupports = supportedChainIns.supportedChainInfo;
+
 export const initOraiCommon = async () => {
   const isInitial = !oraiCommon || !tokenConfig.otherChainTokens.length || !tokenConfig.oraichainTokens.length;
-  console.log("92", isInitial);
   if (isInitial) {
     oraiCommon = await OraiCommon.initializeFromBackend();
-    const readerInstance = new SupportedChainInfoReaderFromConfig();
-    const supportedChainIns = SupportChainInfoImpl.create(readerInstance);
-    const tokenListSupports = supportedChainIns.supportedChainInfo;
 
     const tokenInfos = [];
     for (const [chainId, coins] of Object.entries(tokenListSupports)) {
@@ -104,12 +105,11 @@ export const initOraiCommon = async () => {
         const findItem = orgTokenList.find((c) => [c.contractAddress, c.denom].includes(tk.denom));
 
         if (findItem) {
-          console.log("tokenIconByCoingeckoId", tk.coingecko_id, tokenIconByCoingeckoId[tk.coingecko_id]);
           acc.push({
             ...findItem,
             coinGeckoId: tk.coingecko_id,
-            Icon: tokenIconByCoingeckoId[tk.coingecko_id]?.Icon || "",
-            IconLight: tokenIconByCoingeckoId[tk.coingecko_id]?.IconLight || ""
+            Icon: findItem.icon || tokenIconByCoingeckoId[tk.coingecko_id]?.Icon || "",
+            IconLight: findItem.icon || tokenIconByCoingeckoId[tk.coingecko_id]?.IconLight || ""
           });
         }
 
@@ -138,11 +138,7 @@ await initOraiCommon();
 // other chains, oraichain
 export const oraichainTokens = tokenConfig.oraichainTokens;
 export const otherChainTokens = tokenConfig.otherChainTokens;
-
-// const otherChainTokens = flatten(
-//   chainInfos.filter((chainInfo) => chainInfo.chainId !== "Oraichain").map(getTokensFromNetwork)
-// );
-// export const oraichainTokens: TokenItemType[] = getTokensFromNetwork(oraichainNetwork);
+export const chainInfosCommon = oraiCommon.chainInfos;
 
 export const tokens = [otherChainTokens, oraichainTokens];
 console.log("first", { tokens, oraichainTokens, otherChainTokens });

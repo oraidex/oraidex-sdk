@@ -318,7 +318,6 @@ export const network: CustomChainInfo & NetworkConfig = {
 export const evmChains = chainInfos.filter((c) => c.networkType === "evm");
 export const cosmosChains: CustomChainInfo[] = chainInfos.filter((c) => c.networkType === "cosmos");
 
-
 // evm network
 export enum Networks {
   mainnet = 1,

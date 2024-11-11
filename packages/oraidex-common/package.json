@@ -1,6 +1,6 @@
 {
   "name": "@oraichain/oraidex-common",
-  "version": "1.1.28-beta.4",
+  "version": "1.1.28-beta.5",
   "main": "build/index.js",
   "files": [
     "build/"
@@ -27,7 +27,7 @@
     "@oraichain/oraidex-contracts-sdk": "latest",
     "@injectivelabs/sdk-ts": "1.12.1",
     "tronweb": "6.0.0-beta.4",
-    "@oraichain/common": "^1.1.5"
+    "@oraichain/common": "../oraichain-sdk/packages/common"
   },
   "devDependencies": {},
   "resolutions": {

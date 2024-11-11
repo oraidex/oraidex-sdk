@@ -3,7 +3,7 @@ import { PairInfo } from "@oraichain/oraidex-contracts-sdk";
 import { flatten, uniqBy } from "lodash";
 import { INJECTIVE_ORAICHAIN_DENOM, KWTBSC_ORAICHAIN_DENOM, MILKYBSC_ORAICHAIN_DENOM } from "./constant";
 import { CoinGeckoId, CoinIcon, CustomChainInfo } from "./network";
-import { SupportChainInfoImpl, SupportedChainInfoReaderFromConfig } from "./supported";
+import { SupportChainInfoImpl, SupportedChainInfoReaderFromGit } from "./supported";
 import { mapListWithIcon, tokenIconByCoingeckoId, tokensIcon } from "./config";
 
 export type EvmDenom = "bep20_orai" | "bep20_airi" | "erc20_orai" | "kawaii_orai";
@@ -92,8 +92,8 @@ export const initOraiCommon = async () => {
   if (isInitial) {
     oraiCommon = await OraiCommon.initializeFromBackend();
 
-    const readerInstance = new SupportedChainInfoReaderFromConfig();
-    const supportedChainIns = SupportChainInfoImpl.create(readerInstance);
+    const readerInstance = new SupportedChainInfoReaderFromGit();
+    const supportedChainIns = await SupportChainInfoImpl.create(readerInstance);
     const tokenListSupports = supportedChainIns.supportedChainInfo;
 
     const tokenInfos = [];

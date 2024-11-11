@@ -17,7 +17,7 @@ import {
   ROUTER_V2_CONTRACT,
   STAKING_CONTRACT
 } from "./constant";
-import { SupportChainInfoImpl, SupportedChainInfo, SupportedChainInfoReaderFromConfig } from "./supported";
+import { SupportChainInfoImpl, SupportedChainInfo, SupportedChainInfoReaderFromGit } from "./supported";
 
 export type NetworkName =
   | "Oraichain"
@@ -118,8 +118,8 @@ const initOraiCommon = async () => {
   if (!oraiCommon) {
     oraiCommon = await OraiCommon.initializeFromBackend();
 
-    const readerInstance = new SupportedChainInfoReaderFromConfig();
-    const supportedChainIns = SupportChainInfoImpl.create(readerInstance);
+    const readerInstance = new SupportedChainInfoReaderFromGit();
+    const supportedChainIns = await SupportChainInfoImpl.create(readerInstance);
     tokenListSupports = { ...supportedChainIns.supportedChainInfo };
 
     supportedChainIds.push(...Object.keys(tokenListSupports));

@@ -8,7 +8,7 @@ export type SupportedTokenInfo = {
 };
 
 export interface SupportedChainInfoReader {
-  readSupportedChainInfo(): SupportedChainInfo;
+  readSupportedChainInfo(): Promise<SupportedChainInfo>;
 }
 
 export interface SupportedTokens {

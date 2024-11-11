@@ -3,8 +3,8 @@ import { SupportedChainInfo, SupportedChainInfoReader, SupportedTokens } from ".
 export class SupportChainInfoImpl implements SupportedTokens {
   constructor(public readonly supportedChainInfo: SupportedChainInfo) {}
 
-  static create(supportedReader: SupportedChainInfoReader) {
-    const supportedChainInfo = supportedReader.readSupportedChainInfo();
+  static async create(supportedReader: SupportedChainInfoReader) {
+    const supportedChainInfo = await supportedReader.readSupportedChainInfo();
     const info = new SupportChainInfoImpl(supportedChainInfo);
     return info;
   }

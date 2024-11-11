@@ -1,5 +1,5 @@
 import { OfflineSigner } from "@cosmjs/proto-signing";
-import { CosmosChainId, EvmChainId, NetworkChainId, Networks } from "./network";
+import { CosmosChainId, EvmChainId, Networks } from "./network";
 import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
 import { SigningStargateClient, SigningStargateClientOptions } from "@cosmjs/stargate";
 import { ethToTronAddress, tronToEthAddress } from "./helper";
@@ -111,7 +111,7 @@ export abstract class EvmWallet {
     return Number(chainId) == Networks.tron;
   }
   public getFinalEvmAddress(
-    chainId: NetworkChainId,
+    chainId: string,
     address: { metamaskAddress?: string; tronAddress?: string }
   ): string | undefined {
     if (this.isTron(chainId)) return address.tronAddress;

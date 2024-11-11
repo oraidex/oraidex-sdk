@@ -19,7 +19,7 @@ import {
   MULTIPLIER,
   CW20_DECIMALS
 } from "./constant";
-import { CoinGeckoId, NetworkChainId, cosmosChains } from "./network";
+import { CoinGeckoId, cosmosChains } from "./network";
 import {
   AmountDetails,
   TokenInfo,
@@ -231,7 +231,7 @@ export const proxyContractInfo: { [x: string]: { wrapNativeAddr: string; routerA
   }
 };
 
-export const findToTokenOnOraiBridge = (fromCoingeckoId: CoinGeckoId, toNetwork: NetworkChainId) => {
+export const findToTokenOnOraiBridge = (fromCoingeckoId: CoinGeckoId, toNetwork: string) => {
   return cosmosTokens.find(
     (t) =>
       t.chainId === "oraibridge-subnet-2" &&
@@ -246,10 +246,7 @@ export const parseAssetInfo = (assetInfo: AssetInfo): string => {
   return assetInfo.token.contract_addr;
 };
 
-export const getTokenOnSpecificChainId = (
-  coingeckoId: CoinGeckoId,
-  chainId: NetworkChainId
-): TokenItemType | undefined => {
+export const getTokenOnSpecificChainId = (coingeckoId: CoinGeckoId, chainId: string): TokenItemType | undefined => {
   // @ts-ignore
   return flattenTokens.find((t) => t.coinGeckoId === coingeckoId && t.chainId === chainId);
 };
@@ -339,8 +336,8 @@ export const getSwapType = ({
   fromCoingeckoId,
   toCoingeckoId
 }: {
-  fromChainId: NetworkChainId;
-  toChainId: NetworkChainId;
+  fromChainId: string;
+  toChainId: string;
   fromCoingeckoId: CoinGeckoId;
   toCoingeckoId: CoinGeckoId;
 }): SwapType => {
@@ -590,7 +587,7 @@ export const validateTronAddress = (address: string, network: string) => {
   }
 };
 
-export const checkValidateAddressWithNetwork = (address: string, network: NetworkChainId) => {
+export const checkValidateAddressWithNetwork = (address: string, network: string) => {
   switch (network) {
     case "0x01":
     case "0x38":

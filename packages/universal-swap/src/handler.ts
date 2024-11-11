@@ -5,7 +5,6 @@ import { ExecuteInstruction, ExecuteResult, toBinary } from "@cosmjs/cosmwasm-st
 import { TransferBackMsg } from "@oraichain/common-contracts-sdk/build/CwIcs20Latest.types";
 import {
   TokenItemType,
-  NetworkChainId,
   IBCInfo,
   calculateTimeoutTimestamp,
   generateError,
@@ -81,14 +80,14 @@ export class UniversalSwapHandler {
     return this.config.swapOptions?.ibcInfoTestMode ? IBC_WASM_CONTRACT_TEST : IBC_WASM_CONTRACT;
   }
 
-  public getIbcInfo(fromChainId: CosmosChainId, toChainId: NetworkChainId) {
+  public getIbcInfo(fromChainId: CosmosChainId, toChainId: string) {
     const ibcInfo = UniversalSwapHelper.getIbcInfo(fromChainId, toChainId);
     if (!this.config.swapOptions?.ibcInfoTestMode || !ibcInfo.testInfo) return ibcInfo;
     return ibcInfo.testInfo;
   }
 
   async getUniversalSwapToAddress(
-    toChainId: NetworkChainId,
+    toChainId: string,
     address: { metamaskAddress?: string; tronAddress?: string }
   ): Promise<string> {
     // evm based
@@ -102,7 +101,7 @@ export class UniversalSwapHandler {
       if (tronWeb && tronWeb.defaultAddress?.base58) return tronToEthAddress(tronWeb.defaultAddress.base58);
       throw generateError("Cannot find tron web to nor tron address to send to Tron network");
     }
-    return this.config.cosmosWallet.getKeplrAddr(toChainId);
+    return this.config.cosmosWallet.getKeplrAddr(toChainId as any);
   }
 
   /**
@@ -226,7 +225,7 @@ export class UniversalSwapHandler {
     metamaskAddress: string,
     tronAddress: string,
     channel: string,
-    toToken: { chainId: string; prefix: string; originalChainId: NetworkChainId },
+    toToken: { chainId: string; prefix: string; originalChainId: string },
     recipientAddress?: string
   ) {
     let transferAddress;

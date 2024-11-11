@@ -15,7 +15,7 @@ import {
   OSMOSIS_ORAICHAIN_CHANNELS,
   NEUTARO_ORAICHAIN_CHANNELS
 } from "./constant";
-import { CosmosChainId, NetworkChainId } from "./network";
+import { CosmosChainId } from "./network";
 
 export interface IBCInfo {
   source: string;
@@ -24,7 +24,7 @@ export interface IBCInfo {
   timeout: number;
 }
 
-export type IBCInfoMap = { [key in CosmosChainId]: { [key in NetworkChainId]?: IBCInfo } };
+export type IBCInfoMap = { [key in CosmosChainId]: { [key in string]?: IBCInfo } };
 
 // ibc constants
 

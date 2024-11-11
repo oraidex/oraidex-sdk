@@ -13,7 +13,6 @@ import {
   MILKY_BSC_CONTRACT,
   NEUTARO_INFO,
   NEUTARO_ORAICHAIN_DENOM,
-  NetworkChainId,
   ORAI,
   ORAIX_CONTRACT,
   ORAIX_INFO,
@@ -125,7 +124,7 @@ describe("test helper functions", () => {
     expect(buildIbcWasmPairKey("foo", "bar", "john-doe")).toEqual("foo/bar/john-doe");
   });
 
-  it.each<[NetworkChainId, boolean]>([
+  it.each<[string, boolean]>([
     ["0x01", true],
     ["0x38", true],
     ["Oraichain", false]
@@ -151,7 +150,7 @@ describe("test helper functions", () => {
     expect(res).toBe(keplrAddress);
   });
 
-  it.each<[CoinGeckoId, NetworkChainId, CoinGeckoId, NetworkChainId, string, SwapRoute, boolean]>([
+  it.each<[CoinGeckoId, string, CoinGeckoId, string, string, SwapRoute, boolean]>([
     [
       "airight",
       "0x38",

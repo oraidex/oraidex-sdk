@@ -17,6 +17,7 @@ import {
   ROUTER_V2_CONTRACT,
   STAKING_CONTRACT
 } from "./constant";
+import { SupportChainInfoImpl, SupportedChainInfo, SupportedChainInfoReaderFromConfig } from "./supported";
 
 export type NetworkName =
   | "Oraichain"
@@ -109,19 +110,29 @@ export type CoinType = 118 | 60 | 195;
 export type CustomChainInfo = CustomChainInfoCommon;
 
 let oraiCommon: OraiCommon = null;
+let supportedChainIds = [];
+let tokenListSupports: SupportedChainInfo = {};
+let mapDenomWithCoinGeckoId = {};
+
 const initOraiCommon = async () => {
   if (!oraiCommon) {
     oraiCommon = await OraiCommon.initializeFromBackend();
 
-    const { chainInfos, tokenItems } = oraiCommon;
+    const readerInstance = new SupportedChainInfoReaderFromConfig();
+    const supportedChainIns = SupportChainInfoImpl.create(readerInstance);
+    tokenListSupports = { ...supportedChainIns.supportedChainInfo };
 
-    console.log({
-      chainInfos: chainInfos.chainInfos.length,
-      tokenItems: tokenItems.tokens.length
+    supportedChainIds.push(...Object.keys(tokenListSupports));
+    Object.values(tokenListSupports).map((item) => {
+      mapDenomWithCoinGeckoId = Object.values(item).reduce((acc, cur) => {
+        acc[cur.denom] = cur.coingecko_id;
+
+        return acc;
+      }, {});
     });
   }
 
-  return { oraiCommon };
+  return { oraiCommon, supportedChainIds };
 };
 await initOraiCommon();
 
@@ -245,17 +256,42 @@ export const OsmoToken: BridgeAppCurrency = {
 
 export const oraichainNetwork: CustomChainInfo = {
   ...oraiCommon.chainInfos.getSpecificChainInfo("Oraichain"),
-  bech32Config: defaultBech32Config("orai")
+  bech32Config: defaultBech32Config("orai"),
+  currencies: oraiCommon.chainInfos.getSpecificChainInfo("Oraichain").currencies.map((currency) => {
+    const coingeckoId =
+      mapDenomWithCoinGeckoId[currency.coinMinimalDenom] || mapDenomWithCoinGeckoId[currency.contractAddress];
+    if (coingeckoId) {
+      return {
+        ...currency,
+        coinGeckoId: coingeckoId
+      };
+    }
+    return currency;
+  })
 };
 
-export const chainInfos: CustomChainInfo[] =
-  oraiCommon.chainInfos.chainInfos.map((c) => {
+export const chainInfos: CustomChainInfo[] = oraiCommon.chainInfos.chainInfos
+  .filter((chain) => supportedChainIds.includes(chain.chainId))
+  .map((c) => {
+    const updatedCurrencies = c.currencies.map((currency) => {
+      const coingeckoId =
+        mapDenomWithCoinGeckoId[currency.coinMinimalDenom] || mapDenomWithCoinGeckoId[currency.contractAddress];
+      if (coingeckoId) {
+        return {
+          ...currency,
+          coinGeckoId: coingeckoId
+        };
+      }
+      return currency;
+    });
+
     return {
       ...c,
+      currencies: updatedCurrencies,
       Icon: c.chainLogoSvg || c.chainLogoPng,
       IconLight: c.chainLogoSvg || c.chainLogoPng
     };
-  }) || [];
+  });
 
 export const network: CustomChainInfo & NetworkConfig = {
   ...oraichainNetwork,
@@ -281,6 +317,7 @@ export const network: CustomChainInfo & NetworkConfig = {
 // exclude kawaiverse subnet and other special evm that has different cointype
 export const evmChains = chainInfos.filter((c) => c.networkType === "evm");
 export const cosmosChains: CustomChainInfo[] = chainInfos.filter((c) => c.networkType === "cosmos");
+
 
 // evm network
 export enum Networks {

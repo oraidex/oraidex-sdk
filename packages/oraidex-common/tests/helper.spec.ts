@@ -36,7 +36,7 @@ import {
   validateTronAddress,
   parseAssetInfoFromContractAddrOrDenom
 } from "../src/helper";
-import { CoinGeckoId, NetworkChainId } from "../src/network";
+import { CoinGeckoId } from "../src/network";
 import { isFactoryV1 } from "../src/pairs";
 import { AmountDetails, TokenItemType, cosmosTokens, flattenTokens, oraichainTokens } from "../src/token";
 import fs from "fs";
@@ -288,7 +288,7 @@ describe("should helper functions in helper run exactly", () => {
     expect(calculateTimeoutTimestamp(10, now)).toEqual((11000000000).toString());
   });
 
-  it.each<[CoinGeckoId, NetworkChainId, CoinGeckoId, NetworkChainId | undefined]>([
+  it.each<[CoinGeckoId, string, CoinGeckoId, string | undefined]>([
     // ["cosmos", "cosmoshub-4", "cosmos", undefined],
     // ["osmosis", "osmosis-1", "osmosis", undefined],
     ["airight", "0x38", "airight", "oraibridge-subnet-2"],
@@ -303,7 +303,7 @@ describe("should helper functions in helper run exactly", () => {
     }
   );
 
-  it.each<[CoinGeckoId, NetworkChainId, undefined]>([
+  it.each<[CoinGeckoId, string, undefined]>([
     ["cosmos", "cosmoshub-4", undefined],
     ["osmosis", "osmosis-1", undefined]
   ])("test-findToTokenOnOraiBridge-expect-undefined", (fromCoingeckoId, toChainId) => {
@@ -318,7 +318,7 @@ describe("should helper functions in helper run exactly", () => {
     expect(parseAssetInfo(assetInfo)).toEqual(expectedResult);
   });
 
-  it.each<[CoinGeckoId, NetworkChainId, boolean]>([
+  it.each<[CoinGeckoId, string, boolean]>([
     ["wbnb", "0x38", false],
     ["wbnb", "Oraichain", true]
   ])("test-getTokenOnSpecificChainId", (coingeckoId, chainId, expectedResult) => {
@@ -552,7 +552,7 @@ describe("should helper functions in helper run exactly", () => {
     expect(parseWasmEvents(input).filter((event) => event)).toEqual(expectedOutput);
   });
 
-  it.each<[string, NetworkChainId, { isValid: boolean; network?: string; error?: string }]>([
+  it.each<[string, string, { isValid: boolean; network?: string; error?: string }]>([
     [
       "0x1CE09E54A5d7432ecabf3b085BAda7920aeb7dab",
       "0x01",

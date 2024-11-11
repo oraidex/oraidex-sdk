@@ -1,13 +1,7 @@
 import { BridgeMsgInfo, MiddlewareResponse } from "../types";
 import { ActionType, Path } from "../../types";
 import { Action } from "@oraichain/osor-api-contracts-sdk/src/EntryPoint.types";
-import {
-  BigDecimal,
-  calculateTimeoutTimestamp,
-  generateError,
-  IBC_TRANSFER_TIMEOUT,
-  NetworkChainId
-} from "@oraichain/oraidex-common";
+import { BigDecimal, calculateTimeoutTimestamp, generateError, IBC_TRANSFER_TIMEOUT } from "@oraichain/oraidex-common";
 
 import { EncodeObject } from "@cosmjs/proto-signing";
 import { ChainMsg } from "./chain";
@@ -46,8 +40,8 @@ export class CosmosMsg extends ChainMsg {
           timeout: +calculateTimeoutTimestamp(IBC_TRANSFER_TIMEOUT),
           fromToken: action.tokenIn,
           toToken: action.tokenOut,
-          fromChain: this.path.chainId as NetworkChainId,
-          toChain: this.path.tokenOutChainId as NetworkChainId
+          fromChain: this.path.chainId as string,
+          toChain: this.path.tokenOutChainId as string
         };
         break;
       } else {

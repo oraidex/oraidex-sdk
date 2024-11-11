@@ -87,14 +87,14 @@ let tokenConfig: {
   otherChainTokens: []
 };
 
-const readerInstance = new SupportedChainInfoReaderFromConfig();
-const supportedChainIns = SupportChainInfoImpl.create(readerInstance);
-const tokenListSupports = supportedChainIns.supportedChainInfo;
-
 export const initOraiCommon = async () => {
   const isInitial = !oraiCommon || !tokenConfig.otherChainTokens.length || !tokenConfig.oraichainTokens.length;
   if (isInitial) {
     oraiCommon = await OraiCommon.initializeFromBackend();
+
+    const readerInstance = new SupportedChainInfoReaderFromConfig();
+    const supportedChainIns = SupportChainInfoImpl.create(readerInstance);
+    const tokenListSupports = supportedChainIns.supportedChainInfo;
 
     const tokenInfos = [];
     for (const [chainId, coins] of Object.entries(tokenListSupports)) {
@@ -141,7 +141,6 @@ export const otherChainTokens = tokenConfig.otherChainTokens;
 export const chainInfosCommon = oraiCommon.chainInfos;
 
 export const tokens = [otherChainTokens, oraichainTokens];
-console.log("first", { tokens, oraichainTokens, otherChainTokens });
 
 export const flattenTokens = flatten(tokens);
 export const tokenMap = Object.fromEntries(flattenTokens.map((c) => [c.denom, c]));

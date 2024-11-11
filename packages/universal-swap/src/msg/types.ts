@@ -1,7 +1,6 @@
 import { Coin } from "@cosmjs/amino";
 import { JsonObject } from "@cosmjs/cosmwasm-stargate";
 import { EncodeObject } from "@cosmjs/proto-signing";
-import { NetworkChainId } from "@oraichain/oraidex-common";
 
 export interface BridgeMsgInfo {
   amount: string;
@@ -12,9 +11,9 @@ export interface BridgeMsgInfo {
   memo?: string;
   prefix?: string; // use for bridge to evm
   fromToken: string;
-  fromChain: NetworkChainId;
+  fromChain: string;
   toToken: string;
-  toChain: NetworkChainId;
+  toChain: string;
 }
 
 export enum PostActionType {

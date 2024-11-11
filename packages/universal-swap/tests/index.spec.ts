@@ -1,7 +1,6 @@
 import {
   CosmosWallet,
   EvmWallet,
-  NetworkChainId,
   OSMOSIS_ORAICHAIN_DENOM,
   flattenTokens,
   oraichain2osmosis,
@@ -256,7 +255,7 @@ describe("test universal swap handler functions", () => {
     });
   });
   class StubCosmosWallet extends CosmosWallet {
-    getKeplrAddr(chainId?: NetworkChainId | undefined): Promise<string> {
+    getKeplrAddr(chainId?: string | undefined): Promise<string> {
       let addr: string = "orai1g4h64yjt0fvzv5v2j8tyfnpe5kmnetejvfgs7g";
       switch (chainId) {
         case "noble-1":
@@ -332,7 +331,7 @@ describe("test universal swap handler functions", () => {
     }
   }
 
-  it.each<[string, CoinGeckoId, CoinGeckoId, NetworkChainId, EncodeObject[]]>([
+  it.each<[string, CoinGeckoId, CoinGeckoId, string, EncodeObject[]]>([
     [
       "from-and-to-is-have-same-coingecko-id",
       "osmosis",
@@ -594,7 +593,7 @@ describe("test universal swap handler functions", () => {
         {
           chainId: toToken.chainId,
           prefix: toToken.prefix!,
-          originalChainId: originalChainId as NetworkChainId
+          originalChainId: originalChainId as string
         },
         recipientAddress
       );
@@ -727,7 +726,7 @@ describe("test universal swap handler functions", () => {
     expect(result).toEqual(expectedFunction);
   });
 
-  it.each<[string, CoinGeckoId, CoinGeckoId, NetworkChainId, any, string, any, any]>([
+  it.each<[string, CoinGeckoId, CoinGeckoId, string, any, string, any, any]>([
     [
       "swap-tokens-that-both-belong-to-Oraichain-from-is-native-token",
       "oraichain-token",

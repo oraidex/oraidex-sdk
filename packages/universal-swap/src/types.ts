@@ -1,5 +1,5 @@
 import { Coin } from "@cosmjs/amino";
-import { AmountDetails, CosmosWallet, EvmWallet, NetworkChainId, TokenItemType } from "@oraichain/oraidex-common";
+import { AmountDetails, CosmosWallet, EvmWallet, TokenItemType } from "@oraichain/oraidex-common";
 import { SwapOperation, Uint128 } from "@oraichain/oraidex-contracts-sdk";
 import { Affiliate } from "@oraichain/oraidex-contracts-sdk/build/OraiswapMixedRouter.types";
 

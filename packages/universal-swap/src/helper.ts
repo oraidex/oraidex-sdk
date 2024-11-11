@@ -12,7 +12,6 @@ import {
   EvmChainId,
   proxyContractInfo,
   CosmosChainId,
-  NetworkChainId,
   IBCInfo,
   generateError,
   ibcInfos,
@@ -113,7 +112,7 @@ export class UniversalSwapHelper {
     }
   };
 
-  static isEvmNetworkNativeSwapSupported = (chainId: NetworkChainId) => {
+  static isEvmNetworkNativeSwapSupported = (chainId: string) => {
     switch (chainId) {
       case "0x01":
       case "0x38":
@@ -202,7 +201,7 @@ export class UniversalSwapHelper {
   };
 
   // ibc helpers
-  static getIbcInfo = (fromChainId: CosmosChainId, toChainId: NetworkChainId): IBCInfo => {
+  static getIbcInfo = (fromChainId: CosmosChainId, toChainId: string): IBCInfo => {
     if (!ibcInfos[fromChainId]) throw generateError("Cannot find ibc info");
     const ibcInfo = ibcInfos[fromChainId][toChainId];
     if (!ibcInfo) throw generateError(`Cannot find ibc info from ${fromChainId} to ${toChainId}`);
@@ -373,6 +372,8 @@ export class UniversalSwapHelper {
         ...evmInfo
       };
     }
+
+    console.log("cosmosChains--", cosmosChains, cosmosAddress, addressFollowCoinType);
 
     return cosmosAddress;
   };
@@ -1112,14 +1113,14 @@ export class UniversalSwapHelper {
       filteredToTokens = filteredTokens;
     }
     // special case filter. Tokens on networks other than supported evm cannot swap to tokens, so we need to remove them
-    if (!UniversalSwapHelper.isEvmNetworkNativeSwapSupported(chainId as NetworkChainId))
+    if (!UniversalSwapHelper.isEvmNetworkNativeSwapSupported(chainId as string))
       return filteredToTokens.filter((t) => {
         // one-directional swap. non-pool tokens of evm network can swap be swapped with tokens on Oraichain, but not vice versa
         const isSupported = UniversalSwapHelper.isSupportedNoPoolSwapEvm(t.coinGeckoId);
         if (direction === SwapDirection.To) return !isSupported;
         if (isSupported) {
           // if we cannot find any matched token then we dont include it in the list since it cannot be swapped
-          const sameChainId = getTokenOnSpecificChainId(coingeckoId, t.chainId as NetworkChainId);
+          const sameChainId = getTokenOnSpecificChainId(coingeckoId, t.chainId as string);
           if (!sameChainId) return false;
           return true;
         }

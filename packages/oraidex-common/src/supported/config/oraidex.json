@@ -97,7 +97,7 @@
       "coingecko_id": "hamster-kombat"
     },
     "HTT": {
-      "denom": "orai1k5d5cgekt8kkzcrnxrx860wadvz5esjwtyv299g0ht75a92yfn6qvgu0ml",
+      "denom": "cw20:orai1k5d5cgekt8kkzcrnxrx860wadvz5esjwtyv299g0ht75a92yfn6qvgu0ml:OCH",
       "coingecko_id": "oraidex"
     }
   },

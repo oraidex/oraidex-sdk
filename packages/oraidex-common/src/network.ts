@@ -18,6 +18,7 @@ import {
   STAKING_CONTRACT
 } from "./constant";
 import { SupportChainInfoImpl, SupportedChainInfo, SupportedChainInfoReaderFromGit } from "./supported";
+import { fetchRetry } from "./helper";
 
 export type NetworkName =
   | "Oraichain"
@@ -114,13 +115,44 @@ let supportedChainIds = [];
 let tokenListSupports: SupportedChainInfo = {};
 let mapDenomWithCoinGeckoId = {};
 
+const ORAICHAIN_COMMON_GITHUB_API_ENDPOINTS = {
+  BASE_URL: "https://api.github.com",
+  SUPPORTED_INFO: "/repos/oraidex/oraidex-sdk/contents/packages/oraidex-common/src/supported/config/"
+};
+
+const readSupportedChainInfoStatic = async () => {
+  const options = {
+    method: "GET",
+    headers: {
+      Accept: "application/json"
+    }
+  };
+
+  const res = await (
+    await fetchRetry(
+      `${ORAICHAIN_COMMON_GITHUB_API_ENDPOINTS.BASE_URL}${ORAICHAIN_COMMON_GITHUB_API_ENDPOINTS.SUPPORTED_INFO}oraidex.json?ref=feat/intergrate_common`,
+      options
+    )
+  ).json();
+
+  console.log(
+    "url",
+    `${ORAICHAIN_COMMON_GITHUB_API_ENDPOINTS.BASE_URL}${ORAICHAIN_COMMON_GITHUB_API_ENDPOINTS.SUPPORTED_INFO}oraidex.json?ref=feat/intergrate_common`
+  );
+
+  const supportedChainInfo = await (await fetchRetry(res.download_url)).json();
+
+  return supportedChainInfo;
+};
+
 const initOraiCommon = async () => {
   if (!oraiCommon) {
     oraiCommon = await OraiCommon.initializeFromBackend();
 
-    const readerInstance = new SupportedChainInfoReaderFromGit();
-    const supportedChainIns = await SupportChainInfoImpl.create(readerInstance);
-    tokenListSupports = { ...supportedChainIns.supportedChainInfo };
+    // const readerInstance = new SupportedChainInfoReaderFromGit();
+    // const supportedChainIns = await SupportChainInfoImpl.create(readerInstance);
+    // tokenListSupports = { ...supportedChainIns.supportedChainInfo };
+    const tokenListSupports = await readSupportedChainInfoStatic();
 
     supportedChainIds.push(...Object.keys(tokenListSupports));
     Object.values(tokenListSupports).map((item) => {

@@ -3,8 +3,9 @@ import { PairInfo } from "@oraichain/oraidex-contracts-sdk";
 import { flatten, uniqBy } from "lodash";
 import { INJECTIVE_ORAICHAIN_DENOM, KWTBSC_ORAICHAIN_DENOM, MILKYBSC_ORAICHAIN_DENOM } from "./constant";
 import { CoinGeckoId, CoinIcon, CustomChainInfo } from "./network";
-import { SupportChainInfoImpl, SupportedChainInfoReaderFromGit } from "./supported";
+import { SupportChainInfoImpl, SupportedChainInfo, SupportedChainInfoReaderFromGit } from "./supported";
 import { mapListWithIcon, tokenIconByCoingeckoId, tokensIcon } from "./config";
+import { fetchRetry } from "./helper";
 
 export type EvmDenom = "bep20_orai" | "bep20_airi" | "erc20_orai" | "kawaii_orai";
 export type AmountDetails = { [denom: string]: string };
@@ -87,14 +88,48 @@ let tokenConfig: {
   otherChainTokens: []
 };
 
+const ORAICHAIN_COMMON_GITHUB_API_ENDPOINTS = {
+  BASE_URL: "https://api.github.com",
+  SUPPORTED_INFO: "/repos/oraidex/oraidex-sdk/contents/packages/oraidex-common/src/supported/config/"
+};
+
+const readSupportedChainInfoStatic = async () => {
+  const options = {
+    method: "GET",
+    headers: {
+      Accept: "application/json"
+    }
+  };
+  console.log(
+    "url",
+    `${ORAICHAIN_COMMON_GITHUB_API_ENDPOINTS.BASE_URL}${ORAICHAIN_COMMON_GITHUB_API_ENDPOINTS.SUPPORTED_INFO}oraidex.json?ref=feat/intergrate_common`
+  );
+
+  const res = await (
+    await fetchRetry(
+      `${ORAICHAIN_COMMON_GITHUB_API_ENDPOINTS.BASE_URL}${ORAICHAIN_COMMON_GITHUB_API_ENDPOINTS.SUPPORTED_INFO}oraidex.json?ref=feat/intergrate_common`,
+      options
+    )
+  ).json();
+
+  console.log("res", res);
+
+  const supportedChainInfo = await (await fetchRetry(res.download_url)).json();
+
+  console.log("supportedChainInfo", supportedChainInfo);
+
+  return supportedChainInfo;
+};
+
 export const initOraiCommon = async () => {
   const isInitial = !oraiCommon || !tokenConfig.otherChainTokens.length || !tokenConfig.oraichainTokens.length;
   if (isInitial) {
     oraiCommon = await OraiCommon.initializeFromBackend();
 
-    const readerInstance = new SupportedChainInfoReaderFromGit();
-    const supportedChainIns = await SupportChainInfoImpl.create(readerInstance);
-    const tokenListSupports = supportedChainIns.supportedChainInfo;
+    // const readerInstance = new SupportedChainInfoReaderFromGit();
+    // const supportedChainIns = await SupportChainInfoImpl.create(readerInstance);
+    // const tokenListSupports = supportedChainIns.supportedChainInfo;
+    const tokenListSupports = await readSupportedChainInfoStatic();
 
     const tokenInfos = [];
 

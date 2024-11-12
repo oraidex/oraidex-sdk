@@ -7,12 +7,7 @@ export const ORAICHAIN_COMMON_GITHUB_API_ENDPOINTS = {
 };
 
 export class SupportedChainInfoReaderFromGit implements SupportedChainInfoReader {
-  private readonly dex: string;
-  private readonly accessToken: string;
-  constructor() {
-    this.dex = "oraidex";
-    this.accessToken = "";
-  }
+  constructor(private readonly dex: string = "oraidex", private readonly accessToken: string = "") {}
 
   async readSupportedChainInfo(): Promise<SupportedChainInfo> {
     const options = {
@@ -28,10 +23,40 @@ export class SupportedChainInfoReaderFromGit implements SupportedChainInfoReader
 
     const res = await (
       await fetchRetry(
-        `${ORAICHAIN_COMMON_GITHUB_API_ENDPOINTS.BASE_URL}${ORAICHAIN_COMMON_GITHUB_API_ENDPOINTS.SUPPORTED_INFO}${this.dex}.json?ref=feat/token_map`,
+        `${ORAICHAIN_COMMON_GITHUB_API_ENDPOINTS.BASE_URL}${ORAICHAIN_COMMON_GITHUB_API_ENDPOINTS.SUPPORTED_INFO}${this.dex}.json?ref=feat/feat/intergrate_common`,
         options
       )
     ).json();
+
+    console.log(
+      "url",
+      `${ORAICHAIN_COMMON_GITHUB_API_ENDPOINTS.BASE_URL}${ORAICHAIN_COMMON_GITHUB_API_ENDPOINTS.SUPPORTED_INFO}${this.dex}.json?ref=feat/feat/intergrate_common`
+    );
+
+    const supportedChainInfo: SupportedChainInfo = await (await fetchRetry(res.download_url)).json();
+
+    return supportedChainInfo;
+  }
+
+  static async readSupportedChainInfoStatic(): Promise<SupportedChainInfo> {
+    const options = {
+      method: "GET",
+      headers: {
+        Accept: "application/json"
+      }
+    };
+
+    const res = await (
+      await fetchRetry(
+        `${ORAICHAIN_COMMON_GITHUB_API_ENDPOINTS.BASE_URL}${ORAICHAIN_COMMON_GITHUB_API_ENDPOINTS.SUPPORTED_INFO}oraidex.json?ref=feat/feat/intergrate_common`,
+        options
+      )
+    ).json();
+
+    console.log(
+      "url",
+      `${ORAICHAIN_COMMON_GITHUB_API_ENDPOINTS.BASE_URL}${ORAICHAIN_COMMON_GITHUB_API_ENDPOINTS.SUPPORTED_INFO}oraidex.json?ref=feat/feat/intergrate_common`
+    );
 
     const supportedChainInfo: SupportedChainInfo = await (await fetchRetry(res.download_url)).json();
 

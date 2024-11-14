@@ -8,7 +8,7 @@
   "license": "MIT",
   "dependencies": {
     "@duckdb/duckdb-wasm": "^1.27.1-dev125.0",
-    "@oraichain/oraidex-common": "1.1.28-beta.6",
+    "@oraichain/oraidex-common": "^1.0.10",
     "@oraichain/oraidex-contracts-sdk": "^1.0.24",
     "@oraichain/oraidex-universal-swap": "1.0.14",
     "@xstate/inspect": "^0.8.0",

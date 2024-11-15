@@ -17,7 +17,7 @@ import {
   ROUTER_V2_CONTRACT,
   STAKING_CONTRACT
 } from "./constant";
-import { readSupportedChainInfoStatic, SupportedChainInfo } from "./supported";
+import { readSupportedChainInfoStatic, supportedBridge, SupportedChainInfo } from "./supported";
 
 export type NetworkName =
   | "Oraichain"
@@ -260,7 +260,8 @@ export const oraichainNetwork: CustomChainInfo = {
     if (coingeckoId) {
       return {
         ...currency,
-        coinGeckoId: coingeckoId
+        coinGeckoId: coingeckoId,
+        bridgeTo: supportedBridge.Oraichain?.[coingeckoId] || []
       };
     }
     return currency;
@@ -276,7 +277,8 @@ export const chainInfos: CustomChainInfo[] = oraiCommon.chainInfos.chainInfos
       if (coingeckoId) {
         return {
           ...currency,
-          coinGeckoId: coingeckoId
+          coinGeckoId: coingeckoId,
+          bridgeTo: supportedBridge[c.chainId]?.[coingeckoId] || []
         };
       }
       return currency;

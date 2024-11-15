@@ -4,7 +4,7 @@ import { flatten, uniqBy } from "lodash";
 import { mapListWithIcon, tokenIconByCoingeckoId, tokensIcon } from "./config";
 import { INJECTIVE_ORAICHAIN_DENOM, KWTBSC_ORAICHAIN_DENOM, MILKYBSC_ORAICHAIN_DENOM } from "./constant";
 import { CoinGeckoId, CoinIcon, CustomChainInfo } from "./network";
-import { readSupportedChainInfoStatic } from "./supported";
+import { readSupportedChainInfoStatic, supportedBridge } from "./supported";
 
 export type EvmDenom = "bep20_orai" | "bep20_airi" | "erc20_orai" | "kawaii_orai";
 export type AmountDetails = { [denom: string]: string };
@@ -106,11 +106,14 @@ export const initOraiCommon = async () => {
         );
 
         if (findItem) {
+          const coinGeckoId = supportedToken.coingecko_id;
+
           acc.push({
             ...findItem,
-            coinGeckoId: supportedToken.coingecko_id,
-            Icon: findItem.icon || tokenIconByCoingeckoId[supportedToken.coingecko_id]?.Icon || "",
-            IconLight: findItem.icon || tokenIconByCoingeckoId[supportedToken.coingecko_id]?.IconLight || ""
+            coinGeckoId,
+            bridgeTo: supportedBridge[chainId]?.[coinGeckoId] || [],
+            Icon: findItem.icon || tokenIconByCoingeckoId[coinGeckoId]?.Icon || "",
+            IconLight: findItem.icon || tokenIconByCoingeckoId[coinGeckoId]?.IconLight || ""
           });
         }
 

@@ -1,9 +1,11 @@
 import { fetchRetry } from "../helper";
-import { SupportedChainInfo, SupportedChainInfoReader } from "./types";
+import oraidexJson from "./config/oraidex.json";
 
-const ORAICHAIN_COMMON_GITHUB_API_ENDPOINTS = {
-  BASE_URL: "https://raw.githubusercontent.com/oraidex/oraidex-sdk",
-  SUPPORTED_INFO: "/packages/oraidex-common/src/supported/config/"
+// BASE_URL: "https://raw.githubusercontent.com/oraidex/oraidex-sdk",
+// SUPPORTED_INFO: "/packages/oraidex-common/src/supported/config/"
+const ORAIDEX_API_ENDPOINTS = {
+  BASE_URL: "https://api-staging.oraidex.io",
+  SUPPORTED_INFO: "/v1/token-map/supported"
 };
 
 export const readSupportedChainInfoStatic = async () => {
@@ -13,24 +15,15 @@ export const readSupportedChainInfoStatic = async () => {
       Accept: "application/json"
     }
   };
-  console.log(
-    "requesting . . .",
-    `${ORAICHAIN_COMMON_GITHUB_API_ENDPOINTS.BASE_URL}${"/feat/intergrate_common"}${
-      ORAICHAIN_COMMON_GITHUB_API_ENDPOINTS.SUPPORTED_INFO
-    }${"oraidex.json"}`
-  );
-
-  // FIXME: update branch name in url
   const supportedChainInfo = await (
-    await fetchRetry(
-      `${ORAICHAIN_COMMON_GITHUB_API_ENDPOINTS.BASE_URL}${"/feat/intergrate_common"}${
-        ORAICHAIN_COMMON_GITHUB_API_ENDPOINTS.SUPPORTED_INFO
-      }${"oraidex.json"}`,
-      options
-    )
+    await fetchRetry(`${ORAIDEX_API_ENDPOINTS.BASE_URL}${ORAIDEX_API_ENDPOINTS.SUPPORTED_INFO}`, options)
   ).json();
 
   console.log("supportedChainInfo", supportedChainInfo);
+
+  if (!supportedChainInfo) {
+    return oraidexJson;
+  }
 
   return supportedChainInfo;
 };

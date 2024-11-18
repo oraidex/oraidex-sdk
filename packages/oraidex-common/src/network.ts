@@ -261,7 +261,9 @@ export const oraichainNetwork: CustomChainInfo = {
       return {
         ...currency,
         coinGeckoId: coingeckoId,
-        bridgeTo: supportedBridge.Oraichain?.[coingeckoId] || []
+        bridgeTo: !supportedBridge.Oraichain?.[coingeckoId]?.length
+          ? undefined
+          : supportedBridge.Oraichain?.[coingeckoId]
       };
     }
     return currency;
@@ -278,7 +280,9 @@ export const chainInfos: CustomChainInfo[] = oraiCommon.chainInfos.chainInfos
         return {
           ...currency,
           coinGeckoId: coingeckoId,
-          bridgeTo: supportedBridge[c.chainId]?.[coingeckoId] || []
+          bridgeTo: !supportedBridge[c.chainId]?.[coingeckoId]?.length
+            ? undefined
+            : supportedBridge[c.chainId]?.[coingeckoId]
         };
       }
       return currency;

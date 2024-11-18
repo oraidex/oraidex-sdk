@@ -111,7 +111,9 @@ export const initOraiCommon = async () => {
           acc.push({
             ...findItem,
             coinGeckoId,
-            bridgeTo: supportedBridge[chainId]?.[coinGeckoId] || [],
+            bridgeTo: !supportedBridge[chainId]?.[coinGeckoId]?.length
+              ? undefined
+              : supportedBridge[chainId]?.[coinGeckoId],
             Icon: findItem.icon || tokenIconByCoingeckoId[coinGeckoId]?.Icon || "",
             IconLight: findItem.icon || tokenIconByCoingeckoId[coinGeckoId]?.IconLight || ""
           });

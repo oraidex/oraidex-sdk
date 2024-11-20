@@ -60,4 +60,10 @@ jobs:
         env:
           CI: false
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-
+      - name: Publish Universal-swap
+        id: publish-universal-swap
+        continue-on-error: true
+        run: yarn deploy:beta packages/universal-swap
+        env:
+          CI: false
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

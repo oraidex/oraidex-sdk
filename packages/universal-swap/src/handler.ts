@@ -165,7 +165,7 @@ export class UniversalSwapHandler {
             sender: sender,
             receiver: ibcReceiveAddr,
             memo: "",
-            timeoutTimestamp: timeoutTimestamp ?? calculateTimeoutTimestamp(ibcInfo.timeout)
+            timeoutTimestamp: BigInt(timeoutTimestamp ?? calculateTimeoutTimestamp(ibcInfo.timeout))
           })
         }
       ];
@@ -301,7 +301,7 @@ export class UniversalSwapHandler {
           sender: this.swapData.sender.cosmos,
           receiver: toAddress,
           memo: ibcMemo,
-          timeoutTimestamp: calculateTimeoutTimestamp(ibcInfos.timeout, this.currentTimestamp)
+          timeoutTimestamp: BigInt(calculateTimeoutTimestamp(ibcInfos.timeout, this.currentTimestamp))
         })
       };
       return [...msgExecuteSwap, ...getEncodedExecuteMsgs, msgTransfer];
@@ -1118,7 +1118,7 @@ export class UniversalSwapHandler {
           }
         }
       }),
-      timeoutTimestamp: calculateTimeoutTimestamp(ibcInfo.timeout)
+      timeoutTimestamp: BigInt(calculateTimeoutTimestamp(ibcInfo.timeout))
     });
 
     // check if from chain is noble, use ibc-wasm instead of ibc-hooks

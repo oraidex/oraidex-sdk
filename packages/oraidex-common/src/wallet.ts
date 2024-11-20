@@ -51,7 +51,7 @@ export abstract class CosmosWallet {
     if (chainId === "injective-1") {
       client = await Stargate.InjectiveSigningStargateClient.createWithSigner(
         tmClient as any,
-        wallet,
+        wallet as any,
         optionsClient as any
       );
     } else {

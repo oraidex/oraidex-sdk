@@ -79,7 +79,8 @@ export type CoinGeckoId =
   | "the-open-network"
   | "pepe"
   | "simon-s-cat"
-  | "hamster-kombat";
+  | "hamster-kombat"
+  | "dogecoin";
 
 export type NetworkType = "cosmos" | "evm";
 export interface NetworkConfig {

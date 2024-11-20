@@ -105,7 +105,7 @@ export class CosmosMsg extends ChainMsg {
           channel: bridgeInfo.sourceChannel,
           timeout: +calculateTimeoutTimestamp(IBC_TRANSFER_TIMEOUT),
           retries: 2,
-          next: this.memo
+          next: this.memo || undefined
         }
       })
     };

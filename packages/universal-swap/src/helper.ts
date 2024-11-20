@@ -440,9 +440,8 @@ export class UniversalSwapHelper {
     /**
      * useAlphaIbcWasm case:
      * evm -> oraichain -> osmosis -> inj/tia
-     * tia/inj -> osmosis -> oraichain -> evm
      */
-    if (swapOption.isAlphaIbcWasm) {
+    if (swapOption.isAlphaIbcWasm && !fromToken.cosmosBased) {
       if (!alphaSmartRoute) throw generateError(`Missing router with alpha ibc wasm!`);
       const routes = alphaSmartRoute.routes;
       const alphaRoutes = routes[0];
@@ -469,6 +468,7 @@ export class UniversalSwapHelper {
       });
 
       if (addresses?.recipientAddress) receiverAddresses[toToken.chainId] = addresses?.recipientAddress;
+
       const { memo } = generateMemoSwap(
         {
           ...alphaRoutes,

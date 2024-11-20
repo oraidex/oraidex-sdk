@@ -1,6 +1,6 @@
 {
   "name": "@oraichain/ibc-routing",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "build/index.js",
   "files": [
     "build/"
@@ -27,7 +27,7 @@
     "@typechain/ethers-v6": "^0.5.1",
     "@typechain/hardhat": "^9.1.0",
     "@types/ws": "^8.5.4",
-    "cosmjs-types": "^0.8.0",
+    "cosmjs-types": "^0.9.0",
     "dotenv": "^16.3.1",
     "hardhat": "^2.18.2",
     "jest-websocket-mock": "^2.5.0",

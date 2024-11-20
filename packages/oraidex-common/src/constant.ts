@@ -55,6 +55,7 @@ export const KWT_BSC_CONTRACT = "0x257a8d1E03D17B8535a182301f15290F11674b53";
 export const MILKY_BSC_CONTRACT = "0x6fE3d0F096FC932A905accd1EB1783F6e4cEc717";
 export const PEPE_BSC_CONTRACT = "0x25d887Ce7a35172C62FeBFD67a1856F20FaEbB00";
 export const CAT_BSC_CONTRACT = "0x6894CDe390a3f51155ea41Ed24a33A4827d3063D";
+export const DOGE_BSC_CONTRACT = "0xbA2aE424d960c26247Dd6c32edC70B295c744C43";
 // tron contracts
 export const USDT_TRON_CONTRACT = "0xa614f803B6FD780986A42c78Ec9c7f77e6DeD13C";
 export const WRAP_TRON_TRX_CONTRACT = "0x891cdb91d149f23B1a45D9c5Ca78a88d0cB44C18";
@@ -101,6 +102,9 @@ export const PEPE_ORAICHAIN_EXT_DENOM =
   "factory/orai1wuvhex9xqs3r539mvc6mtm7n20fcj3qr2m0y9khx6n5vtlngfzes3k0rq9/extPEPE";
 export const CAT_ORAICHAIN_EXT_DENOM = "factory/orai1wuvhex9xqs3r539mvc6mtm7n20fcj3qr2m0y9khx6n5vtlngfzes3k0rq9/extCAT";
 export const HMSTR_ORAICHAIN_DENOM = "factory/orai1wuvhex9xqs3r539mvc6mtm7n20fcj3qr2m0y9khx6n5vtlngfzes3k0rq9/HMSTR";
+export const OBTC_ORAICHAIN_EXT_DENOM = "factory/orai1wuvhex9xqs3r539mvc6mtm7n20fcj3qr2m0y9khx6n5vtlngfzes3k0rq9/obtc";
+export const DOGE_BNB_ORAICHAIN_DENOM =
+  "factory/orai1wuvhex9xqs3r539mvc6mtm7n20fcj3qr2m0y9khx6n5vtlngfzes3k0rq9/DogeBNB";
 
 // config for oraichain token
 export const AIRI_CONTRACT = "orai10ldgzued6zjp0mkqwsv2mux3ml50l97c74x8sg";

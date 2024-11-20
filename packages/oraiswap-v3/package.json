@@ -1,6 +1,6 @@
 {
   "name": "@oraichain/oraiswap-v3",
-  "version": "0.1.25-beta.3",
+  "version": "1.1.1-beta.1",
   "main": "build/index.js",
   "files": [
     "build/"
@@ -11,8 +11,8 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@cosmjs/cosmwasm-stargate": "^0.31.0",
-    "@oraichain/oraidex-contracts-sdk": "^1.0.53",
-    "@oraichain/oraidex-common": "1.1.28-beta.10"
+    "@cosmjs/cosmwasm-stargate": "^0.32.4",
+    "@oraichain/oraidex-contracts-sdk": "^1.0.54",
+    "@oraichain/oraidex-common": "1.1.32-beta.1"
   }
 }

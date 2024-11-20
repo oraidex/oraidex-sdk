@@ -13,6 +13,10 @@ export type ExecuteMsg = {
     pool_key: PoolKey;
   };
 } | {
+  withdraw_all_protocol_fee: {
+    receiver?: Addr | null;
+  };
+} | {
   change_protocol_fee: {
     protocol_fee: Percentage;
   };
@@ -133,6 +137,11 @@ export type ExecuteMsg = {
   claim_incentive: {
     index: number;
   };
+} | {
+  update_pool_status: {
+    pool_key: PoolKey;
+    status?: PoolStatus | null;
+  };
 };
 export type Liquidity = string;
 export type SqrtPrice = string;
@@ -156,6 +165,7 @@ export type AssetInfo = {
     denom: string;
   };
 };
+export type PoolStatus = "opening" | "paused" | "swap_only" | "lp_only";
 export interface PoolKey {
   fee_tier: FeeTier;
   token_x: string;
@@ -382,6 +392,7 @@ export interface Pool {
   liquidity: Liquidity;
   sqrt_price: SqrtPrice;
   start_timestamp: number;
+  status?: PoolStatus | null;
 }
 export interface IncentiveRecord {
   id: number;

@@ -102,7 +102,7 @@ describe("test build cosmos msg", () => {
   });
 
   it("Valid path", () => {
-    const nextMemo = "{}";
+    const nextMemo = "";
     let cosmos = new CosmosMsg(validPath, "1", receiver, currentAddress, nextMemo);
 
     let bridgeInfo = cosmos.getBridgeInfo();
@@ -110,7 +110,7 @@ describe("test build cosmos msg", () => {
       amount: "217432",
       sourceChannel: "channel-301",
       sourcePort: "transfer",
-      memo: "{}",
+      memo: "",
       receiver: "orai1hvr9d72r5um9lvt0rpkd4r75vrsqtw6yujhqs2",
       timeout: +calculateTimeoutTimestamp(IBC_TRANSFER_TIMEOUT),
       fromToken: "uatom",
@@ -129,7 +129,7 @@ describe("test build cosmos msg", () => {
           channel: bridgeInfo.sourceChannel,
           timeout: +calculateTimeoutTimestamp(IBC_TRANSFER_TIMEOUT),
           retries: 2,
-          next: nextMemo
+          next: nextMemo || undefined
         }
       })
     });

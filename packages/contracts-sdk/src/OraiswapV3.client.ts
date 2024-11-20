@@ -6,7 +6,7 @@
 
 import { CosmWasmClient, SigningCosmWasmClient, ExecuteResult } from "@cosmjs/cosmwasm-stargate";
 import { Coin, StdFee } from "@cosmjs/amino";
-import {Addr, Percentage, InstantiateMsg, ExecuteMsg, Liquidity, SqrtPrice, TokenAmount, Binary, Expiration, Timestamp, Uint64, AssetInfo, PoolKey, FeeTier, SwapHop, NftExtensionMsg, QueryMsg, MigrateMsg, FeeGrowth, AllNftInfoResponse, OwnerOfResponse, Approval, NftInfoResponse, Position, PositionIncentives, ArrayOfPosition, TokensResponse, ApprovedForAllResponse, Boolean, ArrayOfFeeTier, ArrayOfLiquidityTick, LiquidityTick, Uint32, NumTokensResponse, Pool, IncentiveRecord, ArrayOfPoolWithPoolKey, PoolWithPoolKey, Uint128, ArrayOfAsset, Asset, ArrayOfPositionTick, PositionTick, QuoteResult, Tick, TickIncentive, ArrayOfTupleOfUint16AndUint64} from "./OraiswapV3.types";
+import {Addr, Percentage, InstantiateMsg, ExecuteMsg, Liquidity, SqrtPrice, TokenAmount, Binary, Expiration, Timestamp, Uint64, AssetInfo, PoolStatus, PoolKey, FeeTier, SwapHop, NftExtensionMsg, QueryMsg, MigrateMsg, FeeGrowth, AllNftInfoResponse, OwnerOfResponse, Approval, NftInfoResponse, Position, PositionIncentives, ArrayOfPosition, TokensResponse, ApprovedForAllResponse, Boolean, ArrayOfFeeTier, ArrayOfLiquidityTick, LiquidityTick, Uint32, NumTokensResponse, Pool, IncentiveRecord, ArrayOfPoolWithPoolKey, PoolWithPoolKey, Uint128, ArrayOfAsset, Asset, ArrayOfPositionTick, PositionTick, QuoteResult, Tick, TickIncentive, ArrayOfTupleOfUint16AndUint64} from "./OraiswapV3.types";
 export interface OraiswapV3ReadOnlyInterface {
   contractAddress: string;
   admin: () => Promise<Addr>;
@@ -631,6 +631,11 @@ export interface OraiswapV3Interface extends OraiswapV3ReadOnlyInterface {
   }: {
     poolKey: PoolKey;
   }, _fee?: number | StdFee | "auto", _memo?: string, _funds?: Coin[]) => Promise<ExecuteResult>;
+  withdrawAllProtocolFee: ({
+    receiver
+  }: {
+    receiver?: Addr;
+  }, _fee?: number | StdFee | "auto", _memo?: string, _funds?: Coin[]) => Promise<ExecuteResult>;
   changeProtocolFee: ({
     protocolFee
   }: {
@@ -807,6 +812,13 @@ export interface OraiswapV3Interface extends OraiswapV3ReadOnlyInterface {
   }: {
     index: number;
   }, _fee?: number | StdFee | "auto", _memo?: string, _funds?: Coin[]) => Promise<ExecuteResult>;
+  updatePoolStatus: ({
+    poolKey,
+    status
+  }: {
+    poolKey: PoolKey;
+    status?: PoolStatus;
+  }, _fee?: number | StdFee | "auto", _memo?: string, _funds?: Coin[]) => Promise<ExecuteResult>;
 }
 export class OraiswapV3Client extends OraiswapV3QueryClient implements OraiswapV3Interface {
   client: SigningCosmWasmClient;
@@ -820,6 +832,7 @@ export class OraiswapV3Client extends OraiswapV3QueryClient implements OraiswapV
     this.contractAddress = contractAddress;
     this.changeAdmin = this.changeAdmin.bind(this);
     this.withdrawProtocolFee = this.withdrawProtocolFee.bind(this);
+    this.withdrawAllProtocolFee = this.withdrawAllProtocolFee.bind(this);
     this.changeProtocolFee = this.changeProtocolFee.bind(this);
     this.changeFeeReceiver = this.changeFeeReceiver.bind(this);
     this.createPosition = this.createPosition.bind(this);
@@ -842,6 +855,7 @@ export class OraiswapV3Client extends OraiswapV3QueryClient implements OraiswapV
     this.createIncentive = this.createIncentive.bind(this);
     this.updateIncentive = this.updateIncentive.bind(this);
     this.claimIncentive = this.claimIncentive.bind(this);
+    this.updatePoolStatus = this.updatePoolStatus.bind(this);
   }
 
   changeAdmin = async ({
@@ -863,6 +877,17 @@ export class OraiswapV3Client extends OraiswapV3QueryClient implements OraiswapV
     return await this.client.execute(this.sender, this.contractAddress, {
       withdraw_protocol_fee: {
         pool_key: poolKey
+      }
+    }, _fee, _memo, _funds);
+  };
+  withdrawAllProtocolFee = async ({
+    receiver
+  }: {
+    receiver?: Addr;
+  }, _fee: number | StdFee | "auto" = "auto", _memo?: string, _funds?: Coin[]): Promise<ExecuteResult> => {
+    return await this.client.execute(this.sender, this.contractAddress, {
+      withdraw_all_protocol_fee: {
+        receiver
       }
     }, _fee, _memo, _funds);
   };
@@ -1204,6 +1229,20 @@ export class OraiswapV3Client extends OraiswapV3QueryClient implements OraiswapV
     return await this.client.execute(this.sender, this.contractAddress, {
       claim_incentive: {
         index
+      }
+    }, _fee, _memo, _funds);
+  };
+  updatePoolStatus = async ({
+    poolKey,
+    status
+  }: {
+    poolKey: PoolKey;
+    status?: PoolStatus;
+  }, _fee: number | StdFee | "auto" = "auto", _memo?: string, _funds?: Coin[]): Promise<ExecuteResult> => {
+    return await this.client.execute(this.sender, this.contractAddress, {
+      update_pool_status: {
+        pool_key: poolKey,
+        status
       }
     }, _fee, _memo, _funds);
   };

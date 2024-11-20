@@ -34,4 +34,6 @@ export * as ZapperTypes from "./Zapper.types";
 export * from "./Zapper.client";
 export * as IncentivesFundManagerTypes from "./IncentivesFundManager.types";
 export * from "./IncentivesFundManager.client";
+export * as RefundBtcTypes from "./RefundBtc.types";
+export * from "./RefundBtc.client";
 export * from "./types";

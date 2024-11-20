@@ -346,8 +346,11 @@ describe("test universal swap handler functions", () => {
             token: { denom: OSMOSIS_ORAICHAIN_DENOM, amount: simulateAmount }, //osmosis denom
             sender: testSenderAddress,
             receiver: "osmo1234",
-            timeoutHeight: undefined,
-            timeoutTimestamp: new Long(0),
+            timeoutHeight: {
+              revisionHeight: 0n,
+              revisionNumber: 0n
+            },
+            timeoutTimestamp: 0n,
             memo: ""
           }
         }
@@ -435,8 +438,11 @@ describe("test universal swap handler functions", () => {
             token: { denom: OSMOSIS_ORAICHAIN_DENOM, amount: simulateAmount },
             sender: testSenderAddress,
             receiver: "osmo1234",
-            timeoutHeight: undefined,
-            timeoutTimestamp: new Long(0),
+            timeoutHeight: {
+              revisionHeight: 0n,
+              revisionNumber: 0n
+            },
+            timeoutTimestamp: 0n,
             memo: ""
           }
         }

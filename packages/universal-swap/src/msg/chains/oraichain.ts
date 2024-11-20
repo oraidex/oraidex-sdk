@@ -313,7 +313,7 @@ export class OraichainMsg extends ChainMsg {
             channel: bridgeInfo.sourceChannel,
             timeout: +calculateTimeoutTimestamp(IBC_TRANSFER_TIMEOUT),
             retries: 2,
-            next: this.memo
+            next: this.memo || undefined
           }
         })
       };
@@ -443,7 +443,7 @@ export class OraichainMsg extends ChainMsg {
             msg: toUtf8(
               JSON.stringify({
                 transfer_to_remote: {
-                  msg
+                  ...msg
                 }
               })
             ),

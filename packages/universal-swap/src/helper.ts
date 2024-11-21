@@ -74,7 +74,7 @@ import {
   OraiswapTokenQueryClient,
   SwapOperation
 } from "@oraichain/oraidex-contracts-sdk";
-import { isEqual } from "lodash";
+import isEqual from "lodash/isEqual";
 import { ethers } from "ethers";
 import { Amount, CwIcs20LatestQueryClient, Uint128 } from "@oraichain/common-contracts-sdk";
 import { CosmWasmClient, ExecuteInstruction, toBinary } from "@cosmjs/cosmwasm-stargate";

@@ -1,6 +1,7 @@
 import { OraiCommon, TokenItemType as TokenItemTypeCommon } from "@oraichain/common";
 import { PairInfo } from "@oraichain/oraidex-contracts-sdk";
-import { flatten, uniqBy } from "lodash";
+import flatten from "lodash/flatten";
+import uniqBy from "lodash/uniqBy";
 import { mapListWithIcon, tokenIconByCoingeckoId, tokensIcon } from "./config";
 import { INJECTIVE_ORAICHAIN_DENOM, KWTBSC_ORAICHAIN_DENOM, MILKYBSC_ORAICHAIN_DENOM } from "./constant";
 import { CoinGeckoId, CoinIcon, CustomChainInfo } from "./network";

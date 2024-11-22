@@ -474,7 +474,7 @@ export const oraichainNetwork: CustomChainInfo = {
       coinMinimalDenom: "usdt",
       type: "cw20",
       contractAddress: USDT_CONTRACT,
-      bridgeTo: ["0x38", "0x2b6653dc", "0x01"],
+      bridgeTo: ["0x38", "0x2b6653dc", "0x01", "ton"],
       coinDecimals: 6,
       coinImageUrl: "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png"
     },

@@ -2988,13 +2988,6 @@
   resolved "https://registry.yarnpkg.com/@juggle/resize-observer/-/resize-observer-3.4.0.tgz#08d6c5e20cf7e4cc02fd181c4b0c225cd31dbb60"
   integrity sha512-dfLbk+PwWvFzSxwk3n5ySL0hfBog779o8h68wK/7/APo/7cgyWp5jcXockbxdk5kFRkbeXWm4Fbi9FrdN381sA==
 
-"@keplr-wallet/types@0.12.141":
-  version "0.12.141"
-  resolved "https://registry.yarnpkg.com/@keplr-wallet/types/-/types-0.12.141.tgz#341cc45882a86a39701d726edc8febdc42cafcb3"
-  integrity sha512-och1uUeqL6bUgWGLBSlV87rwXUDZMDUOJaARue65mRzfD6ohp9WBVFZfFgpyxU3M6S6UnzQQ6HuKUnWh4WuDjw==
-  dependencies:
-    long "^4.0.0"
-
 "@keplr-wallet/types@^0.11.38":
   version "0.11.64"
   resolved "https://registry.yarnpkg.com/@keplr-wallet/types/-/types-0.11.64.tgz#5a308c8c019b4e18f894e0f35f0904b60134d605"
@@ -3744,24 +3737,10 @@
   resolved "https://registry.yarnpkg.com/@oraichain/common-contracts-sdk/-/common-contracts-sdk-1.0.31.tgz#595f93b168438d69d64896909b37855c9afc92fb"
   integrity sha512-s8H20RXy5gCnu3DnM7L5ClQyj2mdQpbSBpZrXCpIAX9qY0LKsDdZG3sYaDQ8+VN333jz9Pp/qGWdFSYD+6PBsg==
 
-"@oraichain/common@^1.0.3":
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/@oraichain/common/-/common-1.0.3.tgz#c6746473deed39622a1368a8f8f733a13f628a7e"
-  integrity sha512-4Rwwl8DF3bMNh5XSlP44LjUIKCOglDc/R1bUCeVFifZlrTGaz6Zo7Fdw6xwych7b4doxcuQBBh2gr7AZE6jQyQ==
-  dependencies:
-    "@cosmjs/cosmwasm-stargate" "0.31.3"
-    "@cosmjs/tendermint-rpc" "^0.31.3"
-    axios "0.21.4"
-    axios-extensions "3.1.6"
-    bech32 "^1.1.4"
-    cosmjs-types "^0.8.0"
-    ethers "^5.5.1"
-    lodash "^4.17.21"
-
-"@oraichain/common@^1.1.5":
-  version "1.1.5"
-  resolved "https://registry.yarnpkg.com/@oraichain/common/-/common-1.1.5.tgz#72d2b2fe669110eb2176454e2071c7ce38a46115"
-  integrity sha512-XT9IfGr4W+7czTabLNHJke4oOohl1iRtNdG+JzngckFi4dH5zm79q1bHb1NnDwZVUaxvRZW8beQ1cBYlFwfsXQ==
+"@oraichain/common@1.1.5-beta.1":
+  version "1.1.5-beta.1"
+  resolved "https://registry.yarnpkg.com/@oraichain/common/-/common-1.1.5-beta.1.tgz#7ea7efa00c49a1051184644cf59794d3bd0e7dc0"
+  integrity sha512-XCCreh0LpdeVavrp/0s53fRrygt3riqAstsN0jqyVcScAu9f8XkVQI+TLWSQmNXpTDIlYmG5hnRSnZkt8nOvOQ==
   dependencies:
     "@keplr-wallet/types" "0.12.141"
     axios "0.21.4"

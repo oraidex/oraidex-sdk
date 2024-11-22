@@ -633,6 +633,7 @@ describe("should helper functions in helper run exactly", () => {
     ["TEu6u8JLCFs6x1w5s8WosNqYqVx2JMC5hQ", "0x2b6653dc", true],
     ["0x1CE09E54A5d7432ecabf3b085BAda7920aeb7dab", "0x01", false],
     ["TEu6u8JLCFs6x1w5s8WosNqYqVx2JMC5hQ", "0x01", false],
+    ["UQDOAHXyCPFOXAXm9c1P_NeNEeSWy6IaRHqJRnBUp0jMZ6i3", "ton", true],
     ["TE", "0x2b6653dc", false],
     ["", "0x2b6653dc", false]
   ])("test-validateTronAddress", (value, network, expectation) => {

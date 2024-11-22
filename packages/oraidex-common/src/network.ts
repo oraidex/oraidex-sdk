@@ -65,7 +65,9 @@ import {
   TON_CONTRACT,
   OBTC_ORAICHAIN_EXT_DENOM,
   DOGE_BNB_ORAICHAIN_DENOM,
-  DOGE_BSC_CONTRACT
+  DOGE_BSC_CONTRACT,
+  jUSDC_TON_CONTRACT,
+  HMSTR_TON_CONTRACT
 } from "./constant";
 import { listOsmosisToken } from "./alpha-network";
 import { celestiaNetwork } from "./celestia-network";
@@ -355,6 +357,26 @@ export const tonNetworkMainnet: CustomChainInfo = {
       prefixToken: "ton20_",
       coinGeckoId: "tether",
       coinImageUrl: "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png"
+    },
+    {
+      coinDenom: "HMSTR",
+      coinMinimalDenom: "ton20_hamster_kombat",
+      coinDecimals: 9,
+      bridgeTo: ["Oraichain"],
+      contractAddress: HMSTR_TON_CONTRACT,
+      prefixToken: "ton20_",
+      coinGeckoId: "hamster-kombat",
+      coinImageUrl: "https://assets.coingecko.com/coins/images/39102/standard/hamster-removebg-preview.png?1720514486"
+    },
+    {
+      coinDenom: "jUSDC",
+      coinMinimalDenom: "ton20_usdc",
+      coinDecimals: 6,
+      bridgeTo: ["Oraichain"],
+      contractAddress: jUSDC_TON_CONTRACT,
+      prefixToken: "ton20_",
+      coinGeckoId: "usd-coin",
+      coinImageUrl: "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
     }
   ],
   get feeCurrencies() {
@@ -462,7 +484,7 @@ export const oraichainNetwork: CustomChainInfo = {
       coinMinimalDenom: "usdc",
       type: "cw20",
       contractAddress: USDC_CONTRACT,
-      bridgeTo: ["0x01", "noble-1"],
+      bridgeTo: ["0x01", "noble-1", "ton"],
       coinDecimals: 6,
       coinImageUrl: "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
     },
@@ -604,12 +626,14 @@ export const oraichainNetwork: CustomChainInfo = {
       coinDenom: "TON",
       coinMinimalDenom: TON_ORAICHAIN_DENOM,
       coinDecimals: 9,
+      bridgeTo: ["ton", "osmosis-1"],
       coinGeckoId: "the-open-network",
       coinImageUrl: "https://assets.coingecko.com/coins/images/17980/standard/ton_symbol.png?1696517498"
     },
     {
       coinDenom: "HMSTR",
       coinMinimalDenom: HMSTR_ORAICHAIN_DENOM,
+      bridgeTo: ["ton"],
       coinDecimals: 9,
       coinGeckoId: "hamster-kombat",
       coinImageUrl: "https://assets.coingecko.com/coins/images/39102/standard/hamster-removebg-preview.png?1720514486"

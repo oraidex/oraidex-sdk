@@ -2988,6 +2988,13 @@
   resolved "https://registry.yarnpkg.com/@juggle/resize-observer/-/resize-observer-3.4.0.tgz#08d6c5e20cf7e4cc02fd181c4b0c225cd31dbb60"
   integrity sha512-dfLbk+PwWvFzSxwk3n5ySL0hfBog779o8h68wK/7/APo/7cgyWp5jcXockbxdk5kFRkbeXWm4Fbi9FrdN381sA==
 
+"@keplr-wallet/types@0.12.141":
+  version "0.12.141"
+  resolved "https://registry.yarnpkg.com/@keplr-wallet/types/-/types-0.12.141.tgz#341cc45882a86a39701d726edc8febdc42cafcb3"
+  integrity sha512-och1uUeqL6bUgWGLBSlV87rwXUDZMDUOJaARue65mRzfD6ohp9WBVFZfFgpyxU3M6S6UnzQQ6HuKUnWh4WuDjw==
+  dependencies:
+    long "^4.0.0"
+
 "@keplr-wallet/types@^0.11.38":
   version "0.11.64"
   resolved "https://registry.yarnpkg.com/@keplr-wallet/types/-/types-0.11.64.tgz#5a308c8c019b4e18f894e0f35f0904b60134d605"
@@ -3737,10 +3744,10 @@
   resolved "https://registry.yarnpkg.com/@oraichain/common-contracts-sdk/-/common-contracts-sdk-1.0.31.tgz#595f93b168438d69d64896909b37855c9afc92fb"
   integrity sha512-s8H20RXy5gCnu3DnM7L5ClQyj2mdQpbSBpZrXCpIAX9qY0LKsDdZG3sYaDQ8+VN333jz9Pp/qGWdFSYD+6PBsg==
 
-"@oraichain/common@1.1.5-beta.1":
-  version "1.1.5-beta.1"
-  resolved "https://registry.yarnpkg.com/@oraichain/common/-/common-1.1.5-beta.1.tgz#7ea7efa00c49a1051184644cf59794d3bd0e7dc0"
-  integrity sha512-XCCreh0LpdeVavrp/0s53fRrygt3riqAstsN0jqyVcScAu9f8XkVQI+TLWSQmNXpTDIlYmG5hnRSnZkt8nOvOQ==
+"@oraichain/common@1.1.5-beta.2":
+  version "1.1.5-beta.2"
+  resolved "https://registry.yarnpkg.com/@oraichain/common/-/common-1.1.5-beta.2.tgz#12b9b9036a99cc13e844e549bac1a6932fbcb6e8"
+  integrity sha512-O8vW9NuwLrJFOv8B51oX5kV3s6dBv0EdVdw2KNsx9gexTNXjzHNlWg1a1MBTryybLD9i6ir1uHOLY/6fqzvJSg==
   dependencies:
     "@keplr-wallet/types" "0.12.141"
     axios "0.21.4"

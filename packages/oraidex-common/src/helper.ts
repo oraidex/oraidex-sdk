@@ -34,6 +34,7 @@ import { StargateMsg, Tx } from "./tx";
 import { BigDecimal } from "./bigdecimal";
 import { TextProposal } from "cosmjs-types/cosmos/gov/v1beta1/gov";
 import { defaultRegistryTypes as defaultStargateTypes, IndexedTx, logs, StargateClient } from "@cosmjs/stargate";
+import { Address } from "@ton/core";
 
 export const getEvmAddress = (bech32Address: string) => {
   if (!bech32Address) throw new Error("bech32 address is empty");
@@ -573,7 +574,7 @@ export const validateEvmAddress = (address: string, network: string) => {
 };
 
 const isValidTronAddress = (address: string): boolean => /T[a-zA-Z0-9]{32}/.test(address);
-const isValidTonAddress = (address: string): boolean => /^(0|-1):([a-f0-9]{64}|[A-F0-9]{64})$/.test(address);
+const isValidTonAddress = (address: string): boolean => !!Address.parse(address);
 
 export const validateAddressTonTron = (address: string, network: string) => {
   try {

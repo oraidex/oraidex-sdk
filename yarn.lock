@@ -2988,13 +2988,6 @@
   resolved "https://registry.yarnpkg.com/@juggle/resize-observer/-/resize-observer-3.4.0.tgz#08d6c5e20cf7e4cc02fd181c4b0c225cd31dbb60"
   integrity sha512-dfLbk+PwWvFzSxwk3n5ySL0hfBog779o8h68wK/7/APo/7cgyWp5jcXockbxdk5kFRkbeXWm4Fbi9FrdN381sA==
 
-"@keplr-wallet/types@0.12.141":
-  version "0.12.141"
-  resolved "https://registry.yarnpkg.com/@keplr-wallet/types/-/types-0.12.141.tgz#341cc45882a86a39701d726edc8febdc42cafcb3"
-  integrity sha512-och1uUeqL6bUgWGLBSlV87rwXUDZMDUOJaARue65mRzfD6ohp9WBVFZfFgpyxU3M6S6UnzQQ6HuKUnWh4WuDjw==
-  dependencies:
-    long "^4.0.0"
-
 "@keplr-wallet/types@^0.11.38":
   version "0.11.64"
   resolved "https://registry.yarnpkg.com/@keplr-wallet/types/-/types-0.11.64.tgz#5a308c8c019b4e18f894e0f35f0904b60134d605"
@@ -3750,20 +3743,6 @@
   integrity sha512-XCCreh0LpdeVavrp/0s53fRrygt3riqAstsN0jqyVcScAu9f8XkVQI+TLWSQmNXpTDIlYmG5hnRSnZkt8nOvOQ==
   dependencies:
     "@keplr-wallet/types" "0.12.141"
-    axios "0.21.4"
-    axios-extensions "3.1.6"
-    bech32 "^1.1.4"
-    cosmjs-types "^0.8.0"
-    ethers "^5.5.1"
-    lodash "^4.17.21"
-
-"@oraichain/common@^1.0.3":
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/@oraichain/common/-/common-1.0.3.tgz#c6746473deed39622a1368a8f8f733a13f628a7e"
-  integrity sha512-4Rwwl8DF3bMNh5XSlP44LjUIKCOglDc/R1bUCeVFifZlrTGaz6Zo7Fdw6xwych7b4doxcuQBBh2gr7AZE6jQyQ==
-  dependencies:
-    "@cosmjs/cosmwasm-stargate" "0.31.3"
-    "@cosmjs/tendermint-rpc" "^0.31.3"
     axios "0.21.4"
     axios-extensions "3.1.6"
     bech32 "^1.1.4"

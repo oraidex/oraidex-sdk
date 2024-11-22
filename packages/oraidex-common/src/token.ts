@@ -92,6 +92,8 @@ export const initOraiCommon = async () => {
   const isInitial = !oraiCommon || !tokenConfig.otherChainTokens.length || !tokenConfig.oraichainTokens.length;
   if (isInitial) {
     oraiCommon = await OraiCommon.initializeFromBackend();
+
+    console.log("oraiCommon", oraiCommon);
     const tokenListSupports = await readSupportedChainInfoStatic();
 
     const tokenInfos = [];

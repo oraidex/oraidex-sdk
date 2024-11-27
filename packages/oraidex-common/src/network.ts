@@ -86,7 +86,7 @@ export type NetworkName =
   | "Noble"
   | "Neutaro"
   | "Celestia"
-  | "Ton";
+  | "TON";
 
 export const cosmosChainIds = [
   "Oraichain", // oraichain
@@ -323,7 +323,7 @@ export const tonNetworkMainnet: CustomChainInfo = {
   rest: "https://toncenter.com/api/v2/jsonRPC",
   rpc: "https://toncenter.com/api/v2/jsonRPC",
   chainId: "ton",
-  chainName: "Ton",
+  chainName: "TON",
   bip44: {
     coinType: 607
   },

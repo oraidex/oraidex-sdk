@@ -890,6 +890,7 @@ export class UniversalSwapHandler {
       code: 0,
       status: true,
       sender: sender.ton,
+      transactionHash: sender.ton,
       receiver: handler.wasmBridge.sender
     };
   }

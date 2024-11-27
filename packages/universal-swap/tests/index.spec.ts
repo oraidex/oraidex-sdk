@@ -1191,6 +1191,13 @@ describe("test universal swap handler functions", () => {
   //   console.log("result: ", result);
   // });
 
+  it("test-flattenSmartRouters()", async () => {
+    const routesFlatten = UniversalSwapHelper.flattenSmartRouters(alphaSmartRoutes.routes);
+    expect(routesFlatten).toEqual(expect.any(Array));
+    expect(routesFlatten).toHaveLength(3);
+    expect(routesFlatten).toEqual(flattenAlphaSmartRouters);
+  });
+
   it.each<[string, any, any, number, string, number, string]>([
     [
       "from-orai-bnb-to-orai-oraichain",

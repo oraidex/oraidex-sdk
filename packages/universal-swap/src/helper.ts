@@ -447,7 +447,7 @@ export class UniversalSwapHelper {
      * evm -> oraichain -> osmosis -> cosmos
      * ton -> others
      */
-    if (swapOption.isAlphaIbcWasm && !fromToken.cosmosBased) {
+    if (swapOption.isAlphaIbcWasm && !fromToken.cosmosBased && fromToken.chainId !== toToken.chainId) {
       if (!alphaSmartRoute) throw generateError(`Missing router with alpha ibc wasm!`);
       const routes = alphaSmartRoute.routes;
       const alphaRoutes = routes[0];

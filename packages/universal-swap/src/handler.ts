@@ -940,9 +940,11 @@ export class UniversalSwapHandler {
       } as any
     };
 
+    const isAlphaIbcWasmHasRoute = swapOptions?.isAlphaIbcWasm && alphaSmartRoutes?.routes?.length;
+
     let minimumReceive = simulateAmount;
     if (swapOptions?.isIbcWasm) minimumReceive = await this.calculateMinimumReceive();
-    if (swapOptions?.isAlphaIbcWasm) {
+    if (isAlphaIbcWasmHasRoute) {
       const routesFlatten = UniversalSwapHelper.flattenSmartRouters(alphaSmartRoutes.routes);
       const [hasTron, hasInj] = [
         routesFlatten.some((route) => [route.chainId, route.tokenOutChainId].includes(EVM_CHAIN_IDS.TRON)),
@@ -981,7 +983,7 @@ export class UniversalSwapHandler {
       alphaSmartRoutes
     );
 
-    if (alphaSmartRoutes?.routes?.length && swapOptions.isAlphaIbcWasm) {
+    if (isAlphaIbcWasmHasRoute) {
       let receiverAddresses = UniversalSwapHelper.generateAddress(addressParams);
       if (recipientAddress) receiverAddresses[originalToToken.chainId] = toAddress;
       return this.alphaSmartRouterSwapNewMsg(swapRoute, universalSwapType, receiverAddresses);

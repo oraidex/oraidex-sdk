@@ -3757,6 +3757,19 @@
     ethers "^5.5.1"
     lodash "^4.17.21"
 
+"@oraichain/common@^1.2.1-beta3":
+  version "1.2.1-beta3"
+  resolved "https://registry.yarnpkg.com/@oraichain/common/-/common-1.2.1-beta3.tgz#11bc4ea0b87395121af5bd932ffa0bf0b63122ac"
+  integrity sha512-OKbEhSs9iuEpxqq7mRzeaGDaVUWJ6nkyg/2IjrddQ/kiMEZoCr+xaVOLlf4tUQ6IFKWf4ViSaWpfduJvptaH2w==
+  dependencies:
+    "@keplr-wallet/types" "0.12.141"
+    axios "0.21.4"
+    axios-extensions "3.1.6"
+    bech32 "^1.1.4"
+    cosmjs-types "^0.8.0"
+    ethers "^5.5.1"
+    lodash "^4.17.21"
+
 "@oraichain/cosmwasm-vm-js@^0.2.82":
   version "0.2.82"
   resolved "https://registry.yarnpkg.com/@oraichain/cosmwasm-vm-js/-/cosmwasm-vm-js-0.2.82.tgz#3744951e64f57ca12925dccbd3e62f19d0d0932e"

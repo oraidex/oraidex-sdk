@@ -19,8 +19,6 @@ export const readSupportedChainInfoStatic = async () => {
     await fetchRetry(`${ORAIDEX_API_ENDPOINTS.BASE_URL}${ORAIDEX_API_ENDPOINTS.SUPPORTED_INFO}`, options)
   ).json();
 
-  console.log("supportedChainInfo", supportedChainInfo);
-
   if (!supportedChainInfo) {
     return oraidexJson;
   }

@@ -1,52 +1,88 @@
-const fetchRetry = async (url, options?: any) => {
-  let retry = options?.retry ?? 3;
-  const { callback, timeout = 30000, ...init } = options || {};
-  init.signal = AbortSignal.timeout(timeout);
-  while (retry > 0) {
-    try {
-      return await fetch(url, init);
-    } catch (e) {
-      callback?.(retry);
-      retry--;
-      if (retry === 0) {
-        throw e;
-      }
-    }
+import { ChainInfos, OraiCommon, TokenItems } from "@oraichain/common";
+import { flatten } from "lodash";
+import { mapListWithIcon, tokensIcon } from "./config";
+
+export class TokenService {
+  constructor(private readonly tokenConfig: TokenItems, private readonly chainConfig: ChainInfos) {}
+
+  static async load(): Promise<TokenService> {
+    const oraiCommon = await OraiCommon.initializeFromBackend("https://oraicommon-staging.oraidex.io", "oraidex");
+    return new TokenService(oraiCommon.tokenItems, oraiCommon.chainInfos);
   }
-};
 
-const ORAICHAIN_COMMON_GITHUB_API_ENDPOINTS = {
-  BASE_URL: "https://raw.githubusercontent.com/oraidex/oraidex-sdk",
-  // SUPPORTED_INFO: "/oraidex/oraidex-sdk/main/packages/oraidex-common/src/supported/config/"
-  SUPPORTED_INFO: "/packages/oraidex-common/src/supported/config/"
-};
+  get oraichainTokens() {
+    return this.tokenConfig.oraichainTokens;
+  }
 
-const readSupportedChainInfoStatic = async () => {
-  const options = {
-    method: "GET",
-    headers: {
-      Accept: "application/json"
-    }
-  };
-  console.log(
-    "requesting . . .",
-    `${ORAICHAIN_COMMON_GITHUB_API_ENDPOINTS.BASE_URL}${"/feat/intergrate_common"}${
-      ORAICHAIN_COMMON_GITHUB_API_ENDPOINTS.SUPPORTED_INFO
-    }${"oraidex.json"}`
-  );
+  get otherChainTokens() {
+    return this.tokenConfig.otherChainTokens;
+  }
 
-  const supportedChainInfo = await (
-    await fetchRetry(
-      `${ORAICHAIN_COMMON_GITHUB_API_ENDPOINTS.BASE_URL}${"/feat/intergrate_common"}${
-        ORAICHAIN_COMMON_GITHUB_API_ENDPOINTS.SUPPORTED_INFO
-      }${"oraidex.json"}`,
-      options
-    )
-  ).json();
+  get chainInfosCommon() {
+    return this.chainConfig;
+  }
 
-  console.log("supportedChainInfo", supportedChainInfo);
+  get tokens() {
+    return this.tokenConfig.tokens;
+  }
 
-  return supportedChainInfo;
-};
+  get flattenTokens() {
+    return this.tokenConfig.flattenTokens;
+  }
 
-readSupportedChainInfoStatic();
+  get tokenMap() {
+    return this.tokenConfig.tokenMap;
+  }
+
+  get assetInfoMap() {
+    return this.tokenConfig.assetInfoMap;
+  }
+
+  get cosmosTokens() {
+    return this.tokenConfig.cosmosTokens;
+  }
+
+  get cw20Tokens() {
+    return this.tokenConfig.cw20Tokens;
+  }
+
+  get cw20TokenMap() {
+    return this.tokenConfig.cw20TokenMap;
+  }
+
+  get evmTokens() {
+    return this.tokenConfig.evmTokens;
+  }
+
+  get kawaiiTokens() {
+    return this.tokenConfig.kawaiiTokens;
+  }
+
+  get oraichainTokensWithIcon() {
+    return mapListWithIcon(this.oraichainTokens, tokensIcon, "coinGeckoId");
+  }
+
+  get otherTokensWithIcon() {
+    return mapListWithIcon(this.otherChainTokens, tokensIcon, "coinGeckoId");
+  }
+
+  get tokensWithIcon() {
+    return [this.otherTokensWithIcon, this.oraichainTokensWithIcon];
+  }
+
+  get flattenTokensWithIcon() {
+    return flatten(this.tokensWithIcon);
+  }
+}
+
+// const main = async () => {
+//   const tokenService = await TokenService.load();
+// };
+
+// main()
+//   .then(() => {
+//     console.log("Done");
+//   })
+//   .catch((error) => {
+//     console.error(error);
+//   });

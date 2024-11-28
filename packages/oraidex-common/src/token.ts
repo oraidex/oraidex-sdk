@@ -93,7 +93,6 @@ export const initOraiCommon = async () => {
   if (isInitial) {
     oraiCommon = await OraiCommon.initializeFromBackend();
 
-    console.log("oraiCommon", oraiCommon);
     const tokenListSupports = await readSupportedChainInfoStatic();
 
     const tokenInfos = [];
@@ -133,12 +132,12 @@ export const initOraiCommon = async () => {
 
   return { tokenConfig, oraiCommon };
 };
-await initOraiCommon();
+// await initOraiCommon();
 
 // other chains, oraichain
 export const oraichainTokens = tokenConfig.oraichainTokens;
 export const otherChainTokens = tokenConfig.otherChainTokens;
-export const chainInfosCommon = oraiCommon.chainInfos;
+export const chainInfosCommon = oraiCommon?.chainInfos;
 export const tokens = [otherChainTokens, oraichainTokens];
 export const flattenTokens = flatten(tokens);
 export const tokenMap = Object.fromEntries(flattenTokens.map((c) => [c.denom, c]));

@@ -1,7 +1,8 @@
 import {
   generateError,
   ORAI_BRIDGE_EVM_DENOM_PREFIX,
-  ORAI_BRIDGE_EVM_TRON_DENOM_PREFIX
+  ORAI_BRIDGE_EVM_TRON_DENOM_PREFIX,
+  ORAI_BRIDGE_EVM_ETH_DENOM_PREFIX
 } from "@oraichain/oraidex-common";
 import { Path, Route } from "../types";
 import { CosmosMsg, OraichainMsg, OsmosisMsg } from "./chains";
@@ -10,7 +11,7 @@ import { EncodeObject } from "@cosmjs/proto-signing";
 
 const getDestPrefixForBridgeToEvmOnOrai = (chainId: string): string => {
   const prefixMap: { [key: string]: string } = {
-    "0x01": ORAI_BRIDGE_EVM_DENOM_PREFIX,
+    "0x01": ORAI_BRIDGE_EVM_ETH_DENOM_PREFIX,
     "0x38": ORAI_BRIDGE_EVM_DENOM_PREFIX,
     "0x2b6653dc": ORAI_BRIDGE_EVM_TRON_DENOM_PREFIX
   };

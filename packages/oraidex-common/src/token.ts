@@ -133,7 +133,6 @@ export const initOraiCommon = async () => {
 
   return { tokenConfig, oraiCommon };
 };
-await initOraiCommon();
 
 // other chains, oraichain
 export const oraichainTokens = tokenConfig.oraichainTokens;

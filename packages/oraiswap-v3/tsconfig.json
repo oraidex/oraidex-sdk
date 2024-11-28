@@ -4,9 +4,8 @@
     "baseUrl": ".",
     "outDir": "build",
     "declaration": true,
-    "rootDir": "src",
-    "module": "ESNext"
+    "rootDir": "src"
   },
-  "include": ["src/**/*.ts", "src/**/*.js"],
-  "exclude": ["node_modules/", "src/main.ts"]
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules/"]
 }

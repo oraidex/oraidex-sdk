@@ -132,7 +132,6 @@ const initOraiCommon = async () => {
 
   return { oraiCommon, supportedChainIds };
 };
-await initOraiCommon();
 
 export const defaultBech32Config = (
   mainPrefix: string,

@@ -7,7 +7,6 @@
   "files": [
     "./build/"
   ],
-  "type": "module",
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "build:test": "tsc --project tsconfig.test.json"

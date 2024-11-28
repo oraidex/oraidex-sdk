@@ -5,7 +5,6 @@
   "files": [
     "./build/"
   ],
-  "type": "module",
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "build:test": "tsc --project tsconfig.test.json"
@@ -14,6 +13,6 @@
   "dependencies": {
     "@cosmjs/cosmwasm-stargate": "^0.32.4",
     "@oraichain/oraidex-contracts-sdk": "^1.0.54",
-    "@oraichain/oraidex-common": "1.2.0-beta.3"
+    "@oraichain/oraidex-common": "../oraidex-common"
   }
 }

@@ -55,8 +55,8 @@ async function main() {
   // console.timeEnd("processZapInPositionLiquidity");
 
   const res = await zapper.processZapOutPositionLiquidity({
-    owner: "orai1hvr9d72r5um9lvt0rpkd4r75vrsqtw6yujhqs2",
-    tokenId: 4275,
+    owner: "orai1zyvk3n9r8sax4xvqph97pxuhduqqsqwq6dwzj2",
+    tokenId: 12046,
     tokenOut: tokenIn,
     zapFee: 0,
   });

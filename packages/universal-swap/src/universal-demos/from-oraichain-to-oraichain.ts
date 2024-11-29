@@ -2,14 +2,12 @@ import "dotenv/config";
 import { CosmosWalletImpl } from "./offline-wallet";
 import { UniversalSwapHandler } from "../handler";
 import {
-  ORAI_ETH_CONTRACT,
-  cosmosTokens, // TODO: INIT ORAI COMMON HERE
-  flattenTokens, // TODO: INIT ORAI COMMON HERE
   generateError,
   toAmount,
   USDT_CONTRACT,
   ORAI,
-  SCATOM_CONTRACT
+  SCATOM_CONTRACT,
+  OraidexCommon
 } from "@oraichain/oraidex-common";
 import { UniversalSwapHelper } from "../helper";
 
@@ -18,6 +16,11 @@ const oraichainToOraichain = async (chainId: "Oraichain") => {
 
   const sender = await wallet.getKeplrAddr(chainId);
   const fromAmount = 0.01;
+
+  const oraidexCommon = await OraidexCommon.load();
+  const cosmosTokens = oraidexCommon.cosmosTokens;
+  const flattenTokens = oraidexCommon.flattenTokens;
+
   let originalFromToken = cosmosTokens.find(
     (t) => t.chainId === chainId && t.contractAddress && t.contractAddress === USDT_CONTRACT
   );

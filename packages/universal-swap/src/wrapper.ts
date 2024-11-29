@@ -1,4 +1,3 @@
-// TODO: INIT ORAI COMMON HERE, SHOULD WE?
 import { CosmosChainId, CosmosWallet, EvmResponse, EvmWallet, TokenItemType } from "@oraichain/oraidex-common";
 import { UniversalSwapHandler } from "./handler";
 import { ExecuteResult } from "@cosmjs/cosmwasm-stargate";

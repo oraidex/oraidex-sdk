@@ -1,9 +1,7 @@
 import "dotenv/config";
 import { CosmosWalletImpl } from "./offline-wallet";
 import { UniversalSwapHandler } from "../handler";
-// TODO: INIT ORAI COMMON HERE
-import { flattenTokens, generateError, toAmount } from "@oraichain/oraidex-common";
-import { UniversalSwapHelper } from "../helper";
+import { generateError, OraidexCommon, toAmount, TokenItemType } from "@oraichain/oraidex-common";
 
 const oraichainToEvm = async () => {
   const chainId = "Oraichain";
@@ -11,6 +9,9 @@ const oraichainToEvm = async () => {
 
   const sender = await wallet.getKeplrAddr(chainId);
   const fromAmount = 10000;
+
+  const oraidexCommon = await OraidexCommon.load();
+  const flattenTokens = oraidexCommon.flattenTokens;
   let originalToToken = flattenTokens.find((t) => t.chainId === chainId && t.coinGeckoId === "pepe");
 
   let originalFromToken = flattenTokens.find((t) => t.chainId === "0x38" && t.coinGeckoId === "pepe");
@@ -58,6 +59,4 @@ const oraichainToEvm = async () => {
   }
 };
 
-(() => {
-  return oraichainToEvm();
-})();
+oraichainToEvm();

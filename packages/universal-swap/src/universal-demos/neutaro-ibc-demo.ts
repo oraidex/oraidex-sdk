@@ -1,13 +1,15 @@
 import "dotenv/config";
 import { CosmosWalletImpl } from "./offline-wallet";
 import { UniversalSwapHandler } from "../handler";
-// TODO: INIT ORAI COMMON HERE
-import { NEUTARO_ORAICHAIN_DENOM, cosmosTokens, generateError, toAmount } from "@oraichain/oraidex-common";
+import { NEUTARO_ORAICHAIN_DENOM, OraidexCommon, generateError, toAmount } from "@oraichain/oraidex-common";
 
 const neutaroUsdcToOraiUsdc = async (chainId: "Neutaro-1" | "Oraichain") => {
   const wallet = new CosmosWalletImpl(process.env.MNEMONIC);
   const sender = await wallet.getKeplrAddr(chainId);
   const fromAmount = 0.01;
+
+  const oraidexCommon = await OraidexCommon.load();
+  const cosmosTokens = oraidexCommon.cosmosTokens;
   let originalFromToken = cosmosTokens.find((t) => t.chainId === "Neutaro-1" && t.denom === "uneutaro");
 
   let originalToToken = cosmosTokens.find(
@@ -42,7 +44,7 @@ const neutaroUsdcToOraiUsdc = async (chainId: "Neutaro-1" | "Oraichain") => {
   }
 };
 
-(() => {
+(async () => {
   if (process.env.FORWARD) return neutaroUsdcToOraiUsdc("Neutaro-1");
   return neutaroUsdcToOraiUsdc("Oraichain");
 })();

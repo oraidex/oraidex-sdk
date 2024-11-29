@@ -3,15 +3,18 @@ import { CosmosWalletImpl } from "./offline-wallet";
 import { UniversalSwapHandler } from "../handler";
 import {
   ORAI_ETH_CONTRACT,
-  // TODO: INIT ORAI COMMON HERE
-  cosmosTokens,
-  flattenTokens,
   generateError,
   toAmount,
-  USDT_CONTRACT
+  USDT_CONTRACT,
+  OraidexCommon,
+  TokenItemType
 } from "@oraichain/oraidex-common";
 
 const oraichainToEvm = async (chainId: "Oraichain") => {
+  const oraidexCommon = await OraidexCommon.load();
+  const cosmosTokens = oraidexCommon.cosmosTokens;
+  const flattenTokens = oraidexCommon.flattenTokens;
+
   const wallet = new CosmosWalletImpl(process.env.MNEMONIC);
 
   const sender = await wallet.getKeplrAddr(chainId);

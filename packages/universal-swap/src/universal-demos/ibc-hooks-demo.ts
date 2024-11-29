@@ -1,16 +1,7 @@
 import "dotenv/config";
 import { CosmosWalletImpl } from "./offline-wallet";
 import { UniversalSwapHandler } from "../handler";
-import {
-  CoinGeckoId,
-  KWT_BSC_CONTRACT,
-  USDC_CONTRACT,
-  cosmosTokens, // TODO: INIT ORAI COMMON HERE
-  flattenTokens,
-  generateError,
-  getTokenOnOraichain, // TODO: INIT ORAI COMMON HERE
-  toAmount
-} from "@oraichain/oraidex-common";
+import { CoinGeckoId, generateError, OraidexCommon, toAmount } from "@oraichain/oraidex-common";
 
 const cosmosToOraichain = async (
   chainId: "cosmoshub-4" | "osmosis-1" | "injective-1",
@@ -20,9 +11,12 @@ const cosmosToOraichain = async (
   const sender = await wallet.getKeplrAddr(chainId);
   const fromAmount = 0.001;
   console.log("sender: ", sender);
+
+  const oraidexCommon = await OraidexCommon.load();
+  const cosmosTokens = oraidexCommon.cosmosTokens;
   const originalFromToken = cosmosTokens.find((t) => t.chainId === chainId);
 
-  const originalToToken = getTokenOnOraichain(toTokenCoingeckoId);
+  const originalToToken = oraidexCommon.getTokenOnOraichain(toTokenCoingeckoId);
 
   if (!originalFromToken) throw generateError("Could not find original from token");
   if (!originalToToken) throw generateError("Could not find original to token");

@@ -29,11 +29,16 @@ import { AmountDetails, CoinGeckoPrices, TokenItemType } from "./token";
 import { PAIRS } from "./pairs";
 
 export class OraidexCommon {
+  static instance: OraidexCommon;
+
   constructor(private readonly tokenConfig: TokenItems, private readonly chainConfig: ChainInfos) {}
 
   static async load(): Promise<OraidexCommon> {
-    const oraiCommon = await OraiCommon.initializeFromBackend("https://oraicommon-staging.oraidex.io", "oraidex");
-    return new OraidexCommon(oraiCommon.tokenItems, oraiCommon.chainInfos);
+    if (!OraidexCommon.instance) {
+      const oraiCommon = await OraiCommon.initializeFromBackend("https://oraicommon-staging.oraidex.io", "oraidex");
+      OraidexCommon.instance = new OraidexCommon(oraiCommon.tokenItems, oraiCommon.chainInfos);
+    }
+    return OraidexCommon.instance;
   }
 
   get oraichainTokens() {

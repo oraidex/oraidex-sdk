@@ -35,7 +35,8 @@ export class OraidexCommon {
 
   static async load(): Promise<OraidexCommon> {
     if (!OraidexCommon.instance) {
-      const oraiCommon = await OraiCommon.initializeFromBackend("https://oraicommon-staging.oraidex.io", "oraidex");
+      // const oraiCommon = await OraiCommon.initializeFromBackend("https://oraicommon-staging.oraidex.io", "oraidex");
+      const oraiCommon = await OraiCommon.initializeFromBackend("http://localhost:8080", "oraidex");
       OraidexCommon.instance = new OraidexCommon(oraiCommon.tokenItems, oraiCommon.chainInfos);
     }
     return OraidexCommon.instance;
@@ -291,21 +292,6 @@ export class OraidexCommon {
         isValid: false,
         error: error.message
       };
-    }
-  }
-
-  checkValidateAddressWithNetwork(address: string, network: string) {
-    switch (network) {
-      case "0x01":
-      case "0x38":
-        return validateEvmAddress(address, network);
-
-      // tron
-      case "0x2b6653dc":
-        return validateTronAddress(address, network);
-
-      default:
-        return this.validateAndIdentifyCosmosAddress(address, network);
     }
   }
 

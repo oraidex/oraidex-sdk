@@ -18,12 +18,13 @@ import {
   GAS_ESTIMATION_BRIDGE_DEFAULT,
   MULTIPLIER
 } from "./constant";
-import { CoinGeckoId } from "./network";
+import { CoinGeckoId, CustomChainInfo } from "./network";
 import { AmountDetails, TokenInfo, TokenItemType, CoinGeckoPrices } from "./token";
 import { StargateMsg, Tx } from "./tx";
 import { BigDecimal } from "./bigdecimal";
 import { TextProposal } from "cosmjs-types/cosmos/gov/v1beta1/gov";
 import { defaultRegistryTypes as defaultStargateTypes, logs } from "@cosmjs/stargate";
+import { OraidexCommon } from "./test";
 
 export const getEvmAddress = (bech32Address: string) => {
   if (!bech32Address) throw new Error("bech32 address is empty");
@@ -500,44 +501,49 @@ export const parseTxToMsgsAndEvents = (indexedTx: Tx, eventsParser?: (events: re
   });
 };
 
-// export const validateAndIdentifyCosmosAddress = (address: string, network: string) => {
-//   try {
-//     const cosmosAddressRegex = /^[a-z]{1,6}[0-9a-z]{0,64}$/;
-//     if (!cosmosAddressRegex.test(address)) {
-//       throw new Error("Invalid address");
-//     }
+export const validateAndIdentifyCosmosAddress = async (
+  address: string,
+  network: string,
+  cosmosChains: CustomChainInfo[]
+) => {
+  try {
+    const cosmosAddressRegex = /^[a-z]{1,6}[0-9a-z]{0,64}$/;
+    if (!cosmosAddressRegex.test(address)) {
+      throw new Error("Invalid address");
+    }
 
-//     const decodedAddress = bech32.decode(address);
-//     const prefix = decodedAddress.prefix;
+    const decodedAddress = bech32.decode(address);
+    const prefix = decodedAddress.prefix;
 
-//     let chainInfo;
-//     const networkMap = cosmosChains.reduce((acc, cur) => {
-//       if (cur.chainId === network) chainInfo = cur;
-//       return {
-//         ...acc,
-//         [cur.bech32Config.bech32PrefixAccAddr]: true
-//       };
-//     }, {});
+    let chainInfo;
 
-//     if (chainInfo && chainInfo.bech32Config.bech32PrefixAccAddr !== prefix) {
-//       throw new Error("Network doesn't match");
-//     }
+    const networkMap = cosmosChains.reduce((acc, cur) => {
+      if (cur.chainId === network) chainInfo = cur;
+      return {
+        ...acc,
+        [cur.bech32Config.bech32PrefixAccAddr]: true
+      };
+    }, {});
 
-//     if (networkMap.hasOwnProperty(prefix)) {
-//       return {
-//         isValid: true,
-//         network
-//       };
-//     } else {
-//       throw new Error("Unsupported address network");
-//     }
-//   } catch (error) {
-//     return {
-//       isValid: false,
-//       error: error.message
-//     };
-//   }
-// };
+    if (chainInfo && chainInfo.bech32Config.bech32PrefixAccAddr !== prefix) {
+      throw new Error("Network doesn't match");
+    }
+
+    if (networkMap.hasOwnProperty(prefix)) {
+      return {
+        isValid: true,
+        network
+      };
+    } else {
+      throw new Error("Unsupported address network");
+    }
+  } catch (error) {
+    return {
+      isValid: false,
+      error: error.message
+    };
+  }
+};
 
 export const validateEvmAddress = (address: string, network: string) => {
   try {
@@ -577,17 +583,18 @@ export const validateTronAddress = (address: string, network: string) => {
   }
 };
 
-// export const checkValidateAddressWithNetwork = (address: string, network: string) => {
-//   switch (network) {
-//     case "0x01":
-//     case "0x38":
-//       return validateEvmAddress(address, network);
+export const checkValidateAddressWithNetwork = (address: string, network: string) => {
+  switch (network) {
+    case "0x01":
+    case "0x38":
+      return validateEvmAddress(address, network);
 
-//     // tron
-//     case "0x2b6653dc":
-//       return validateTronAddress(address, network);
+    // tron
+    case "0x2b6653dc":
+      return validateTronAddress(address, network);
 
-//     default:
-//       return validateAndIdentifyCosmosAddress(address, network);
-//   }
-// };
+    default:
+      if (!OraidexCommon.instance) throw new Error("OraidexCommon is not loaded");
+      return validateAndIdentifyCosmosAddress(address, network, OraidexCommon.instance.cosmosChains);
+  }
+};

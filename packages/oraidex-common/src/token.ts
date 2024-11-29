@@ -1,11 +1,7 @@
-import { OraiCommon, TokenItemType as TokenItemTypeCommon } from "@oraichain/common";
+import { TokenItemType as TokenItemTypeCommon } from "@oraichain/common";
 import { PairInfo } from "@oraichain/oraidex-contracts-sdk";
-import flatten from "lodash/flatten";
-import uniqBy from "lodash/uniqBy";
-import { mapListWithIcon, tokenIconByCoingeckoId, tokensIcon } from "./config";
 import { INJECTIVE_ORAICHAIN_DENOM, KWTBSC_ORAICHAIN_DENOM, MILKYBSC_ORAICHAIN_DENOM } from "./constant";
 import { CoinGeckoId, CoinIcon, CustomChainInfo } from "./network";
-import { readSupportedChainInfoStatic, supportedBridge } from "./supported";
 
 export type EvmDenom = "bep20_orai" | "bep20_airi" | "erc20_orai" | "kawaii_orai";
 export type AmountDetails = { [denom: string]: string };
@@ -79,92 +75,92 @@ export const getTokensFromNetwork = (network: CustomChainInfo): TokenItemType[] 
   })) as any;
 };
 
-let oraiCommon: OraiCommon = null;
-let tokenConfig: {
-  oraichainTokens: TokenItemType[];
-  otherChainTokens: TokenItemType[];
-} = {
-  oraichainTokens: [],
-  otherChainTokens: []
-};
+// let oraiCommon: OraiCommon = null;
+// let tokenConfig: {
+//   oraichainTokens: TokenItemType[];
+//   otherChainTokens: TokenItemType[];
+// } = {
+//   oraichainTokens: [],
+//   otherChainTokens: []
+// };
 
-export const initOraiCommon = async () => {
-  const isInitial = !oraiCommon || !tokenConfig.otherChainTokens.length || !tokenConfig.oraichainTokens.length;
-  if (isInitial) {
-    oraiCommon = await OraiCommon.initializeFromBackend();
+// export const initOraiCommon = async () => {
+//   const isInitial = !oraiCommon || !tokenConfig.otherChainTokens.length || !tokenConfig.oraichainTokens.length;
+//   if (isInitial) {
+//     oraiCommon = await OraiCommon.initializeFromBackend();
 
-    const tokenListSupports = await readSupportedChainInfoStatic();
+//     const tokenListSupports = await readSupportedChainInfoStatic();
 
-    const tokenInfos = [];
+//     const tokenInfos = [];
 
-    // filter to get tokens that are supported by the network.
-    for (const [chainId, coins] of Object.entries(tokenListSupports)) {
-      const chainTokens = oraiCommon.tokenItems.getSpecificChainTokens(chainId);
-      const listSupportedTokenByChain = Object.values(coins);
+//     // filter to get tokens that are supported by the network.
+//     for (const [chainId, coins] of Object.entries(tokenListSupports)) {
+//       const chainTokens = oraiCommon.tokenItems.getSpecificChainTokens(chainId);
+//       const listSupportedTokenByChain = Object.values(coins);
 
-      const fmtTokens = listSupportedTokenByChain.reduce((acc, supportedToken) => {
-        const findItem = chainTokens.find((chainToken) =>
-          [chainToken.contractAddress, chainToken.denom].includes(supportedToken.denom)
-        );
+//       const fmtTokens = listSupportedTokenByChain.reduce((acc, supportedToken) => {
+//         const findItem = chainTokens.find((chainToken) =>
+//           [chainToken.contractAddress, chainToken.denom].includes(supportedToken.denom)
+//         );
 
-        if (findItem) {
-          const coinGeckoId = supportedToken.coingecko_id;
+//         if (findItem) {
+//           const coinGeckoId = supportedToken.coingecko_id;
 
-          acc.push({
-            ...findItem,
-            coinGeckoId,
-            bridgeTo: !supportedBridge[chainId]?.[coinGeckoId]?.length
-              ? undefined
-              : supportedBridge[chainId]?.[coinGeckoId],
-            Icon: findItem.icon || tokenIconByCoingeckoId[coinGeckoId]?.Icon || "",
-            IconLight: findItem.icon || tokenIconByCoingeckoId[coinGeckoId]?.IconLight || ""
-          });
-        }
+//           acc.push({
+//             ...findItem,
+//             coinGeckoId,
+//             bridgeTo: !supportedBridge[chainId]?.[coinGeckoId]?.length
+//               ? undefined
+//               : supportedBridge[chainId]?.[coinGeckoId],
+//             Icon: findItem.icon || tokenIconByCoingeckoId[coinGeckoId]?.Icon || "",
+//             IconLight: findItem.icon || tokenIconByCoingeckoId[coinGeckoId]?.IconLight || ""
+//           });
+//         }
 
-        return acc;
-      }, []);
-      tokenInfos.push(...fmtTokens);
-    }
+//         return acc;
+//       }, []);
+//       tokenInfos.push(...fmtTokens);
+//     }
 
-    tokenConfig.oraichainTokens = tokenInfos.filter((token) => token.chainId === "Oraichain");
-    tokenConfig.otherChainTokens = tokenInfos.filter((token) => token.chainId !== "Oraichain");
-  }
+//     tokenConfig.oraichainTokens = tokenInfos.filter((token) => token.chainId === "Oraichain");
+//     tokenConfig.otherChainTokens = tokenInfos.filter((token) => token.chainId !== "Oraichain");
+//   }
 
-  return { tokenConfig, oraiCommon };
-};
+//   return { tokenConfig, oraiCommon };
+// };
 
 // other chains, oraichain
-export const oraichainTokens = tokenConfig.oraichainTokens;
-export const otherChainTokens = tokenConfig.otherChainTokens;
-export const chainInfosCommon = oraiCommon?.chainInfos;
-export const tokens = [otherChainTokens, oraichainTokens];
-export const flattenTokens = flatten(tokens);
-export const tokenMap = Object.fromEntries(flattenTokens.map((c) => [c.denom, c]));
-export const assetInfoMap = Object.fromEntries(flattenTokens.map((c) => [c.contractAddress || c.denom, c]));
-export const cosmosTokens = uniqBy(
-  flattenTokens.filter((token) => token.denom && token.cosmosBased && token.coinGeckoId),
-  (c) => c.denom
-);
-export const cw20Tokens = uniqBy(
-  cosmosTokens.filter(
-    // filter cosmos based tokens to collect tokens that have contract addresses
-    (token) => token.contractAddress
-  ),
-  (c) => c.denom
-);
-export const cw20TokenMap = Object.fromEntries(cw20Tokens.map((c) => [c.contractAddress, c]));
-export const evmTokens = uniqBy(
-  flattenTokens.filter(
-    (token) => token.denom && !token.cosmosBased && token.coinGeckoId && token.chainId !== "kawaii_6886-1"
-  ),
-  (c) => c.denom
-);
-export const kawaiiTokens = uniqBy(
-  cosmosTokens.filter((token) => token.chainId === "kawaii_6886-1"),
-  (c) => c.denom
-);
-// mapped token with icon
-export const oraichainTokensWithIcon = mapListWithIcon(oraichainTokens, tokensIcon, "coinGeckoId");
-export const otherTokensWithIcon = mapListWithIcon(otherChainTokens, tokensIcon, "coinGeckoId");
-export const tokensWithIcon = [otherTokensWithIcon, oraichainTokensWithIcon];
-export const flattenTokensWithIcon = flatten(tokensWithIcon);
+// export const oraichainTokens = tokenConfig.oraichainTokens;
+// export const otherChainTokens = tokenConfig.otherChainTokens;
+// export const chainInfosCommon = oraiCommon?.chainInfos;
+// export const tokens = [otherChainTokens, oraichainTokens];
+// export const flattenTokens = flatten(tokens);
+// export const tokenMap = Object.fromEntries(flattenTokens.map((c) => [c.denom, c]));
+// export const assetInfoMap = Object.fromEntries(flattenTokens.map((c) => [c.contractAddress || c.denom, c]));
+// export const cosmosTokens = uniqBy(
+//   flattenTokens.filter((token) => token.denom && token.cosmosBased && token.coinGeckoId),
+//   (c) => c.denom
+// );
+// export const cw20Tokens = uniqBy(
+//   cosmosTokens.filter(
+//     // filter cosmos based tokens to collect tokens that have contract addresses
+//     (token) => token.contractAddress
+//   ),
+//   (c) => c.denom
+// );
+// export const cw20TokenMap = Object.fromEntries(cw20Tokens.map((c) => [c.contractAddress, c]));
+// export const evmTokens = uniqBy(
+//   flattenTokens.filter(
+//     (token) => token.denom && !token.cosmosBased && token.coinGeckoId && token.chainId !== "kawaii_6886-1"
+//   ),
+//   (c) => c.denom
+// );
+// export const kawaiiTokens = uniqBy(
+//   cosmosTokens.filter((token) => token.chainId === "kawaii_6886-1"),
+//   (c) => c.denom
+// );
+// // mapped token with icon
+// export const oraichainTokensWithIcon = mapListWithIcon(oraichainTokens, tokensIcon, "coinGeckoId");
+// export const otherTokensWithIcon = mapListWithIcon(otherChainTokens, tokensIcon, "coinGeckoId");
+// export const tokensWithIcon = [otherTokensWithIcon, oraichainTokensWithIcon];
+// export const flattenTokensWithIcon = flatten(tokensWithIcon);

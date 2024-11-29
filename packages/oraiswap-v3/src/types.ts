@@ -1,5 +1,5 @@
 import { CosmWasmClient } from "@cosmjs/cosmwasm-stargate";
-import { TokenItemType } from "@oraichain/oraidex-common";
+import { OraidexCommon, TokenItemType } from "@oraichain/oraidex-common";
 import { Asset, Route, SwapOperation, Uint128 } from "@oraichain/oraidex-contracts-sdk/build/Zapper.types";
 
 export interface SnapshotValueData {
@@ -193,6 +193,7 @@ export type ZapConfig = {
   multiCallAddress: string;
   deviation: number;
   smartRouteConfig: SmartRouteConfig;
+  oraidexCommon: OraidexCommon;
 };
 
 export type ActionRoute = {

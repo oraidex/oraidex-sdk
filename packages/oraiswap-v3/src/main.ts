@@ -2,7 +2,8 @@ import {
   AMM_V3_CONTRACT,
   KWT_CONTRACT,
   MULTICALL_CONTRACT,
-  oraichainTokens,
+  OraidexCommon,
+  // oraichainTokens,
   ORAIX_CONTRACT,
   OSMO,
   OSMOSIS_ORAICHAIN_DENOM,
@@ -15,6 +16,7 @@ import { extractAddress, parsePoolKey } from "./helpers";
 import { getTickAtSqrtPrice } from "./wasm/oraiswap_v3_wasm";
 
 async function main() {
+  const oraidexCommon = await OraidexCommon.load();
   const zapper = new ZapConsumer({
     routerApi: "https://osor.oraidex.io/smart-router/alpha-router",
     client: await CosmWasmClient.connect("https://rpc.orai.io"),
@@ -25,20 +27,21 @@ async function main() {
       swapOptions: {
         protocols: ["OraidexV3"]
       }
-    }
+    },
+    oraidexCommon
   });
 
-  const tokenIn = oraichainTokens.find((t) => t.name === "USDT") as TokenItemType;
+  const tokenIn = oraidexCommon.oraichainTokens.find((t) => t.name === "USDT") as TokenItemType;
   const pool = `${OSMOSIS_ORAICHAIN_DENOM}-orai-${(0.3 / 100) * 10 ** 12}-100`;
-  const poolKey = parsePoolKey(pool);
+  // const poolKey = parsePoolKey(pool);
 
   // for (let i = 0; i < 10; i++) {
     // const poolInfo = await zapper.handler.getPool(poolKey);
     // console.log("poolInfo", poolInfo);
   // }
 
-  const tickSpacing = poolKey.fee_tier.tick_spacing;
-  const currentTick = (await zapper.handler.getPool(poolKey)).pool.current_tick_index;
+  // const tickSpacing = poolKey.fee_tier.tick_spacing;
+  // const currentTick = (await zapper.handler.getPool(poolKey)).pool.current_tick_index;
 
   // console.log(getTickAtSqrtPrice(314557996917228655710133n, 10));
 

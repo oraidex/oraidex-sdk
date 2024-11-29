@@ -1,7 +1,4 @@
-import { CustomChainInfo } from "./network";
-import { chainInfosCommon } from "./token";
-
-export const celestiaNetwork: CustomChainInfo = chainInfosCommon?.getSpecificChainInfo("celestia");
+// export const celestiaNetwork: CustomChainInfo = chainInfosCommon.getSpecificChainInfo("celestia");
 // {
 //   bech32Config: {
 //     bech32PrefixAccAddr: "celestia",

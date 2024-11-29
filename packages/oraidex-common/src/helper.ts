@@ -16,24 +16,14 @@ import {
   atomic,
   truncDecimals,
   GAS_ESTIMATION_BRIDGE_DEFAULT,
-  MULTIPLIER,
-  CW20_DECIMALS
+  MULTIPLIER
 } from "./constant";
 import { CoinGeckoId } from "./network";
-import {
-  AmountDetails,
-  TokenInfo,
-  TokenItemType,
-  cosmosTokens,
-  flattenTokens,
-  oraichainTokens,
-  CoinGeckoPrices,
-  tokenMap
-} from "./token";
+import { AmountDetails, TokenInfo, TokenItemType, CoinGeckoPrices } from "./token";
 import { StargateMsg, Tx } from "./tx";
 import { BigDecimal } from "./bigdecimal";
 import { TextProposal } from "cosmjs-types/cosmos/gov/v1beta1/gov";
-import { defaultRegistryTypes as defaultStargateTypes, IndexedTx, logs, StargateClient } from "@cosmjs/stargate";
+import { defaultRegistryTypes as defaultStargateTypes, logs } from "@cosmjs/stargate";
 
 export const getEvmAddress = (bech32Address: string) => {
   if (!bech32Address) throw new Error("bech32 address is empty");
@@ -187,17 +177,17 @@ export const calculateMinReceive = (
   ).toString();
 };
 
-export const parseAssetInfoFromContractAddrOrDenom = (addressOrDenomToken: string) => {
-  if (!addressOrDenomToken) return null;
-  const addressOrDenomLowerCase = addressOrDenomToken.toLowerCase();
-  const tokenItem = cosmosTokens.find((cosmosToken) => {
-    return !cosmosToken.contractAddress
-      ? cosmosToken.denom.toLowerCase() === addressOrDenomLowerCase
-      : cosmosToken.contractAddress.toLowerCase() === addressOrDenomLowerCase;
-  });
-  // @ts-ignore
-  return tokenItem ? parseTokenInfo(tokenItem).info : null;
-};
+// export const parseAssetInfoFromContractAddrOrDenom = (addressOrDenomToken: string) => {
+//   if (!addressOrDenomToken) return null;
+//   const addressOrDenomLowerCase = addressOrDenomToken.toLowerCase();
+//   const tokenItem = cosmosTokens.find((cosmosToken) => {
+//     return !cosmosToken.contractAddress
+//       ? cosmosToken.denom.toLowerCase() === addressOrDenomLowerCase
+//       : cosmosToken.contractAddress.toLowerCase() === addressOrDenomLowerCase;
+//   });
+//   // @ts-ignore
+//   return tokenItem ? parseTokenInfo(tokenItem).info : null;
+// };
 
 export const parseTokenInfo = (tokenInfo: TokenItemType, amount?: string): { fund?: Coin; info: AssetInfo } => {
   if (!tokenInfo.contractAddress) {
@@ -231,15 +221,15 @@ export const proxyContractInfo: { [x: string]: { wrapNativeAddr: string; routerA
   }
 };
 
-export const findToTokenOnOraiBridge = (fromCoingeckoId: CoinGeckoId, toNetwork: string) => {
-  return cosmosTokens.find(
-    (t) =>
-      t.chainId === "oraibridge-subnet-2" &&
-      t.coinGeckoId === fromCoingeckoId &&
-      t.bridgeNetworkIdentifier &&
-      t.bridgeNetworkIdentifier === toNetwork
-  );
-};
+// export const findToTokenOnOraiBridge = (fromCoingeckoId: CoinGeckoId, toNetwork: string) => {
+//   return cosmosTokens.find(
+//     (t) =>
+//       t.chainId === "oraibridge-subnet-2" &&
+//       t.coinGeckoId === fromCoingeckoId &&
+//       t.bridgeNetworkIdentifier &&
+//       t.bridgeNetworkIdentifier === toNetwork
+//   );
+// };
 
 export const parseAssetInfo = (assetInfo: AssetInfo): string => {
   if ("native_token" in assetInfo) return assetInfo.native_token.denom;
@@ -258,14 +248,14 @@ export const getTokenOnSpecificChainId = (coingeckoId: CoinGeckoId, chainId: str
  * @returns token on oraichain
  */
 
-export const getTokenOnOraichain = (coingeckoId: CoinGeckoId, isNative?: boolean) => {
-  const filterOraichainToken = oraichainTokens.filter((orai) => orai.coinGeckoId === coingeckoId);
-  if (!filterOraichainToken.length) return undefined;
-  if (filterOraichainToken.length === 1) return filterOraichainToken[0];
+// export const getTokenOnOraichain = (coingeckoId: CoinGeckoId, isNative?: boolean) => {
+//   const filterOraichainToken = oraichainTokens.filter((orai) => orai.coinGeckoId === coingeckoId);
+//   if (!filterOraichainToken.length) return undefined;
+//   if (filterOraichainToken.length === 1) return filterOraichainToken[0];
 
-  const oraichainToken = filterOraichainToken.find((token) => (isNative ? !token.evmDenoms : token.evmDenoms));
-  return oraichainToken;
-};
+//   const oraichainToken = filterOraichainToken.find((token) => (isNative ? !token.evmDenoms : token.evmDenoms));
+//   return oraichainToken;
+// };
 
 export const parseTokenInfoRawDenom = (tokenInfo: TokenItemType) => {
   if (tokenInfo.contractAddress) return tokenInfo.contractAddress;
@@ -391,39 +381,39 @@ export const calcMaxAmount = ({
   return finalAmount;
 };
 
-export const getTotalUsd = (amounts: AmountDetails, prices: CoinGeckoPrices<string>): number => {
-  let usd = 0;
-  for (const denom in amounts) {
-    const tokenInfo = tokenMap[denom];
-    if (!tokenInfo) continue;
-    const amount = toDisplay(amounts[denom], tokenInfo.decimals);
-    usd += amount * (prices[tokenInfo.coinGeckoId] ?? 0);
-  }
-  return usd;
-};
+// export const getTotalUsd = (amounts: AmountDetails, prices: CoinGeckoPrices<string>): number => {
+//   let usd = 0;
+//   for (const denom in amounts) {
+//     const tokenInfo = tokenMap[denom];
+//     if (!tokenInfo) continue;
+//     const amount = toDisplay(amounts[denom], tokenInfo.decimals);
+//     usd += amount * (prices[tokenInfo.coinGeckoId] ?? 0);
+//   }
+//   return usd;
+// };
 
-export const toSubDisplay = (amounts: AmountDetails, tokenInfo: TokenItemType): number => {
-  const subAmounts = getSubAmountDetails(amounts, tokenInfo);
-  return toSumDisplay(subAmounts);
-};
+// export const toSubDisplay = (amounts: AmountDetails, tokenInfo: TokenItemType): number => {
+//   const subAmounts = getSubAmountDetails(amounts, tokenInfo);
+//   return toSumDisplay(subAmounts);
+// };
 
-export const toSubAmount = (amounts: AmountDetails, tokenInfo: TokenItemType): bigint => {
-  const displayAmount = toSubDisplay(amounts, tokenInfo);
-  return toAmount(displayAmount, tokenInfo.decimals);
-};
+// export const toSubAmount = (amounts: AmountDetails, tokenInfo: TokenItemType): bigint => {
+//   const displayAmount = toSubDisplay(amounts, tokenInfo);
+//   return toAmount(displayAmount, tokenInfo.decimals);
+// };
 
-export const toSumDisplay = (amounts: AmountDetails): number => {
-  // get all native balances that are from oraibridge (ibc/...)
-  let amount = 0;
+// export const toSumDisplay = (amounts: AmountDetails): number => {
+//   // get all native balances that are from oraibridge (ibc/...)
+//   let amount = 0;
 
-  for (const denom in amounts) {
-    // update later
-    const balance = amounts[denom];
-    if (!balance) continue;
-    amount += toDisplay(balance, tokenMap[denom].decimals);
-  }
-  return amount;
-};
+//   for (const denom in amounts) {
+//     // update later
+//     const balance = amounts[denom];
+//     if (!balance) continue;
+//     amount += toDisplay(balance, tokenMap[denom].decimals);
+//   }
+//   return amount;
+// };
 
 export type RetryOptions = {
   retry?: number;

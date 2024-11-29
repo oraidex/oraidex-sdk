@@ -11,7 +11,7 @@ export * from "./bigdecimal";
 export * from "./interface";
 export * from "./config/chainInfosWithIcon";
 export * from "./axios-request";
-export * from "./celestia-network";
+// export * from "./celestia-network";
 export * from "./config";
 export * from "./supported";
 export * from "./test";

@@ -1,4 +1,4 @@
-import { BigDecimal, oraichainTokens, TokenItemType } from "@oraichain/oraidex-common";
+import { BigDecimal, OraidexCommon, TokenItemType } from "@oraichain/oraidex-common";
 import { OraiswapV3Handler } from "./handler";
 import {
   ActionRoute,
@@ -56,12 +56,14 @@ export class ZapConsumer {
   private _handler: OraiswapV3Handler;
   private _smartRouteConfig: SmartRouteConfig;
   private _deviation: number;
+  private _oraidexCommon: OraidexCommon;
 
   constructor(config: ZapConfig) {
     this._router = config.routerApi;
     this._handler = new OraiswapV3Handler(config.client, config.dexV3Address, config.multiCallAddress);
     this._smartRouteConfig = config.smartRouteConfig;
     this._deviation = config.deviation;
+    this._oraidexCommon = config.oraidexCommon;
   }
 
   public get handler(): OraiswapV3Handler {
@@ -259,6 +261,7 @@ export class ZapConsumer {
         lowerTick,
         upperTick,
         slippage,
+        this._oraidexCommon,
         {
           isTokenX,
           isSingleSide: true
@@ -443,7 +446,8 @@ export class ZapConsumer {
             pool.pool_key,
             lowerTick,
             upperTick,
-            slippage
+            slippage,
+            this._oraidexCommon
           );
           return zapInResult;
         }
@@ -520,7 +524,8 @@ export class ZapConsumer {
         pool.pool_key,
         lowerTick,
         upperTick,
-        slippage
+        slippage,
+        this._oraidexCommon
       );
 
       return zapInResult;
@@ -562,8 +567,13 @@ export class ZapConsumer {
       const pool = await this._handler.getPool(position.pool_key);
       const { amountX, amountY } = calculateRewardAmounts(pool, position, zapFee);
 
-      const tokenX = oraichainTokens.find((t) => extractAddress(t) === pool.pool_key.token_x) as TokenItemType;
-      const tokenY = oraichainTokens.find((t) => extractAddress(t) === pool.pool_key.token_y) as TokenItemType;
+      //TODO: fix type
+      const tokenX = this._oraidexCommon.oraichainTokens.find(
+        (t) => extractAddress(t as any) === pool.pool_key.token_x
+      ) as TokenItemType;
+      const tokenY = this._oraidexCommon.oraichainTokens.find(
+        (t) => extractAddress(t as any) === pool.pool_key.token_y
+      ) as TokenItemType;
 
       if (!tokenX || !tokenY) {
         throw new Error("Token X or Token Y not found in oraichainTokens.");
@@ -582,7 +592,7 @@ export class ZapConsumer {
         }
       ]);
 
-      return buildZapOutMessage(ZapOutResult.Success, index, xRouteInfo, yRouteInfo, slippage);
+      return buildZapOutMessage(ZapOutResult.Success, index, xRouteInfo, yRouteInfo, slippage, this._oraidexCommon);
     } catch (e) {
       console.log(`[ZapConsumer] ZapOut error: ${e}`);
       throw e;

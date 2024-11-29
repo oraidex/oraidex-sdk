@@ -30,7 +30,7 @@
     "@oraichain/oraidex-contracts-sdk": "latest",
     "@injectivelabs/sdk-ts": "1.12.1",
     "tronweb": "6.0.0-beta.4",
-    "@oraichain/common": "^1.2.1-beta5"
+    "@oraichain/common": "^1.2.1-beta6"
   },
   "devDependencies": {},
   "resolutions": {

@@ -115,8 +115,7 @@ const alphaSwapToOraichain = async () => {
     },
     {
       cosmosWallet: wallet,
-      swapOptions: { isIbcWasm: false, isAlphaIbcWasm: true },
-
+      swapOptions: { isIbcWasm: false, isAlphaIbcWasm: true }
     },
     oraidexCommon
   );
@@ -130,5 +129,7 @@ const alphaSwapToOraichain = async () => {
 };
 
 (() => {
-  alphaSwapToOraichain();
+  alphaSwapToOraichain().catch((error) => {
+    console.log({ error_alphaSwapToOraichain: error });
+  });
 })();

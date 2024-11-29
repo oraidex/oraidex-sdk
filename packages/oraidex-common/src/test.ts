@@ -1,5 +1,5 @@
 import { ChainInfos, MULTICALL_CONTRACT, OraiCommon, TokenItems } from "@oraichain/common";
-import { flatten, uniq } from "lodash";
+import { flatten } from "lodash";
 import { chainIcons, mapListWithIcon, tokensIcon } from "./config";
 import {
   AMM_V3_CONTRACT,
@@ -14,19 +14,7 @@ import {
   ROUTER_V2_CONTRACT,
   STAKING_CONTRACT
 } from "./constant";
-import bech32 from "bech32";
-import { CoinGeckoId, CustomChainInfo, NetworkConfig } from "./network";
-import {
-  getSubAmountDetails,
-  parseAssetInfo,
-  parseTokenInfo,
-  toAmount,
-  toDisplay,
-  validateEvmAddress,
-  validateTronAddress
-} from "./helper";
-import { AmountDetails, CoinGeckoPrices, TokenItemType } from "./token";
-import { PAIRS } from "./pairs";
+import { CustomChainInfo, NetworkConfig } from "./network";
 
 export class OraidexCommon {
   static instance: OraidexCommon;
@@ -35,8 +23,7 @@ export class OraidexCommon {
 
   static async load(): Promise<OraidexCommon> {
     if (!OraidexCommon.instance) {
-      // const oraiCommon = await OraiCommon.initializeFromBackend("https://oraicommon-staging.oraidex.io", "oraidex");
-      const oraiCommon = await OraiCommon.initializeFromBackend("http://localhost:8080", "oraidex");
+      const oraiCommon = await OraiCommon.initializeFromBackend("https://oraicommon-staging.oraidex.io", "oraidex");
       OraidexCommon.instance = new OraidexCommon(oraiCommon.tokenItems, oraiCommon.chainInfos);
     }
     return OraidexCommon.instance;
@@ -192,101 +179,4 @@ export class OraidexCommon {
   get celestiaNetwork() {
     return this.chainConfig.getSpecificChainInfo("celestia");
   }
-
-  getTokenOnOraichain(coingeckoId: CoinGeckoId, isNative?: boolean) {
-    const filterOraichainToken = this.oraichainTokens.filter((orai) => orai.coinGeckoId === coingeckoId);
-    if (!filterOraichainToken.length) return undefined;
-    if (filterOraichainToken.length === 1) return filterOraichainToken[0];
-
-    const oraichainToken = filterOraichainToken.find((token) => (isNative ? !token.evmDenoms : token.evmDenoms));
-    return oraichainToken;
-  }
-
-  toSumDisplay(amounts: AmountDetails) {
-    let amount = 0;
-
-    for (const denom in amounts) {
-      // update later
-      const balance = amounts[denom];
-      if (!balance) continue;
-      amount += toDisplay(balance, this.tokenMap[denom].decimals);
-    }
-    return amount;
-  }
-
-  toSubDisplay(amounts: AmountDetails, tokenInfo: TokenItemType) {
-    const subAmounts = getSubAmountDetails(amounts, tokenInfo);
-    return this.toSumDisplay(subAmounts);
-  }
-
-  findToTokenOnOraiBridge(fromCoingeckoId: CoinGeckoId, toNetwork: string) {
-    return this.cosmosTokens.find(
-      (t) =>
-        t.chainId === "oraibridge-subnet-2" &&
-        t.coinGeckoId === fromCoingeckoId &&
-        t.bridgeNetworkIdentifier &&
-        t.bridgeNetworkIdentifier === toNetwork
-    );
-  }
-
-  toSubAmount(amounts: AmountDetails, tokenInfo: TokenItemType) {
-    const displayAmount = this.toSubDisplay(amounts, tokenInfo);
-    return toAmount(displayAmount, tokenInfo.decimals);
-  }
-
-  validateAndIdentifyCosmosAddress(address: string, network: string) {
-    try {
-      const cosmosAddressRegex = /^[a-z]{1,6}[0-9a-z]{0,64}$/;
-      if (!cosmosAddressRegex.test(address)) {
-        throw new Error("Invalid address");
-      }
-
-      const decodedAddress = bech32.decode(address);
-      const prefix = decodedAddress.prefix;
-
-      let chainInfo;
-      const networkMap = this.cosmosChains.reduce((acc, cur) => {
-        if (cur.chainId === network) chainInfo = cur;
-        return {
-          ...acc,
-          [cur.bech32Config.bech32PrefixAccAddr]: true
-        };
-      }, {});
-
-      if (chainInfo && chainInfo.bech32Config.bech32PrefixAccAddr !== prefix) {
-        throw new Error("Network doesn't match");
-      }
-
-      if (networkMap.hasOwnProperty(prefix)) {
-        return {
-          isValid: true,
-          network
-        };
-      } else {
-        throw new Error("Unsupported address network");
-      }
-    } catch (error) {
-      return {
-        isValid: false,
-        error: error.message
-      };
-    }
-  }
-
-  getPoolTokens() {
-    return uniq(flatten(PAIRS.map((pair) => pair.asset_infos)).map((info) => this.assetInfoMap[parseAssetInfo(info)]));
-  }
 }
-
-const main = async () => {
-  const tokenService = await OraidexCommon.load();
-  // console.log(tokenService.oraichainNetwork);
-};
-
-main()
-  .then(() => {
-    console.log("Done");
-  })
-  .catch((error) => {
-    console.error(error);
-  });

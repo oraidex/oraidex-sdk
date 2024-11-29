@@ -1,5 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { BigDecimal, OraidexCommon, TokenItemType } from "@oraichain/oraidex-common";
+import {
+  BigDecimal,
+  OraidexCommon,
+  TokenItemType,
+  parseAssetInfoFromContractAddrOrDenom
+} from "@oraichain/oraidex-common";
 import { Pool, PoolWithPoolKey, Position } from "@oraichain/oraidex-contracts-sdk/build/OraiswapV3.types";
 import { Asset, Route, SwapOperation } from "@oraichain/oraidex-contracts-sdk/build/Zapper.types";
 import { DENOMINATOR, LIQUIDITY_DENOMINATOR, PRICE_DENOMINATOR } from "./const";
@@ -305,20 +310,20 @@ export const generateMessageSwapOperation = (
     if (!response.routes) continue;
     if (response.routes.length === 0) continue;
 
-    const { routes, returnAmount, swapAmount } = response;
+    const { routes } = response;
 
     for (const route of routes) {
       const { swapAmount, returnAmount, paths } = route;
       const operations: SwapOperation[] = [];
       for (const path of paths) {
-        const { actions, chainId, tokenIn, tokenInAmount, tokenOut, tokenOutAmount, tokenOutChainId } = path;
+        const { actions } = path;
         for (const action of actions) {
-          const { protocol, swapInfo, tokenIn, tokenInAmount, tokenOut, tokenOutAmount, type } = action;
-          let currTokenIn = oraidexCommon.parseAssetInfoFromContractAddrOrDenom(tokenIn);
+          const { swapInfo, tokenIn } = action;
+          let currTokenIn = parseAssetInfoFromContractAddrOrDenom(tokenIn);
           for (const swap of swapInfo) {
             const { poolId } = swap;
             const [tokenX, tokenY, fee, tickSpacing] = poolId.split("-");
-            const tokenOut = oraidexCommon.parseAssetInfoFromContractAddrOrDenom(swap.tokenOut);
+            const tokenOut = parseAssetInfoFromContractAddrOrDenom(swap.tokenOut);
             if (tokenX && tokenY && fee && tickSpacing) {
               operations.push({
                 swap_v3: {
@@ -440,7 +445,7 @@ export const getPriceImpactAfterSwap = ({
 export const calculateRewardAmounts = (
   pool: PoolWithPoolKey,
   position: Position,
-  zapFee: number,
+  zapFee: number
 ): { amountX: bigint; amountY: bigint } => {
   const res = calculateTokenAmounts(pool.pool, position);
   const amountX = (res.x * BigInt(100 - zapFee * 100)) / 100n;
@@ -531,7 +536,11 @@ export const populateMessageZapIn = (
     }
     message.routes = generateMessageSwapOperation([actualAmountXReceived], slippage, oraidexCommon);
   } else {
-    message.routes = generateMessageSwapOperation([actualAmountXReceived, actualAmountYReceived], slippage, oraidexCommon);
+    message.routes = generateMessageSwapOperation(
+      [actualAmountXReceived, actualAmountYReceived],
+      slippage,
+      oraidexCommon
+    );
   }
 
   calculateSwapFee(message);

@@ -19,7 +19,7 @@ import {
   MULTIPLIER,
   CW20_DECIMALS
 } from "./constant";
-import { CoinGeckoId, cosmosChains } from "./network";
+import { CoinGeckoId } from "./network";
 import {
   AmountDetails,
   TokenInfo,
@@ -510,44 +510,44 @@ export const parseTxToMsgsAndEvents = (indexedTx: Tx, eventsParser?: (events: re
   });
 };
 
-export const validateAndIdentifyCosmosAddress = (address: string, network: string) => {
-  try {
-    const cosmosAddressRegex = /^[a-z]{1,6}[0-9a-z]{0,64}$/;
-    if (!cosmosAddressRegex.test(address)) {
-      throw new Error("Invalid address");
-    }
+// export const validateAndIdentifyCosmosAddress = (address: string, network: string) => {
+//   try {
+//     const cosmosAddressRegex = /^[a-z]{1,6}[0-9a-z]{0,64}$/;
+//     if (!cosmosAddressRegex.test(address)) {
+//       throw new Error("Invalid address");
+//     }
 
-    const decodedAddress = bech32.decode(address);
-    const prefix = decodedAddress.prefix;
+//     const decodedAddress = bech32.decode(address);
+//     const prefix = decodedAddress.prefix;
 
-    let chainInfo;
-    const networkMap = cosmosChains.reduce((acc, cur) => {
-      if (cur.chainId === network) chainInfo = cur;
-      return {
-        ...acc,
-        [cur.bech32Config.bech32PrefixAccAddr]: true
-      };
-    }, {});
+//     let chainInfo;
+//     const networkMap = cosmosChains.reduce((acc, cur) => {
+//       if (cur.chainId === network) chainInfo = cur;
+//       return {
+//         ...acc,
+//         [cur.bech32Config.bech32PrefixAccAddr]: true
+//       };
+//     }, {});
 
-    if (chainInfo && chainInfo.bech32Config.bech32PrefixAccAddr !== prefix) {
-      throw new Error("Network doesn't match");
-    }
+//     if (chainInfo && chainInfo.bech32Config.bech32PrefixAccAddr !== prefix) {
+//       throw new Error("Network doesn't match");
+//     }
 
-    if (networkMap.hasOwnProperty(prefix)) {
-      return {
-        isValid: true,
-        network
-      };
-    } else {
-      throw new Error("Unsupported address network");
-    }
-  } catch (error) {
-    return {
-      isValid: false,
-      error: error.message
-    };
-  }
-};
+//     if (networkMap.hasOwnProperty(prefix)) {
+//       return {
+//         isValid: true,
+//         network
+//       };
+//     } else {
+//       throw new Error("Unsupported address network");
+//     }
+//   } catch (error) {
+//     return {
+//       isValid: false,
+//       error: error.message
+//     };
+//   }
+// };
 
 export const validateEvmAddress = (address: string, network: string) => {
   try {
@@ -587,17 +587,17 @@ export const validateTronAddress = (address: string, network: string) => {
   }
 };
 
-export const checkValidateAddressWithNetwork = (address: string, network: string) => {
-  switch (network) {
-    case "0x01":
-    case "0x38":
-      return validateEvmAddress(address, network);
+// export const checkValidateAddressWithNetwork = (address: string, network: string) => {
+//   switch (network) {
+//     case "0x01":
+//     case "0x38":
+//       return validateEvmAddress(address, network);
 
-    // tron
-    case "0x2b6653dc":
-      return validateTronAddress(address, network);
+//     // tron
+//     case "0x2b6653dc":
+//       return validateTronAddress(address, network);
 
-    default:
-      return validateAndIdentifyCosmosAddress(address, network);
-  }
-};
+//     default:
+//       return validateAndIdentifyCosmosAddress(address, network);
+//   }
+// };

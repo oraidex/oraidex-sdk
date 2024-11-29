@@ -3744,23 +3744,10 @@
   resolved "https://registry.yarnpkg.com/@oraichain/common-contracts-sdk/-/common-contracts-sdk-1.0.31.tgz#595f93b168438d69d64896909b37855c9afc92fb"
   integrity sha512-s8H20RXy5gCnu3DnM7L5ClQyj2mdQpbSBpZrXCpIAX9qY0LKsDdZG3sYaDQ8+VN333jz9Pp/qGWdFSYD+6PBsg==
 
-"@oraichain/common@1.1.5-beta.2":
-  version "1.1.5-beta.2"
-  resolved "https://registry.yarnpkg.com/@oraichain/common/-/common-1.1.5-beta.2.tgz#12b9b9036a99cc13e844e549bac1a6932fbcb6e8"
-  integrity sha512-O8vW9NuwLrJFOv8B51oX5kV3s6dBv0EdVdw2KNsx9gexTNXjzHNlWg1a1MBTryybLD9i6ir1uHOLY/6fqzvJSg==
-  dependencies:
-    "@keplr-wallet/types" "0.12.141"
-    axios "0.21.4"
-    axios-extensions "3.1.6"
-    bech32 "^1.1.4"
-    cosmjs-types "^0.8.0"
-    ethers "^5.5.1"
-    lodash "^4.17.21"
-
-"@oraichain/common@^1.2.1-beta3":
-  version "1.2.1-beta3"
-  resolved "https://registry.yarnpkg.com/@oraichain/common/-/common-1.2.1-beta3.tgz#11bc4ea0b87395121af5bd932ffa0bf0b63122ac"
-  integrity sha512-OKbEhSs9iuEpxqq7mRzeaGDaVUWJ6nkyg/2IjrddQ/kiMEZoCr+xaVOLlf4tUQ6IFKWf4ViSaWpfduJvptaH2w==
+"@oraichain/common@1.2.1-beta5", "@oraichain/common@^1.2.1-beta5":
+  version "1.2.1-beta5"
+  resolved "https://registry.yarnpkg.com/@oraichain/common/-/common-1.2.1-beta5.tgz#5e04251588e27e51fa7ac0d07512e72a86c1a488"
+  integrity sha512-6UnoNDNPIfz7Z99bpOfjesrEFgIpDeAfupMlCuJKzPelCSAxubzyqXqr3fGNUnkeR7OJHkmCQ0V+PcxEYA5Jgw==
   dependencies:
     "@keplr-wallet/types" "0.12.141"
     axios "0.21.4"

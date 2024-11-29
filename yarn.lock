@@ -3744,10 +3744,10 @@
   resolved "https://registry.yarnpkg.com/@oraichain/common-contracts-sdk/-/common-contracts-sdk-1.0.31.tgz#595f93b168438d69d64896909b37855c9afc92fb"
   integrity sha512-s8H20RXy5gCnu3DnM7L5ClQyj2mdQpbSBpZrXCpIAX9qY0LKsDdZG3sYaDQ8+VN333jz9Pp/qGWdFSYD+6PBsg==
 
-"@oraichain/common@1.2.1-beta5", "@oraichain/common@^1.2.1-beta5":
-  version "1.2.1-beta5"
-  resolved "https://registry.yarnpkg.com/@oraichain/common/-/common-1.2.1-beta5.tgz#5e04251588e27e51fa7ac0d07512e72a86c1a488"
-  integrity sha512-6UnoNDNPIfz7Z99bpOfjesrEFgIpDeAfupMlCuJKzPelCSAxubzyqXqr3fGNUnkeR7OJHkmCQ0V+PcxEYA5Jgw==
+"@oraichain/common@1.2.1-beta6", "@oraichain/common@^1.2.1-beta6":
+  version "1.2.1-beta6"
+  resolved "https://registry.yarnpkg.com/@oraichain/common/-/common-1.2.1-beta6.tgz#c5089e42dce601fb2b6c87fddee469c2698c0259"
+  integrity sha512-U1LZ99Ym1LlgoNgvWGShcoxPLtOozWh+m+8q8xwoU/XlS/xDTbhbqhhIWwz6Hl9+6Ac4TFWLd0ewRpGCjrymtQ==
   dependencies:
     "@keplr-wallet/types" "0.12.141"
     axios "0.21.4"

@@ -5,7 +5,8 @@
     "outDir": "build",
     "declaration": true,
     "rootDir": "src",
-    "module": "esnext"
+    "module": "esnext",
+    "resolveJsonModule": true
   },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules/"]

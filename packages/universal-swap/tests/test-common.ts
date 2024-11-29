@@ -21,11 +21,11 @@ export const deployToken = async (
   }: { symbol: string; name: string; decimals?: number; initial_balances?: Cw20Coin[] }
 ): Promise<OraiswapTokenClient> => {
   return new OraiswapTokenClient(
-    client,
+    client as any,
     testSenderAddress,
     (
       await oraidexArtifacts.deployContract(
-        client,
+        client as any,
         testSenderAddress,
 
         {
@@ -47,7 +47,7 @@ export const deployIcs20Token = async (
   { swap_router_contract, gov_contract = testSenderAddress }: { gov_contract?: string; swap_router_contract: string }
 ): Promise<CwIcs20LatestClient> => {
   const { contractAddress } = await commonArtifacts.deployContract(
-    client,
+    client as any,
     testSenderAddress,
     {
       allowlist: [],
@@ -58,5 +58,5 @@ export const deployIcs20Token = async (
     "cw-ics20-latest",
     "cw-ics20-latest"
   );
-  return new CwIcs20LatestClient(client, testSenderAddress, contractAddress);
+  return new CwIcs20LatestClient(client as any, testSenderAddress, contractAddress);
 };

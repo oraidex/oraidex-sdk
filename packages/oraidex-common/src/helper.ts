@@ -241,7 +241,7 @@ export const parseAssetInfo = (assetInfo: AssetInfo): string => {
 };
 
 export const getTokenOnSpecificChainId = (coingeckoId: CoinGeckoId, chainId: string): TokenItemType | undefined => {
-  // @ts-ignore
+  const flattenTokens = getOraidexCommonAttribute<TokenItemType[]>("flattenTokens");
   return flattenTokens.find((t) => t.coinGeckoId === coingeckoId && t.chainId === chainId);
 };
 
@@ -387,7 +387,7 @@ export const calcMaxAmount = ({
 };
 
 export const getOraidexCommonAttribute = <T>(
-  key: "cosmosTokens" | "tokenMap" | "assetInfoMap" | "oraichainTokens"
+  key: "cosmosTokens" | "tokenMap" | "assetInfoMap" | "oraichainTokens" | "flattenTokens"
 ): T => {
   if (!OraidexCommon.instance) throw new Error("OraidexCommon is not loaded");
   return OraidexCommon.instance[key] as T;

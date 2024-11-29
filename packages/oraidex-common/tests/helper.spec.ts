@@ -73,6 +73,7 @@ describe("should helper functions in helper run exactly", () => {
 
   it("should get sub amount of evm token correctly and to sum display, to total display correctly", () => {
     // test for milky token that have evm denom => have sub amount.
+    console.log("oraidexCommon.flattenTokens: ", oraidexCommon.flattenTokens.filter((t) => t.evmDenoms)); 
     const tokenInfo = oraidexCommon.flattenTokens.find((t) => t.evmDenoms && t.coinGeckoId === "milky-token")!;
     const subAmounts = getSubAmountDetails(amounts, tokenInfo);
     expect(subAmounts).toEqual({
@@ -103,7 +104,7 @@ describe("should helper functions in helper run exactly", () => {
     if (type === "token") {
       expectedDenom = token.contractAddress!;
     } else {
-      expectedDenom = token.denom;
+      expectedDenom = token.denom!;
     }
     expect(parseTokenInfoRawDenom(token)).toEqual(expectedDenom);
   });
@@ -300,7 +301,7 @@ describe("should helper functions in helper run exactly", () => {
 
   it.each<[string, AssetInfo]>([
     [ORAI, { native_token: { denom: ORAI } }],
-    ["airi", { token: { contract_addr: AIRI_CONTRACT } }]
+    ['airi', { token: { contract_addr: AIRI_CONTRACT } }]
   ])("test-toAssetInfo", (denom, expectedAssetInfo) => {
     // fixture
     const token = oraidexCommon.oraichainTokens.find((t) => t.denom === denom);
@@ -388,15 +389,17 @@ describe("should helper functions in helper run exactly", () => {
   it.each<[string, string | undefined, AssetInfo, any]>([
     [ORAI, "10", { native_token: { denom: ORAI } }, { denom: ORAI, amount: "10" }],
     [ORAI, undefined, { native_token: { denom: ORAI } }, undefined],
-    ["airi", "10", { token: { contract_addr: AIRI_CONTRACT } }, undefined],
-    ["airi", undefined, { token: { contract_addr: AIRI_CONTRACT } }, undefined]
+    ['airi', "10", { token: { contract_addr: AIRI_CONTRACT } }, undefined],
+    ['airi', undefined, { token: { contract_addr: AIRI_CONTRACT } }, undefined]
   ])("test-parseTokenInfo", (denom, amount, expectedInfo, expectedFund) => {
     // fixture
+    // console.log("oraichainTokens1: ", oraidexCommon.oraichainTokens);  
     const token = oraidexCommon.oraichainTokens.find((t) => t.denom === denom)!;
     const expectedResult: { info: AssetInfo; fund: any } = {
       info: expectedInfo,
       fund: expectedFund
     };
+    // console.log("token: ", token);  
     expect(parseTokenInfo(token, amount)).toEqual(expectedResult);
   });
 

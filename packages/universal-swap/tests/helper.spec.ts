@@ -22,6 +22,7 @@ import {
   ORAI_BSC_CONTRACT,
   ORAI_ETH_CONTRACT,
   ORAI_INFO,
+  OraidexCommon,
   TokenInfo,
   TokenItemType,
   USDC_CONTRACT,
@@ -33,7 +34,7 @@ import {
   WRAP_BNB_CONTRACT,
   WRAP_ETH_CONTRACT,
   WRAP_TRON_TRX_CONTRACT,
-  flattenTokens, // TODO: INIT ORAI COMMON HERE
+  // flattenTokens, // TODO: INIT ORAI COMMON HERE
   getTokenOnOraichain,
   getTokenOnSpecificChainId,
   ibcInfos,
@@ -69,6 +70,12 @@ import { expect, afterAll, beforeAll, describe, it, vi } from "vitest";
 import { parseAssetInfo } from "../../oraidex-common/src";
 
 describe("test helper functions", () => {
+  let oraidexCommon: OraidexCommon;
+
+  beforeAll(async () => {
+    oraidexCommon = await OraidexCommon.load();
+  });
+
   it("test-buildSwapRouterKey", () => {
     expect(buildSwapRouterKey("foo", "bar")).toEqual("foo-bar");
   });
@@ -342,12 +349,14 @@ describe("test helper functions", () => {
       vi.spyOn(dexCommonHelper, "isEthAddress").mockImplementation((address) =>
         address.includes("0x") ? true : false
       );
-      const fromToken = flattenTokens.find(
+      const fromToken = oraidexCommon.flattenTokens.find(
         (item) => item.coinGeckoId === fromCoingeckoId && item.chainId === fromChainId
       )!;
-      const toToken = flattenTokens.find((item) => item.coinGeckoId === toCoingeckoId && item.chainId === toChainId);
+      const toToken = oraidexCommon.flattenTokens.find(
+        (item) => item.coinGeckoId === toCoingeckoId && item.chainId === toChainId
+      );
       try {
-        const receiverAddress = UniversalSwapHelper.getRoute(fromToken, toToken, receiver);
+        const receiverAddress = UniversalSwapHelper.getRoute(oraidexCommon.cosmosTokens, fromToken, toToken, receiver);
         expect(receiverAddress).toEqual(swapRoute);
         expect(willThrow).toEqual(false);
       } catch (error) {
@@ -397,7 +406,12 @@ describe("test helper functions", () => {
         ...evmInfo
       };
 
-      const generateAddress = UniversalSwapHelper.generateAddress({ oraiAddress, injAddress, evmInfo });
+      const generateAddress = UniversalSwapHelper.generateAddress({
+        oraiAddress,
+        injAddress,
+        cosmosChains: oraidexCommon.cosmosChains,
+        evmInfo
+      });
       expect(generateAddress).toMatchObject(expectAddresses);
     } catch (error) {
       expect(willThrow).toEqual(false);
@@ -604,6 +618,9 @@ describe("test helper functions", () => {
       undefined as any,
       "0",
       1,
+      oraidexCommon.cosmosTokens,
+      oraidexCommon.cosmosChains,
+      oraidexCommon.evmChains,
       {
         isSourceReceiverTest: false
       }
@@ -618,6 +635,9 @@ describe("test helper functions", () => {
         undefined as any,
         "0",
         1,
+        oraidexCommon.cosmosTokens,
+        oraidexCommon.cosmosChains,
+        oraidexCommon.evmChains,
         {
           isSourceReceiverTest: false
         }
@@ -887,7 +907,14 @@ describe("test helper functions", () => {
     ],
     [{}, getTokenOnOraichain("injective-protocol"), coin(1000, INJECTIVE_ORAICHAIN_DENOM), 0]
   ])("test-generate-convert-msgs", async (currentBal: AmountDetails, tokenInfo, toSend, msgLength) => {
-    const msg = universalHelper.generateConvertCw20Erc20Message(currentBal, tokenInfo, "orai123", toSend);
+    const msg = universalHelper.generateConvertCw20Erc20Message(
+      currentBal,
+      tokenInfo,
+      "orai123",
+      toSend,
+      oraidexCommon.tokenMap,
+      oraidexCommon.network
+    );
     console.dir(msg, { depth: null });
     expect(msg.length).toEqual(msgLength);
   });
@@ -899,7 +926,13 @@ describe("test helper functions", () => {
   ])(
     "test-generateConvertErc20Cw20Message-should-return-correct-message-length",
     (amountDetails, tokenInfo, expectedMessageLength) => {
-      const result = universalHelper.generateConvertErc20Cw20Message(amountDetails, tokenInfo, "john doe");
+      const result = universalHelper.generateConvertErc20Cw20Message(
+        amountDetails,
+        tokenInfo,
+        oraidexCommon.tokenMap,
+        oraidexCommon.network,
+        "john doe"
+      );
       expect(result.length).toEqual(expectedMessageLength);
     }
   );

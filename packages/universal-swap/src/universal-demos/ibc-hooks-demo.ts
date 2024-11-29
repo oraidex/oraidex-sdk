@@ -33,7 +33,8 @@ const cosmosToOraichain = async (
       fromAmount,
       simulateAmount: toAmount(fromAmount, originalToToken.decimals).toString()
     },
-    { cosmosWallet: wallet }
+    { cosmosWallet: wallet },
+    oraidexCommon
   );
 
   try {

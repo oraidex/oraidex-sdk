@@ -31,7 +31,8 @@ const nobleUsdcToOraiUsdc = async (chainId: "noble-1" | "Oraichain") => {
       fromAmount,
       simulateAmount: toAmount(fromAmount, originalToToken.decimals).toString()
     },
-    { cosmosWallet: wallet, swapOptions: { ibcInfoTestMode: true } }
+    { cosmosWallet: wallet, swapOptions: { ibcInfoTestMode: true } },
+    oraidexCommon
   );
 
   try {

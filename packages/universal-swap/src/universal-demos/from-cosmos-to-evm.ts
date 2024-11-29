@@ -41,7 +41,8 @@ const oraichainToEvm = async (chainId: "Oraichain") => {
       fromAmount,
       simulateAmount: toAmount(fromAmount, originalToToken.decimals).toString()
     },
-    { cosmosWallet: wallet, swapOptions: {} }
+    { cosmosWallet: wallet, swapOptions: {} },
+    oraidexCommon
   );
 
   try {

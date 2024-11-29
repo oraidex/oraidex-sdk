@@ -1,4 +1,4 @@
-import { CosmosChainId, CosmosWallet, EvmResponse, EvmWallet, TokenItemType } from "@oraichain/oraidex-common";
+import { CosmosChainId, CosmosWallet, EvmResponse, EvmWallet, OraidexCommon, TokenItemType } from "@oraichain/oraidex-common";
 import { UniversalSwapHandler } from "./handler";
 import { ExecuteResult } from "@cosmjs/cosmwasm-stargate";
 
@@ -13,6 +13,7 @@ export const swapOraichainToOraichain = async (data: {
 }): Promise<ExecuteResult> => {
   const { cosmosWallet, fromAmount, fromToken, toToken, simulatePrice, userSlippage, simulateAmount } = data;
   const sender = await cosmosWallet.getKeplrAddr("Oraichain");
+  const oraidexCommon = await OraidexCommon.load();
   const handler = new UniversalSwapHandler(
     {
       sender: { cosmos: sender },
@@ -23,7 +24,8 @@ export const swapOraichainToOraichain = async (data: {
       simulatePrice,
       userSlippage
     },
-    { cosmosWallet }
+    { cosmosWallet },
+    oraidexCommon
   );
   return handler.swap();
 };
@@ -39,6 +41,7 @@ export const swapOraichainToCosmos = async (data: {
 }) => {
   const { cosmosWallet, fromAmount, fromToken, toToken, simulatePrice, userSlippage, simulateAmount } = data;
   const cosmos = await cosmosWallet.getKeplrAddr(fromToken.chainId as CosmosChainId);
+  const oraidexCommon = await OraidexCommon.load();
   const handler = new UniversalSwapHandler(
     {
       sender: { cosmos },
@@ -49,7 +52,8 @@ export const swapOraichainToCosmos = async (data: {
       simulateAmount,
       userSlippage
     },
-    { cosmosWallet }
+    { cosmosWallet },
+    oraidexCommon
   );
   return handler.swapAndTransferToOtherNetworks("oraichain-to-cosmos");
 };
@@ -68,6 +72,7 @@ export const swapOraichainToEvm = async (data: {
   const cosmos = await cosmosWallet.getKeplrAddr(fromToken.chainId as CosmosChainId);
   const evm = await evmWallet.getEthAddress();
   const tron = evmWallet.tronWeb?.defaultAddress?.base58 as string;
+  const oraidexCommon = await OraidexCommon.load();
   const handler = new UniversalSwapHandler(
     {
       sender: { cosmos, evm, tron },
@@ -78,7 +83,8 @@ export const swapOraichainToEvm = async (data: {
       simulateAmount,
       userSlippage
     },
-    { cosmosWallet, evmWallet }
+    { cosmosWallet, evmWallet },
+    oraidexCommon
   );
   return handler.swapAndTransferToOtherNetworks("oraichain-to-evm");
 };
@@ -101,6 +107,7 @@ export const swapEvmToOraichain = async (data: {
   const cosmos = await cosmosWallet.getKeplrAddr(fromToken.chainId as CosmosChainId);
   const evm = await evmWallet.getEthAddress();
   const tron = evmWallet.tronWeb?.defaultAddress?.base58 as string;
+  const oraidexCommon = await OraidexCommon.load();
   const handler = new UniversalSwapHandler(
     {
       sender: { cosmos, evm, tron },
@@ -111,7 +118,8 @@ export const swapEvmToOraichain = async (data: {
       simulateAmount,
       userSlippage
     },
-    { cosmosWallet, evmWallet }
+    { cosmosWallet, evmWallet },
+    oraidexCommon
   );
   return handler.processUniversalSwap() as Promise<EvmResponse>;
 };

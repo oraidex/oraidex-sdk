@@ -48,7 +48,8 @@ const oraichainToEvm = async () => {
         isAlphaSmartRouter: true,
         isIbcWasm: true
       }
-    }
+    },
+    oraidexCommon
   );
 
   try {

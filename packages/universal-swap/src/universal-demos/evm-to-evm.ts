@@ -51,7 +51,8 @@ const evmToEvm = async () => {
       swapOptions: {
         isAlphaSmartRouter: true
       }
-    }
+    },
+    oraidexCommon
   );
 
   try {

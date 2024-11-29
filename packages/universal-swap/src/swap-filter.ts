@@ -5,7 +5,7 @@ import {
   MILKYBSC_ORAICHAIN_DENOM,
   MILKY_BSC_CONTRACT,
   // TODO: INIT ORAI COMMON HERE
-  flattenTokens
+  // flattenTokens
 } from "@oraichain/oraidex-common";
 
 export const evmDenomsMap = {
@@ -13,9 +13,9 @@ export const evmDenomsMap = {
   milky: [MILKYBSC_ORAICHAIN_DENOM],
   injective: [INJECTIVE_ORAICHAIN_DENOM]
 };
-const notAllowSwapCoingeckoIds = [];
+export const notAllowSwapCoingeckoIds = [];
 // universal swap. Currently we dont support from tokens that are not using the ibc wasm channel
-const notAllowSwapFromChainIds = [
+export const notAllowSwapFromChainIds = [
   "0x1ae6",
   "kawaii_6886-1",
   "oraibridge-subnet-2",
@@ -23,18 +23,18 @@ const notAllowSwapFromChainIds = [
   "Neutaro-1",
   "bitcoin"
 ];
-const notAllowDenom = Object.values(evmDenomsMap).flat();
-const notAllowBEP20Token = [KWT_BSC_CONTRACT, MILKY_BSC_CONTRACT];
-export const swapFromTokens = flattenTokens.filter((token) => {
-  return (
-    !notAllowDenom.includes(token?.denom) &&
-    !notAllowSwapCoingeckoIds.includes(token.coinGeckoId) &&
-    !notAllowSwapFromChainIds.includes(token.chainId) &&
-    !notAllowBEP20Token.includes(token?.contractAddress)
-  );
-});
+export const notAllowDenom = Object.values(evmDenomsMap).flat();
+export const notAllowBEP20Token = [KWT_BSC_CONTRACT, MILKY_BSC_CONTRACT];
+// export const swapFromTokens = flattenTokens.filter((token) => {
+//   return (
+//     !notAllowDenom.includes(token?.denom) &&
+//     !notAllowSwapCoingeckoIds.includes(token.coinGeckoId) &&
+//     !notAllowSwapFromChainIds.includes(token.chainId) &&
+//     !notAllowBEP20Token.includes(token?.contractAddress)
+//   );
+// });
 // universal swap. We dont support kwt & milky & injective for simplicity. We also skip OraiBridge tokens because users dont care about them
-const notAllowSwapToChainIds = [
+export const notAllowSwapToChainIds = [
   "0x1ae6",
   "kawaii_6886-1",
   "oraibridge-subnet-2",
@@ -42,11 +42,11 @@ const notAllowSwapToChainIds = [
   "Neutaro-1",
   "bitcoin"
 ];
-export const swapToTokens = flattenTokens.filter((token) => {
-  return (
-    !notAllowDenom.includes(token?.denom) &&
-    !notAllowSwapCoingeckoIds.includes(token.coinGeckoId) &&
-    !notAllowSwapToChainIds.includes(token.chainId) &&
-    !notAllowBEP20Token.includes(token?.contractAddress)
-  );
-});
+// export const swapToTokens = flattenTokens.filter((token) => {
+//   return (
+//     !notAllowDenom.includes(token?.denom) &&
+//     !notAllowSwapCoingeckoIds.includes(token.coinGeckoId) &&
+//     !notAllowSwapToChainIds.includes(token.chainId) &&
+//     !notAllowBEP20Token.includes(token?.contractAddress)
+//   );
+// });

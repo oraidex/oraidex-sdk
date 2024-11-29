@@ -27,7 +27,8 @@ const simulate = async () => {
         url: "https://osor.oraidex.io",
         path: "/smart-router/alpha-router",
         protocols: ["Oraidex", "OraidexV3", "Osmosis"]
-      }
+      },
+      getTokenOnOraichain: oraidexCommon.getTokenOnOraichain
     });
   } catch (error) {
     console.log("error: ", error);

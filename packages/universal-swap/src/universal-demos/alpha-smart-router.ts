@@ -74,7 +74,8 @@ const alphaSwapToOraichain = async () => {
     {
       cosmosWallet: wallet,
       swapOptions: { isIbcWasm: false, isAlphaIbcWasm: true }
-    }
+    },
+    oraidexCommon
   );
 
   try {

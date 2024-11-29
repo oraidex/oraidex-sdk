@@ -113,6 +113,7 @@ describe("test universal swap handler functions", () => {
   let oraidexCommon: OraidexCommon;
   let universalSwapData: UniversalSwapData;
   let flattenTokens: TokenItemType[];
+  let oraichainTokens: TokenItemType[];
   const now = 1000;
 
   beforeEach(() => {
@@ -122,6 +123,8 @@ describe("test universal swap handler functions", () => {
   beforeAll(async () => {
     // deploy oracle addr
     oraidexCommon = await OraidexCommon.load();
+    flattenTokens = oraidexCommon.flattenTokens;
+    oraichainTokens = oraidexCommon.oraichainTokens;
     const { codeId: pairCodeId } = await client.upload(
       testSenderAddress,
       readFileSync(oraidexArtifacts.getContractDir("oraiswap-pair")),
@@ -258,8 +261,8 @@ describe("test universal swap handler functions", () => {
 
     universalSwapData = {
       sender: { cosmos: testSenderAddress, evm: "0x1234", tron: "TNJksEkvvdmae8uXYkNE9XKHbTDiSQrpbf" },
-      originalFromToken: oraidexCommon.oraichainTokens[0],
-      originalToToken: oraidexCommon.oraichainTokens[0],
+      originalFromToken: oraichainTokens[0],
+      originalToToken: oraichainTokens[0],
       simulateAmount,
       simulatePrice: "0",
       userSlippage,
@@ -322,8 +325,8 @@ describe("test universal swap handler functions", () => {
       super(
         data ?? {
           sender: { cosmos: testSenderAddress },
-          originalFromToken: oraidexCommon.oraichainTokens[0],
-          originalToToken: oraidexCommon.oraichainTokens[1],
+          originalFromToken: oraichainTokens[0],
+          originalToToken: oraichainTokens[1],
           simulateAmount: "0",
           simulatePrice: "0",
           userSlippage: 1,
@@ -459,10 +462,8 @@ describe("test universal swap handler functions", () => {
       vi.spyOn(dexCommonHelper, "calculateMinReceive").mockReturnValue(minimumReceive);
       const universalSwap = new FakeUniversalSwapHandler({
         ...universalSwapData,
-        originalFromToken: oraidexCommon.oraichainTokens.find((t) => t.coinGeckoId === fromCoingeckoId)!,
-        originalToToken: oraidexCommon.flattenTokens.find(
-          (t) => t.coinGeckoId === toCoingeckoId && t.chainId === toChainId
-        )!
+        originalFromToken: oraichainTokens.find((t) => t.coinGeckoId === fromCoingeckoId)!,
+        originalToToken: flattenTokens.find((t) => t.coinGeckoId === toCoingeckoId && t.chainId === toChainId)!
       });
       const msg = await universalSwap.combineSwapMsgOraichain("0");
       expect(
@@ -509,7 +510,7 @@ describe("test universal swap handler functions", () => {
   ])(
     "test checkFeeRelayerNotOrai given denom %s with from amount %d, is it sufficient for relayer fee?: %s",
     async (fromDenom, mockSimulateAmount, mockRelayerFee, isSufficient) => {
-      const originalFromToken = oraidexCommon.oraichainTokens.find((item) => item.coinGeckoId === fromDenom);
+      const originalFromToken = oraichainTokens.find((item) => item.coinGeckoId === fromDenom);
       // TODO: run tests without mocking to simulate actual swap
       vi.spyOn(UniversalSwapHelper, "simulateSwap").mockResolvedValue({ amount: mockSimulateAmount });
       const result = await checkFeeRelayerNotOrai({
@@ -568,7 +569,7 @@ describe("test universal swap handler functions", () => {
       });
       const ibcInfo = ibcInfos["Oraichain"]["oraibridge-subnet-2"]!.channel;
       vi.spyOn(dexCommonHelper, "getTokenOnOraichain").mockReturnValue(
-        oraidexCommon.oraichainTokens.find((t) => t.coinGeckoId === "airight")!
+        oraichainTokens.find((t) => t.coinGeckoId === "airight")!
       );
       try {
         const transferAddress = universalSwap.getTranferAddress(metamaskAddress, tronAddress, ibcInfo);
@@ -676,7 +677,7 @@ describe("test universal swap handler functions", () => {
     ["airight", 10000000],
     ["oraichain-token", 0]
   ])("test-universal-swap-getBalanceIBCOraichain-ibc-%", async (token: string, expectedBalance: number) => {
-    const tokenInfo = oraidexCommon.oraichainTokens.find((t) => t.coinGeckoId === token)!;
+    const tokenInfo = oraichainTokens.find((t) => t.coinGeckoId === token)!;
     const mockToken = { ...tokenInfo };
     if (mockToken.contractAddress) {
       if (mockToken.coinGeckoId === "airight") mockToken.contractAddress = airiToken.contractAddress;
@@ -927,7 +928,7 @@ describe("test universal swap handler functions", () => {
       // setup
       const universalSwap = new FakeUniversalSwapHandler({
         ...universalSwapData,
-        originalFromToken: oraidexCommon.oraichainTokens.find((t) => t.coinGeckoId === fromCoinGeckoId)!,
+        originalFromToken: oraichainTokens.find((t) => t.coinGeckoId === fromCoinGeckoId)!,
         originalToToken: flattenTokens.find((t) => t.coinGeckoId === toCoinGeckoId && t.chainId === toChainId)!,
         affiliates
       });
@@ -1126,7 +1127,7 @@ describe("test universal swap handler functions", () => {
     //  setup mock
     const universalSwap = new FakeUniversalSwapHandler({
       ...universalSwapData,
-      originalFromToken: oraidexCommon.oraichainTokens.find((t) => t.coinGeckoId === fromCoingeckoId)!,
+      originalFromToken: oraichainTokens.find((t) => t.coinGeckoId === fromCoingeckoId)!,
       originalToToken: flattenTokens.find((t) => t.coinGeckoId === toCoingeckoId && t.chainId === toChainId)!
     });
     vi.spyOn(dexCommonHelper, "calculateMinReceive").mockReturnValue(minimumReceive);
@@ -1142,7 +1143,7 @@ describe("test universal swap handler functions", () => {
     vi.spyOn(universalSwap.config.cosmosWallet!, "getKeplrAddr").mockReturnValue(
       new Promise((resolve) => resolve(undefined as any))
     );
-    vi.spyOn(dexCommonHelper, "findToTokenOnOraiBridge").mockReturnValue(oraidexCommon.oraichainTokens[0]);
+    vi.spyOn(dexCommonHelper, "findToTokenOnOraiBridge").mockReturnValue(oraichainTokens[0]);
     try {
       await universalSwap.combineMsgEvm("0x1234", "T1234");
     } catch (error) {
@@ -1156,8 +1157,8 @@ describe("test universal swap handler functions", () => {
   ])(
     "test simulateSwap-given-fromid-%s-toid-%s-input-amount-%d-returns-%d",
     async (fromCoingeckoId, toCoingeckoId, amount, expectedSimulateData) => {
-      const fromToken = oraidexCommon.oraichainTokens.find((t) => t.coinGeckoId === fromCoingeckoId);
-      const toToken = oraidexCommon.oraichainTokens.find((t) => t.coinGeckoId === toCoingeckoId);
+      const fromToken = oraichainTokens.find((t) => t.coinGeckoId === fromCoingeckoId);
+      const toToken = oraichainTokens.find((t) => t.coinGeckoId === toCoingeckoId);
       const routerClient = new OraiswapRouterClient(client, testSenderAddress, "foo");
       vi.spyOn(routerClient, "simulateSwapOperations").mockReturnValue(new Promise((resolve) => resolve({ amount })));
       const [fromInfo, toInfo] = [toTokenInfo(fromToken!), toTokenInfo(toToken!)];
@@ -1173,8 +1174,8 @@ describe("test universal swap handler functions", () => {
   ])(
     "test simulateSwapUsingSmartRoute-given-fromid-%s-toid-%s-input-amount-%d-returns-%d",
     async (fromCoingeckoId, toCoingeckoId, amount, expectedSimulateData) => {
-      const fromToken = oraidexCommon.oraichainTokens.find((t) => t.coinGeckoId === fromCoingeckoId);
-      const toToken = oraidexCommon.oraichainTokens.find((t) => t.coinGeckoId === toCoingeckoId);
+      const fromToken = oraichainTokens.find((t) => t.coinGeckoId === fromCoingeckoId);
+      const toToken = oraichainTokens.find((t) => t.coinGeckoId === toCoingeckoId);
       vi.spyOn(UniversalSwapHelper, "querySmartRoute").mockResolvedValue({
         swapAmount: amount,
         returnAmount: amount,
@@ -1209,8 +1210,8 @@ describe("test universal swap handler functions", () => {
       isSupportedNoPoolSwapEvmSpy.mockReturnValue(isSupportedNoPoolSwapEvmRes);
       isEvmSwappableSpy.mockReturnValue(isEvmSwappableRes);
       const simulateData = await handleSimulateSwap({
-        originalFromInfo: oraidexCommon.oraichainTokens[0],
-        originalToInfo: oraidexCommon.oraichainTokens[1],
+        originalFromInfo: oraichainTokens[0],
+        originalToInfo: oraichainTokens[1],
         originalAmount: 0,
         routerClient: new OraiswapRouterQueryClient(client, "")
       });
@@ -1250,7 +1251,17 @@ describe("test universal swap handler functions", () => {
     expect(routesFlatten).toEqual(flattenAlphaSmartRouters);
   });
 
-  it.each<[string, { chainId: string; coinGeckoId: CoinGeckoId }, { chainId: string; coinGeckoId: CoinGeckoId }, number, string, number, string]>([
+  it.each<
+    [
+      string,
+      { chainId: string; coinGeckoId: CoinGeckoId },
+      { chainId: string; coinGeckoId: CoinGeckoId },
+      number,
+      string,
+      number,
+      string
+    ]
+  >([
     [
       "from-orai-bnb-to-orai-oraichain",
       { chainId: "0x38", coinGeckoId: "oraichain-token" }, // 18
@@ -1275,8 +1286,12 @@ describe("test universal swap handler functions", () => {
       const isHandleSimulateSwap = vi.spyOn(UniversalSwapHelper, "handleSimulateSwap");
       isHandleSimulateSwap.mockReturnValue(new Promise((resolve) => resolve({ amount: "600000", displayAmount: 0.6 })));
 
-      const originalToTokenInfo = oraidexCommon.flattenTokens.find((t) => t.coinGeckoId === originalToToken.coinGeckoId && t.chainId === originalToToken.chainId)!;
-      const originalFromTokenInfo = oraidexCommon.flattenTokens.find((t) => t.coinGeckoId === originalFromToken.coinGeckoId && t.chainId === originalFromToken.chainId)!;
+      const originalToTokenInfo = oraidexCommon.flattenTokens.find(
+        (t) => t.coinGeckoId === originalToToken.coinGeckoId && t.chainId === originalToToken.chainId
+      )!;
+      const originalFromTokenInfo = oraidexCommon.flattenTokens.find(
+        (t) => t.coinGeckoId === originalFromToken.coinGeckoId && t.chainId === originalFromToken.chainId
+      )!;
 
       const universalSwap = new FakeUniversalSwapHandler({
         ...universalSwapData,

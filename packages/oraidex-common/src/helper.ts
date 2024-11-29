@@ -178,17 +178,24 @@ export const calculateMinReceive = (
   ).toString();
 };
 
-// export const parseAssetInfoFromContractAddrOrDenom = (addressOrDenomToken: string) => {
-//   if (!addressOrDenomToken) return null;
-//   const addressOrDenomLowerCase = addressOrDenomToken.toLowerCase();
-//   const tokenItem = cosmosTokens.find((cosmosToken) => {
-//     return !cosmosToken.contractAddress
-//       ? cosmosToken.denom.toLowerCase() === addressOrDenomLowerCase
-//       : cosmosToken.contractAddress.toLowerCase() === addressOrDenomLowerCase;
-//   });
-//   // @ts-ignore
-//   return tokenItem ? parseTokenInfo(tokenItem).info : null;
-// };
+export const checkOraidexCommonLoaded = () => {
+  if (!OraidexCommon.instance) throw new Error("OraidexCommon is not loaded");
+};
+
+export const parseAssetInfoFromContractAddrOrDenom = (addressOrDenomToken: string) => {
+  if (!addressOrDenomToken) return null;
+  const addressOrDenomLowerCase = addressOrDenomToken.toLowerCase();
+
+  checkOraidexCommonLoaded();
+
+  const tokenItem = OraidexCommon.instance.cosmosTokens.find((cosmosToken) => {
+    return !cosmosToken.contractAddress
+      ? cosmosToken.denom.toLowerCase() === addressOrDenomLowerCase
+      : cosmosToken.contractAddress.toLowerCase() === addressOrDenomLowerCase;
+  });
+  // @ts-ignore
+  return tokenItem ? parseTokenInfo(tokenItem).info : null;
+};
 
 export const parseTokenInfo = (tokenInfo: TokenItemType, amount?: string): { fund?: Coin; info: AssetInfo } => {
   if (!tokenInfo.contractAddress) {
@@ -382,16 +389,19 @@ export const calcMaxAmount = ({
   return finalAmount;
 };
 
-// export const getTotalUsd = (amounts: AmountDetails, prices: CoinGeckoPrices<string>): number => {
-//   let usd = 0;
-//   for (const denom in amounts) {
-//     const tokenInfo = tokenMap[denom];
-//     if (!tokenInfo) continue;
-//     const amount = toDisplay(amounts[denom], tokenInfo.decimals);
-//     usd += amount * (prices[tokenInfo.coinGeckoId] ?? 0);
-//   }
-//   return usd;
-// };
+export const getTotalUsd = (amounts: AmountDetails, prices: CoinGeckoPrices<string>): number => {
+  let usd = 0;
+
+  checkOraidexCommonLoaded();
+  const tokenMap = OraidexCommon.instance.tokenMap;
+  for (const denom in amounts) {
+    const tokenInfo = tokenMap[denom];
+    if (!tokenInfo) continue;
+    const amount = toDisplay(amounts[denom], tokenInfo.decimals);
+    usd += amount * (prices[tokenInfo.coinGeckoId] ?? 0);
+  }
+  return usd;
+};
 
 // export const toSubDisplay = (amounts: AmountDetails, tokenInfo: TokenItemType): number => {
 //   const subAmounts = getSubAmountDetails(amounts, tokenInfo);
@@ -501,11 +511,7 @@ export const parseTxToMsgsAndEvents = (indexedTx: Tx, eventsParser?: (events: re
   });
 };
 
-export const validateAndIdentifyCosmosAddress = async (
-  address: string,
-  network: string,
-  cosmosChains: CustomChainInfo[]
-) => {
+export const validateAndIdentifyCosmosAddress = (address: string, network: string, cosmosChains: CustomChainInfo[]) => {
   try {
     const cosmosAddressRegex = /^[a-z]{1,6}[0-9a-z]{0,64}$/;
     if (!cosmosAddressRegex.test(address)) {

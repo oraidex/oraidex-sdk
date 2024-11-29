@@ -108,6 +108,7 @@ export class OraidexCommon {
 
   get oraichainNetwork() {
     return this.chainConfig.getSpecificChainInfo("Oraichain");
+    // TODO: update later
     //   bech32Config: defaultBech32Config("orai"),
     // currencies: oraiCommon.chainInfos.getSpecificChainInfo("Oraichain").currencies.map((currency) => {
     //   const coingeckoId =
@@ -127,7 +128,7 @@ export class OraidexCommon {
 
   get chainInfos() {
     return this.chainConfig.chainInfos;
-
+    // TODO: update later
     //   .filter((chain) => supportedChainIds.includes(chain.chainId))
     // .map((c) => {
     //   const updatedCurrencies = c.currencies.map((currency) => {
@@ -192,18 +193,6 @@ export class OraidexCommon {
     return this.chainConfig.getSpecificChainInfo("celestia");
   }
 
-  parseAssetInfoFromContractAddrOrDenom(addressOrDenomToken: string) {
-    if (!addressOrDenomToken) return null;
-    const addressOrDenomLowerCase = addressOrDenomToken.toLowerCase();
-    const tokenItem = this.cosmosTokens.find((cosmosToken) => {
-      return !cosmosToken.contractAddress
-        ? cosmosToken.denom.toLowerCase() === addressOrDenomLowerCase
-        : cosmosToken.contractAddress.toLowerCase() === addressOrDenomLowerCase;
-    });
-    // @ts-ignore
-    return tokenItem ? parseTokenInfo(tokenItem).info : null;
-  }
-
   getTokenOnOraichain(coingeckoId: CoinGeckoId, isNative?: boolean) {
     const filterOraichainToken = this.oraichainTokens.filter((orai) => orai.coinGeckoId === coingeckoId);
     if (!filterOraichainToken.length) return undefined;
@@ -211,17 +200,6 @@ export class OraidexCommon {
 
     const oraichainToken = filterOraichainToken.find((token) => (isNative ? !token.evmDenoms : token.evmDenoms));
     return oraichainToken;
-  }
-
-  getTotalUsd(amounts: AmountDetails, prices: CoinGeckoPrices<string>) {
-    let usd = 0;
-    for (const denom in amounts) {
-      const tokenInfo = this.tokenMap[denom];
-      if (!tokenInfo) continue;
-      const amount = toDisplay(amounts[denom], tokenInfo.decimals);
-      usd += amount * (prices[tokenInfo.coinGeckoId] ?? 0);
-    }
-    return usd;
   }
 
   toSumDisplay(amounts: AmountDetails) {

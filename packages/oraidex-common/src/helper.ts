@@ -518,7 +518,11 @@ export const parseTxToMsgsAndEvents = (indexedTx: Tx, eventsParser?: (events: re
   });
 };
 
-export const validateAndIdentifyCosmosAddress = (address: string, network: string, cosmosChains: CustomChainInfo[]) => {
+export const validateAndIdentifyCosmosAddress = (
+  address: string,
+  network: string,
+  cosmosChains: CustomChainInfo[]
+) => {
   try {
     const cosmosAddressRegex = /^[a-z]{1,6}[0-9a-z]{0,64}$/;
     if (!cosmosAddressRegex.test(address)) {

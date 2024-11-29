@@ -51,8 +51,10 @@ import {
   COSMOS_CHAIN_ID_COMMON,
   OraidexCommon,
   CustomChainInfo,
-  NetworkConfig
-  // checkValidateAddressWithNetwork,
+  NetworkConfig,
+  checkValidateAddressWithNetwork,
+  getTokenOnOraichain,
+  parseAssetInfoFromContractAddrOrDenom,
   // cosmosChains
 } from "@oraichain/oraidex-common";
 import {
@@ -224,7 +226,6 @@ export class UniversalSwapHelper {
    */
   static getSourceReceiver = (
     oraiAddress: string,
-    checkValidateAddressWithNetwork: (address: string, chainId: string) => { isValid: boolean; error?: string },
     contractAddress?: string,
     isSourceReceiverTest?: boolean
   ): string => {
@@ -406,13 +407,6 @@ export class UniversalSwapHelper {
     cosmosTokens: TokenItemType[],
     cosmosChains: CustomChainInfo[],
     evmChains: CustomChainInfo[],
-    checkValidateAddressWithNetwork: (
-      address: string,
-      chainId: string
-    ) => {
-      isValid: boolean;
-      error?: string;
-    },
     swapOption?: {
       isSourceReceiverTest?: boolean;
       isIbcWasm?: boolean;
@@ -425,7 +419,6 @@ export class UniversalSwapHelper {
     if (!addresses.sourceReceiver) throw generateError(`Cannot get source if the sourceReceiver is empty!`);
     const source = UniversalSwapHelper.getSourceReceiver(
       addresses.sourceReceiver,
-      checkValidateAddressWithNetwork,
       fromToken.contractAddress,
       swapOption?.isSourceReceiverTest
     );
@@ -875,7 +868,6 @@ export class UniversalSwapHelper {
     originalToInfo: TokenItemType;
     originalAmount: number;
     routerClient: OraiswapRouterReadOnlyInterface;
-    getTokenOnOraichain: (coingeckoId: CoinGeckoId, isNative?: boolean) => TokenItemType;
     routerOption?: {
       useIbcWasm?: boolean;
       useAlphaIbcWasm?: boolean;
@@ -912,8 +904,8 @@ export class UniversalSwapHelper {
       ignoreFee: query?.routerConfig?.ignoreFee ?? false
     };
 
-    let fromInfo = query.getTokenOnOraichain(query.originalFromInfo.coinGeckoId);
-    let toInfo = query.getTokenOnOraichain(query.originalToInfo.coinGeckoId);
+    let fromInfo = getTokenOnOraichain(query.originalFromInfo.coinGeckoId);
+    let toInfo = getTokenOnOraichain(query.originalToInfo.coinGeckoId);
 
     /**
      * useAlphaIbcWasm case: (evm -> oraichain -> osmosis -> inj not using wasm)
@@ -951,7 +943,6 @@ export class UniversalSwapHelper {
     };
     fromAmount: number;
     routerClient: OraiswapRouterReadOnlyInterface;
-    getTokenOnOraichain: (coingeckoId: CoinGeckoId, isNative?: boolean) => TokenItemType;
   }): Promise<boolean> => {
     const { originalFromToken, relayerFee, fromAmount, routerClient } = query;
     if (!relayerFee || !parseInt(relayerFee.relayerAmount)) return true;
@@ -964,11 +955,10 @@ export class UniversalSwapHelper {
     }
 
     return UniversalSwapHelper.checkFeeRelayerNotOrai({
-      fromTokenInOrai: query.getTokenOnOraichain(originalFromToken.coinGeckoId),
+      fromTokenInOrai: getTokenOnOraichain(originalFromToken.coinGeckoId),
       fromAmount,
       relayerAmount: relayerFee.relayerAmount,
       routerClient,
-      getTokenOnOraichain: query.getTokenOnOraichain
     });
   };
 
@@ -977,7 +967,6 @@ export class UniversalSwapHelper {
     fromAmount: number;
     relayerAmount: string;
     routerClient: OraiswapRouterReadOnlyInterface;
-    getTokenOnOraichain: (coingeckoId: CoinGeckoId, isNative?: boolean) => TokenItemType;
   }): Promise<boolean> => {
     const { fromTokenInOrai, fromAmount, routerClient, relayerAmount } = query;
     if (!fromTokenInOrai) return true;
@@ -987,7 +976,7 @@ export class UniversalSwapHelper {
       );
     // estimate exchange token when From Token not orai. Only need to swap & check if it is swappable with ORAI. Otherwise, we ignore the fees
     if (isInPairList(fromTokenInOrai.denom) || isInPairList(fromTokenInOrai.contractAddress)) {
-      const oraiToken = query.getTokenOnOraichain("oraichain-token");
+      const oraiToken = getTokenOnOraichain("oraichain-token");
       const { amount } = await UniversalSwapHelper.simulateSwap({
         fromInfo: fromTokenInOrai,
         toInfo: oraiToken,
@@ -1010,7 +999,6 @@ export class UniversalSwapHelper {
     toSimulateAmount: string,
     client: CosmWasmClient,
     ibcWasmContract: string,
-    getTokenOnOraichain: (coingeckoId: CoinGeckoId, isNative?: boolean) => TokenItemType,
     network: CustomChainInfo & NetworkConfig
   ) => {
     try {
@@ -1085,7 +1073,6 @@ export class UniversalSwapHelper {
     toSimulateAmount: string,
     client: CosmWasmClient,
     ibcWasmContract: string,
-    getTokenOnOraichain: (coingeckoId: CoinGeckoId, isNative?: boolean) => TokenItemType,
     network: CustomChainInfo & NetworkConfig
   ) => {
     // ORAI ( ETH ) -> check ORAI (ORAICHAIN) -> ORAI (BSC)
@@ -1126,7 +1113,6 @@ export class UniversalSwapHelper {
         toSimulateAmount,
         client,
         ibcWasmContract,
-        getTokenOnOraichain,
         network
       );
     }
@@ -1138,7 +1124,6 @@ export class UniversalSwapHelper {
     denom: string,
     searchTokenName: string,
     direction: SwapDirection, // direction = to means we are filtering to tokens
-    getTokenOnOraichain: (coingeckoId: CoinGeckoId, isNative?: boolean) => TokenItemType,
     swapFromTokens: TokenItemType[],  
     swapToTokens: TokenItemType[]
   ) => {
@@ -1328,7 +1313,7 @@ export class UniversalSwapHelper {
    * @param offerInfo
    * @returns
    */
-  static generateMsgsSmartRouterV2withV3(routes, offerInfo, parseAssetInfoFromContractAddrOrDenom: (addressOrDenomToken: string) => AssetInfo) {
+  static generateMsgsSmartRouterV2withV3(routes, offerInfo) {
     return routes.map((route) => {
       let ops = [];
       let currTokenIn = offerInfo;

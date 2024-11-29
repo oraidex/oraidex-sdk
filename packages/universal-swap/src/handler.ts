@@ -39,7 +39,10 @@ import {
   OSMOSIS_ROUTER_CONTRACT,
   toDisplay,
   ChainIdEnum,
-  OraidexCommon
+  OraidexCommon,
+  checkValidateAddressWithNetwork,
+  getTokenOnOraichain,
+  findToTokenOnOraiBridge
 } from "@oraichain/oraidex-common";
 import { ethers } from "ethers";
 import { UniversalSwapHelper } from "./helper";
@@ -72,7 +75,7 @@ export class UniversalSwapHandler {
   ) {}
 
   private getTokenOnOraichain(coinGeckoId: CoinGeckoId, isNative?: boolean): TokenItemType {
-    const fromTokenOnOrai = this.oraidexCommon.getTokenOnOraichain(coinGeckoId, isNative);
+    const fromTokenOnOrai = getTokenOnOraichain(coinGeckoId, isNative);
     if (!fromTokenOnOrai) throw generateError(`Could not find token ${coinGeckoId} on Oraichain. Could not swap`);
     return fromTokenOnOrai;
   }
@@ -146,7 +149,7 @@ export class UniversalSwapHandler {
     let ibcReceiveAddr = "";
 
     if (this.swapData.recipientAddress) {
-      const isValidRecipient = this.oraidexCommon.checkValidateAddressWithNetwork(
+      const isValidRecipient = checkValidateAddressWithNetwork(
         this.swapData.recipientAddress,
         toChainId
       );
@@ -259,7 +262,7 @@ export class UniversalSwapHandler {
   ) {
     let transferAddress;
     if (recipientAddress) {
-      const isValidRecipient = this.oraidexCommon.checkValidateAddressWithNetwork(this.swapData.recipientAddress, toToken.originalChainId);
+      const isValidRecipient = checkValidateAddressWithNetwork(this.swapData.recipientAddress, toToken.originalChainId);
       if (!isValidRecipient.isValid) throw generateError("Recipient address invalid!");
       transferAddress =
         toToken.originalChainId === ChainIdEnum.TRON ? tronToEthAddress(recipientAddress) : recipientAddress;
@@ -284,7 +287,7 @@ export class UniversalSwapHandler {
     }
 
     // then find new _toToken in Oraibridge that have same coingeckoId with originalToToken.
-    const newToToken = this.oraidexCommon.findToTokenOnOraiBridge(originalToToken.coinGeckoId, originalToToken.chainId);
+    const newToToken = findToTokenOnOraiBridge(originalToToken.coinGeckoId, originalToToken.chainId);
 
     const toAddress = await this.config.cosmosWallet.getKeplrAddr(newToToken.chainId as CosmosChainId);
     if (!toAddress) throw generateError("Please login cosmos wallet!");
@@ -556,7 +559,6 @@ export class UniversalSwapHandler {
             fromAmount: this.swapData.fromAmount,
             relayerFee: this.swapData.relayerFee,
             routerClient,
-            getTokenOnOraichain: this.oraidexCommon.getTokenOnOraichain
           });
           if (!isSufficient)
             throw generateError(
@@ -579,7 +581,6 @@ export class UniversalSwapHandler {
         simulateAmount,
         client,
         this.getCwIcs20ContractAddr(),
-        this.oraidexCommon.getTokenOnOraichain,
         this.oraidexCommon.network
       );
     }
@@ -659,7 +660,6 @@ export class UniversalSwapHandler {
         simulateAmount,
         client,
         this.getCwIcs20ContractAddr(),
-        this.oraidexCommon.getTokenOnOraichain,
         this.oraidexCommon.network
       );
 
@@ -669,7 +669,6 @@ export class UniversalSwapHandler {
         fromAmount,
         relayerFee,
         routerClient,
-        getTokenOnOraichain: this.oraidexCommon.getTokenOnOraichain
       });
       if (!isSufficient)
         throw generateError(
@@ -728,7 +727,6 @@ export class UniversalSwapHandler {
       this.oraidexCommon.cosmosTokens,
       this.oraidexCommon.cosmosChains,
       this.oraidexCommon.evmChains,
-      this.oraidexCommon.checkValidateAddressWithNetwork,
       this.config.swapOptions,
       alphaSmartRoutes,
     );
@@ -759,7 +757,7 @@ export class UniversalSwapHandler {
     // check if from chain is noble, use ibc-wasm instead of ibc-hooks
     if (originalFromToken.chainId === "noble-1") {
       if (this.swapData.recipientAddress) {
-        const isValidRecipient = this.oraidexCommon.checkValidateAddressWithNetwork(this.swapData.recipientAddress, "Oraichain");
+        const isValidRecipient = checkValidateAddressWithNetwork(this.swapData.recipientAddress, "Oraichain");
 
         if (!isValidRecipient.isValid || isValidRecipient.network !== "Oraichain") {
           throw generateError("Recipient address invalid! Only support bridge to Oraichain");
@@ -810,7 +808,6 @@ export class UniversalSwapHandler {
           simulateAmount,
           client,
           this.getCwIcs20ContractAddr(),
-          this.oraidexCommon.getTokenOnOraichain,
           this.oraidexCommon.network
         );
       }
@@ -835,7 +832,7 @@ export class UniversalSwapHandler {
 
   async getToAddressUniversalSwap(evm, tron, recipientAddress, originalToToken) {
     if (this.swapData.recipientAddress) {
-      const isValidRecipient = this.oraidexCommon.checkValidateAddressWithNetwork(recipientAddress, originalToToken.chainId);
+      const isValidRecipient = checkValidateAddressWithNetwork(recipientAddress, originalToToken.chainId);
 
       if (!isValidRecipient.isValid) throw generateError("Recipient address invalid!");
 
@@ -859,7 +856,7 @@ export class UniversalSwapHandler {
     const toAddress = await this.getToAddressUniversalSwap(evm, tron, this.swapData.recipientAddress, originalToToken);
     const oraiAddress = await this.config.cosmosWallet.getKeplrAddr(COSMOS_CHAIN_IDS.ORAICHAIN);
     if (!oraiAddress) throw generateError("orai address and obridge address invalid!");
-    const isValidRecipientOraichain = this.oraidexCommon.checkValidateAddressWithNetwork(oraiAddress, COSMOS_CHAIN_IDS.ORAICHAIN);
+    const isValidRecipientOraichain = checkValidateAddressWithNetwork(oraiAddress, COSMOS_CHAIN_IDS.ORAICHAIN);
     if (!isValidRecipientOraichain.isValid) throw generateError("orai get address invalid!");
 
     let injAddress = undefined;
@@ -926,7 +923,6 @@ export class UniversalSwapHandler {
       this.oraidexCommon.cosmosTokens,
       this.oraidexCommon.cosmosChains,
       this.oraidexCommon.evmChains,
-      this.oraidexCommon.checkValidateAddressWithNetwork,
       this.config.swapOptions,
       alphaSmartRoutes,
     );
@@ -963,7 +959,6 @@ export class UniversalSwapHandler {
           originalToInfo: this.getTokenOnOraichain(originalToToken.coinGeckoId),
           originalAmount: toDisplay(subRelayerFee),
           routerClient: routerClient,
-          getTokenOnOraichain: this.oraidexCommon.getTokenOnOraichain,
           routerOption: {
             useIbcWasm: true
           },
@@ -1014,7 +1009,7 @@ export class UniversalSwapHandler {
     const { info: offerInfo } = parseTokenInfo(fromTokenOnOrai, _fromAmount);
     const msgConvertsFrom = UniversalSwapHelper.generateConvertErc20Cw20Message(this.swapData.amounts, fromTokenOnOrai, this.oraidexCommon.tokenMap, this.oraidexCommon.network);
 
-    const routes = UniversalSwapHelper.generateMsgsSmartRouterV2withV3([route], offerInfo, this.oraidexCommon.parseAssetInfoFromContractAddrOrDenom);
+    const routes = UniversalSwapHelper.generateMsgsSmartRouterV2withV3([route], offerInfo);
     const msgs: ExecuteInstruction[] = UniversalSwapHelper.buildSwapMsgsFromSmartRoute(
       routes,
       fromTokenOnOrai,
@@ -1054,7 +1049,7 @@ export class UniversalSwapHandler {
       const funds = handleSentFunds(offerSentFund, askSentFund);
       let to = undefined;
       if (this.swapData.recipientAddress && originalToToken.chainId === "Oraichain") {
-        const isValidRecipient = this.oraidexCommon.checkValidateAddressWithNetwork(
+        const isValidRecipient = checkValidateAddressWithNetwork(
           this.swapData.recipientAddress,
           this.swapData.originalToToken.chainId
         );
@@ -1080,7 +1075,7 @@ export class UniversalSwapHandler {
         if (hasRouteNotIsOraichain) throw "Only support routes in Oraichain!";
 
         const routesFlatten = UniversalSwapHelper.flattenSmartRouters(routes);
-        const generatedRoutes = UniversalSwapHelper.generateMsgsSmartRouterV2withV3(routesFlatten, offerInfo, this.oraidexCommon.parseAssetInfoFromContractAddrOrDenom);
+        const generatedRoutes = UniversalSwapHelper.generateMsgsSmartRouterV2withV3(routesFlatten, offerInfo);
 
         msgs = UniversalSwapHelper.buildSwapMsgsFromSmartRoute(
           generatedRoutes,

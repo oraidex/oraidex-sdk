@@ -315,7 +315,7 @@ export class ZapConsumer {
       zapInResult.tickUpperIndex = upperTick;
 
       // if the position is out range, call @processZapInWithSingleSide
-      if (lowerTick >= pool.pool.current_tick_index || upperTick < pool.pool.current_tick_index) {
+      if (lowerTick > pool.pool.current_tick_index || upperTick <= pool.pool.current_tick_index) {
         console.log("Position is out of range");
         const zapInSingleSideResult = await this.processZapInWithSingleSide({
           poolKey: pool.pool_key,

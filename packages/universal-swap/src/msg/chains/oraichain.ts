@@ -275,12 +275,12 @@ export class OraichainMsg extends ChainMsg {
         contract_call: {
           contract_address: this.TON_BRIDGE_ADAPTER,
           msg: toBinary({
-            bridge_to_ton: {
-              to: bridgeInfo.receiver,
-              denom: bridgeInfo.toToken,
-              timeout: Math.floor(new Date().getTime() / 1000) + IBC_TRANSFER_TIMEOUT,
-              recovery_addr: this.currentChainAddress
-            }
+            // bridge_to_ton: {
+            to: bridgeInfo.receiver,
+            denom: bridgeInfo.toToken,
+            timeout: Math.floor(new Date().getTime() / 1000) + IBC_TRANSFER_TIMEOUT,
+            recovery_addr: this.currentChainAddress
+            // }
           })
         }
       };

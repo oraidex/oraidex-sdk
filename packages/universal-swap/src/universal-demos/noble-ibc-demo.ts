@@ -1,6 +1,7 @@
 import "dotenv/config";
 import { CosmosWalletImpl } from "./offline-wallet";
 import { UniversalSwapHandler } from "../handler";
+// TODO: INIT ORAI COMMON HERE
 import { USDC_CONTRACT, cosmosTokens, generateError, toAmount } from "@oraichain/oraidex-common";
 
 const nobleUsdcToOraiUsdc = async (chainId: "noble-1" | "Oraichain") => {

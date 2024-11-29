@@ -5,10 +5,10 @@ import {
   CoinGeckoId,
   KWT_BSC_CONTRACT,
   USDC_CONTRACT,
-  cosmosTokens,
+  cosmosTokens, // TODO: INIT ORAI COMMON HERE
   flattenTokens,
   generateError,
-  getTokenOnOraichain,
+  getTokenOnOraichain, // TODO: INIT ORAI COMMON HERE
   toAmount
 } from "@oraichain/oraidex-common";
 

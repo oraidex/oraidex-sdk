@@ -1,4 +1,6 @@
 import { DirectSecp256k1HdWallet, OfflineSigner } from "@cosmjs/proto-signing";
+
+// TODO: INIT ORAI COMMON HERE
 import { CosmosChainId, CosmosWallet, cosmosTokens, generateError } from "@oraichain/oraidex-common";
 
 export class CosmosWalletImpl extends CosmosWallet {

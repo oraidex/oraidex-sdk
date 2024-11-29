@@ -1,6 +1,7 @@
 import "dotenv/config";
 import { CosmosWalletImpl } from "./offline-wallet";
 import { UniversalSwapHandler } from "../handler";
+// TODO: INIT ORAI COMMON HERE
 import { flattenTokens, generateError, toAmount } from "@oraichain/oraidex-common";
 import { UniversalSwapHelper } from "../helper";
 

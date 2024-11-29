@@ -20,6 +20,7 @@ import {
   MILKY_BSC_CONTRACT,
   TokenItemType,
   parseTokenInfoRawDenom,
+  // TODO: INIT ORAI COMMON HERE
   getTokenOnOraichain,
   isEthAddress,
   PAIRS,

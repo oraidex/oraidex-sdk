@@ -13,6 +13,6 @@
   "dependencies": {
     "@cosmjs/cosmwasm-stargate": "^0.32.4",
     "@oraichain/oraidex-contracts-sdk": "^1.0.54",
-    "@oraichain/oraidex-common": "^1.1.32"
+    "@oraichain/oraidex-common": "2.0.0"
   }
 }

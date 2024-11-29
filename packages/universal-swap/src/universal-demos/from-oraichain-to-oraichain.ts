@@ -3,8 +3,8 @@ import { CosmosWalletImpl } from "./offline-wallet";
 import { UniversalSwapHandler } from "../handler";
 import {
   ORAI_ETH_CONTRACT,
-  cosmosTokens,
-  flattenTokens,
+  cosmosTokens, // TODO: INIT ORAI COMMON HERE
+  flattenTokens, // TODO: INIT ORAI COMMON HERE
   generateError,
   toAmount,
   USDT_CONTRACT,

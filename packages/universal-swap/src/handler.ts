@@ -27,6 +27,7 @@ import {
   ethToTronAddress,
   network,
   EvmResponse,
+  // TODO: INIT ORAI COMMON HERE
   getTokenOnOraichain,
   getCosmosGasPrice,
   CoinGeckoId,

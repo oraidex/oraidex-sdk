@@ -33,7 +33,7 @@ import {
   WRAP_BNB_CONTRACT,
   WRAP_ETH_CONTRACT,
   WRAP_TRON_TRX_CONTRACT,
-  flattenTokens,
+  flattenTokens, // TODO: INIT ORAI COMMON HERE
   getTokenOnOraichain,
   getTokenOnSpecificChainId,
   ibcInfos,

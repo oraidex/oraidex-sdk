@@ -4,6 +4,7 @@ import {
   KWT_BSC_CONTRACT,
   MILKYBSC_ORAICHAIN_DENOM,
   MILKY_BSC_CONTRACT,
+  // TODO: INIT ORAI COMMON HERE
   flattenTokens
 } from "@oraichain/oraidex-common";
 

@@ -14,9 +14,8 @@ export type CoinGeckoPrices<T extends string> = {
 };
 
 export type TokenItemType = TokenItemTypeCommon & {
-  Icon: CoinIcon;
+  Icon?: CoinIcon;
   IconLight?: CoinIcon;
-  coinGeckoId: CoinGeckoId;
 };
 
 export type TokenInfo = TokenItemType & {

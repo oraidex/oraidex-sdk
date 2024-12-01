@@ -387,7 +387,30 @@ export const calcMaxAmount = ({
 };
 
 export const getOraidexCommonAttribute = <T>(
-  key: "cosmosTokens" | "tokenMap" | "assetInfoMap" | "oraichainTokens" | "flattenTokens"
+  key:
+    | "oraichainTokens"
+    | "otherChainTokens"
+    | "chainInfosCommon"
+    | "tokens"
+    | "flattenTokens"
+    | "tokenMap"
+    | "assetInfoMap"
+    | "cosmosTokens"
+    | "cw20Tokens"
+    | "cw20TokenMap"
+    | "evmTokens"
+    | "kawaiiTokens"
+    | "oraichainTokensWithIcon"
+    | "otherTokensWithIcon"
+    | "tokensWithIcon"
+    | "flattenTokensWithIcon"
+    | "oraichainNetwork"
+    | "chainInfos"
+    | "network"
+    | "evmChains"
+    | "cosmosChains"
+    | "chainInfosWithIcon"
+    | "celestiaNetwork"
 ): T => {
   if (!OraidexCommon.instance) throw new Error("OraidexCommon is not loaded");
   return OraidexCommon.instance[key] as T;
@@ -518,11 +541,7 @@ export const parseTxToMsgsAndEvents = (indexedTx: Tx, eventsParser?: (events: re
   });
 };
 
-export const validateAndIdentifyCosmosAddress = (
-  address: string,
-  network: string,
-  cosmosChains: CustomChainInfo[]
-) => {
+export const validateAndIdentifyCosmosAddress = (address: string, network: string, cosmosChains: CustomChainInfo[]) => {
   try {
     const cosmosAddressRegex = /^[a-z]{1,6}[0-9a-z]{0,64}$/;
     if (!cosmosAddressRegex.test(address)) {

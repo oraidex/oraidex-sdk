@@ -4,7 +4,8 @@ import {
   calculateTimeoutTimestamp,
   generateError,
   IBC_TRANSFER_TIMEOUT,
-  IBC_WASM_CONTRACT
+  IBC_WASM_CONTRACT,
+  TON_CONTRACT
 } from "@oraichain/oraidex-common";
 import { Action } from "@oraichain/osor-api-contracts-sdk/src/EntryPoint.types";
 import { OsmosisMsg } from "../../build/msg";
@@ -56,7 +57,7 @@ describe("test build oraichain msg", () => {
 
   it.each<[BridgeMsgInfo, Action, string]>([
     [
-      undefined,
+      undefined as any,
       {
         transfer: {
           to_address: receiver
@@ -215,7 +216,7 @@ describe("test build oraichain msg", () => {
               sourceChannel: bridgeInfo.sourceChannel,
               sourcePort: bridgeInfo.sourcePort,
               receiver: bridgeInfo.receiver,
-              memo: bridgeInfo.memo,
+              memo: bridgeInfo.memo as string,
               recoverAddress: currentAddress
             }
           },
@@ -312,7 +313,7 @@ describe("test build oraichain msg", () => {
               sourceChannel: bridgeInfo.sourceChannel,
               sourcePort: bridgeInfo.sourcePort,
               receiver: bridgeInfo.receiver,
-              memo: bridgeInfo.memo,
+              memo: bridgeInfo.memo as string,
               recoverAddress: currentAddress
             }
           },
@@ -328,7 +329,7 @@ describe("test build oraichain msg", () => {
       chainId: "Oraichain",
       tokenIn: "factory/orai1wuvhex9xqs3r539mvc6mtm7n20fcj3qr2m0y9khx6n5vtlngfzes3k0rq9/ton",
       tokenInAmount: "999000",
-      tokenOut: "ton",
+      tokenOut: TON_CONTRACT,
       tokenOutAmount: "999000",
       tokenOutChainId: "ton",
       actions: [
@@ -337,7 +338,7 @@ describe("test build oraichain msg", () => {
           protocol: "Bridge",
           tokenIn: "factory/orai1wuvhex9xqs3r539mvc6mtm7n20fcj3qr2m0y9khx6n5vtlngfzes3k0rq9/ton",
           tokenInAmount: "999000",
-          tokenOut: "ton",
+          tokenOut: TON_CONTRACT,
           tokenOutAmount: "999000",
           tokenOutChainId: "ton",
           bridgeInfo: {
@@ -358,7 +359,7 @@ describe("test build oraichain msg", () => {
       receiver: receiver,
       timeout: +calculateTimeoutTimestamp(IBC_TRANSFER_TIMEOUT),
       fromToken: "factory/orai1wuvhex9xqs3r539mvc6mtm7n20fcj3qr2m0y9khx6n5vtlngfzes3k0rq9/ton",
-      toToken: "ton",
+      toToken: TON_CONTRACT,
       fromChain: "Oraichain",
       toChain: "ton"
     });

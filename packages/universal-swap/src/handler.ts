@@ -818,8 +818,8 @@ export class UniversalSwapHandler {
       relayerFee,
       simulateAmount
     } = this.swapData;
-    const { evm: metamaskAddress, tron: tronAddress, ton: tonAddress } = sender;
-    if (!metamaskAddress && !tronAddress) throw generateError("Cannot call evm swap if the evm address is empty");
+    const { ton: tonAddress } = sender;
+    if (!tonAddress) throw generateError("Cannot call ton swap if the ton address is empty");
     if (!this.config.cosmosWallet) throw generateError("Cannot transfer and swap if cosmos wallet is not initialized");
     // we get cosmwasm client on Oraichain because this is checking channel balance on Oraichain
     const { client } = await this.config.cosmosWallet.getCosmWasmClient(

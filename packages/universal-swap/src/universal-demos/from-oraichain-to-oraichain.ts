@@ -35,7 +35,6 @@ const oraichainToOraichain = async (chainId: "Oraichain") => {
     amount: toAmount(fromAmount, originalToToken.decimals).toString()
   });
 
-  console.log("expected amount: ", smartRoutes.returnAmount);
   const universalHandler = new UniversalSwapHandler(
     {
       originalFromToken,
@@ -45,12 +44,18 @@ const oraichainToOraichain = async (chainId: "Oraichain") => {
         relayerAmount: "0",
         relayerDecimals: 6
       },
-      simulatePrice: "1",
+      simulatePrice: "1000000",
       fromAmount,
       simulateAmount: toAmount(fromAmount, originalToToken.decimals).toString(),
       userSlippage: 0.01
     },
-    { cosmosWallet: wallet, swapOptions: {} }
+    {
+      cosmosWallet: wallet,
+      swapOptions: {
+        isIbcWasm: false,
+        isAlphaIbcWasm: true
+      }
+    }
   );
 
   try {

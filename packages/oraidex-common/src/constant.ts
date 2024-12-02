@@ -130,6 +130,23 @@ export const TON_CONTRACT = "EQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAM9c";
 export const TON_BRIDGE_ADAPTER = "EQC-aFP0rJXwTgKZQJPbPfTSpBFc8wxOgKHWD9cPvOl_DnaY";
 export const TON_LIGHT_CLIENT = "EQDzy_POlimFDyzrHd3OQsb9sZCngyG3O7Za4GRFzM-rrO93";
 export const TON_WHITE_LIST = "EQATDM6mfPZjPDMD9TVa6D9dlbmAKY5w6xOJiTXJ9Nqj_dsu";
+/**
+ * TODO: This is the object containing the hardcoded addresses of cw20 TON Network. They are obtained from the formula below. We need to add more when we support new TON20.
+ * const client = await getTonClient();
+ * const jettonMinter = JettonMinter.createFromAddress(
+ *     Address.parse(TON20 contractAddress)  // exam: "EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs" => TON20_USDT_CONTRACT
+ * );
+ * const jettonMinterContract = client.open(jettonMinter);
+ * const jettonWalletAddress = await jettonMinterContract.getWalletAddress(
+ *    Address.parse("orai159l8l9c5ckhqpuwdfgs9p4v599nqt3cjlfahalmtrhfuncnec2ms5mz60e")
+ * );
+ */
+export const JETTONS_ADDRESS = {
+  [TON_CONTRACT]: TON_CONTRACT,
+  [TON20_USDT_CONTRACT]: "EQANiP_ggkS0lJbR12xmDNT7hgqphdnVG0cCiJN6BN35Z498",
+  [HMSTR_TON_CONTRACT]: "EQC6hNI8R02lWfTV7wKXo9zueMoUP7ZBY4KZp5fkvN_Ad9Um",
+  [jUSDC_TON_CONTRACT]: "EQAacZPtQpnIHS1PlQgVaceb_I4v2HE3rvrZC91ynSRqXd9d"
+};
 export const TON_NATIVE_DENOM = "ton";
 
 export const TON_BRIDGE_ADAPTER_ORAICHAIN = "orai159l8l9c5ckhqpuwdfgs9p4v599nqt3cjlfahalmtrhfuncnec2ms5mz60e";

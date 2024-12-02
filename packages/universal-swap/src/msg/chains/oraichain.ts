@@ -13,6 +13,7 @@ import {
   isCosmosChain,
   isEthAddress,
   isTonChain,
+  JETTONS_ADDRESS,
   NetworkChainId
 } from "@oraichain/oraidex-common";
 import { toBinary } from "@cosmjs/cosmwasm-stargate";
@@ -168,13 +169,16 @@ export class OraichainMsg extends ChainMsg {
 
     // case 2: bridge to ton
     if (isTonChain(bridgeInfo.toChain)) {
+      const jettonToToken = JETTONS_ADDRESS[bridgeInfo.toToken];
+      if (!jettonToToken) throw `getProtoForPostAction: jetton address of ${bridgeInfo.toToken} not found!`;
+
       return {
         contractCall: {
           contractAddress: this.TON_BRIDGE_ADAPTER,
           msg: toBinary({
             bridge_to_ton: {
               to: bridgeInfo.receiver,
-              denom: bridgeInfo.toToken,
+              denom: jettonToToken,
               timeout: Math.floor(new Date().getTime() / 1000) + IBC_TRANSFER_TIMEOUT,
               recovery_addr: this.currentChainAddress
             }
@@ -271,13 +275,16 @@ export class OraichainMsg extends ChainMsg {
 
     // case 2: bridge to ton
     if (isTonChain(bridgeInfo.toChain)) {
+      const jettonToToken = JETTONS_ADDRESS[bridgeInfo.toToken];
+      if (!jettonToToken) throw `getPostAction: jetton address of ${bridgeInfo.toToken} not found!`;
+
       return {
         contract_call: {
           contract_address: this.TON_BRIDGE_ADAPTER,
           msg: toBinary({
             bridge_to_ton: {
               to: bridgeInfo.receiver,
-              denom: bridgeInfo.toToken,
+              denom: jettonToToken,
               timeout: Math.floor(new Date().getTime() / 1000) + IBC_TRANSFER_TIMEOUT,
               recovery_addr: this.currentChainAddress
             }
@@ -487,6 +494,8 @@ export class OraichainMsg extends ChainMsg {
       contractAddr = ibcWasmContractAddress;
     } else if (isTonChain(bridgeInfo.toChain)) {
       contractAddr = this.TON_BRIDGE_ADAPTER;
+      const jettonToToken = JETTONS_ADDRESS[bridgeInfo.toToken];
+      if (!jettonToToken) throw `jetton address of ${bridgeInfo.toToken} not found!`;
 
       msg = {
         to: bridgeInfo.receiver,

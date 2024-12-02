@@ -4,8 +4,8 @@ import {
   KWT_BSC_CONTRACT,
   MILKYBSC_ORAICHAIN_DENOM,
   MILKY_BSC_CONTRACT,
-  // TODO: INIT ORAI COMMON HERE
-  // flattenTokens
+  TokenItemType,
+  getOraidexCommonAttribute,
 } from "@oraichain/oraidex-common";
 
 export const evmDenomsMap = {
@@ -50,3 +50,27 @@ export const notAllowSwapToChainIds = [
 //     !notAllowBEP20Token.includes(token?.contractAddress)
 //   );
 // });
+
+export const getSwapFromTokens = () => {
+  const flattenTokens = getOraidexCommonAttribute<TokenItemType[]>('flattenTokens');
+  return flattenTokens.filter((token) => {
+    return (
+      !notAllowDenom.includes(token?.denom) &&
+      !notAllowSwapCoingeckoIds.includes(token.coinGeckoId) &&
+      !notAllowSwapFromChainIds.includes(token.chainId) &&
+      !notAllowBEP20Token.includes(token?.contractAddress)
+    );
+  });
+}
+
+export const getSwapToTokens = () => {
+  const flattenTokens = getOraidexCommonAttribute<TokenItemType[]>('flattenTokens');
+  return flattenTokens.filter((token) => {
+    return (
+      !notAllowDenom.includes(token?.denom) &&
+      !notAllowSwapCoingeckoIds.includes(token.coinGeckoId) &&
+      !notAllowSwapToChainIds.includes(token.chainId) &&
+      !notAllowBEP20Token.includes(token?.contractAddress)
+    );
+  });
+}

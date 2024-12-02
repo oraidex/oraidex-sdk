@@ -102,6 +102,8 @@ export interface NetworkConfig {
   bid_pool: string;
   multicall: string;
   pool_v3: string;
+  staking_oraix: string,
+  indexer_v3: string;
 }
 
 export type CoinIcon = any;

@@ -4,6 +4,7 @@ import { chainIcons, mapListWithIcon, tokensIcon } from "./config";
 import {
   AMM_V3_CONTRACT,
   CONVERTER_CONTRACT,
+  CW20_STAKING_CONTRACT,
   FACTORY_CONTRACT,
   FACTORY_V2_CONTRACT,
   MIXED_ROUTER,
@@ -19,7 +20,7 @@ import { CustomChainInfo, NetworkConfig } from "./network";
 export class OraidexCommon {
   static instance: OraidexCommon;
 
-  constructor(private readonly tokenConfig: TokenItems, private readonly chainConfig: ChainInfos) {}
+  constructor(public readonly tokenConfig: TokenItems, public readonly chainConfig: ChainInfos) {}
 
   static async load(): Promise<OraidexCommon> {
     if (!OraidexCommon.instance) {
@@ -146,21 +147,22 @@ export class OraidexCommon {
       ...this.oraichainNetwork,
       prefix: this.oraichainNetwork.bech32Config.bech32PrefixAccAddr,
       denom: "orai",
-      coinType: this.oraichainNetwork.bip44.coinType as any,
+      coinType: this.oraichainNetwork.bip44.coinType,
       fee: { gasPrice: "0.00506", amount: "1518", gas: "2000000" }, // 0.000500 ORAI
       factory: FACTORY_CONTRACT,
       factory_v2: FACTORY_V2_CONTRACT,
       router: ROUTER_V2_CONTRACT,
-      mixer_router: MIXED_ROUTER,
       oracle: ORACLE_CONTRACT,
       staking: STAKING_CONTRACT,
       rewarder: REWARDER_CONTRACT,
       converter: CONVERTER_CONTRACT,
       oraidex_listing: ORAIDEX_LISTING_CONTRACT,
-      multicall: MULTICALL_CONTRACT,
       bid_pool: ORAIDEX_BID_POOL_CONTRACT,
+      staking_oraix: CW20_STAKING_CONTRACT,
+      multicall: MULTICALL_CONTRACT,
       explorer: "https://scan.orai.io",
-      pool_v3: AMM_V3_CONTRACT
+      pool_v3: AMM_V3_CONTRACT,
+      indexer_v3: "https://ammv3-indexer.oraidex.io/"
     };
   }
 

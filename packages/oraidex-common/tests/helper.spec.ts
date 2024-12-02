@@ -118,7 +118,7 @@ describe("should helper functions in helper run exactly", () => {
       const token = oraidexCommon.cosmosTokens.find(
         (token) => token.coinGeckoId === expectedToken && token.chainId === "Oraichain"
       )!;
-      expect(getTokenOnOraichain(coingeckoId)).toEqual(token);
+      expect(getTokenOnOraichain(coingeckoId, oraidexCommon.oraichainTokens)).toEqual(token);
     } catch (error) {
       expect(error).toEqual(new Error(err));
     }
@@ -323,7 +323,7 @@ describe("should helper functions in helper run exactly", () => {
   ])(
     "test-findToTokenOnOraiBridge-when-universalSwap-from-Oraichain-to%s",
     (fromCoingeckoId, toChainId, expectedToCoinGeckoId, expectedToChainId) => {
-      const toTokenTransfer = findToTokenOnOraiBridge(fromCoingeckoId, toChainId);
+      const toTokenTransfer = findToTokenOnOraiBridge(fromCoingeckoId, toChainId, oraidexCommon.cosmosTokens);
       expect(toTokenTransfer!.coinGeckoId).toEqual(expectedToCoinGeckoId);
       expect(toTokenTransfer!.chainId).toEqual(expectedToChainId);
     }
@@ -333,7 +333,7 @@ describe("should helper functions in helper run exactly", () => {
     ["cosmos", "cosmoshub-4", undefined],
     ["osmosis", "osmosis-1", undefined]
   ])("test-findToTokenOnOraiBridge-expect-undefined", (fromCoingeckoId, toChainId) => {
-    const toTokenTransfer = findToTokenOnOraiBridge(fromCoingeckoId, toChainId);
+    const toTokenTransfer = findToTokenOnOraiBridge(fromCoingeckoId, toChainId, oraidexCommon.cosmosTokens);
     expect(toTokenTransfer).toEqual(undefined);
   });
 
@@ -348,7 +348,7 @@ describe("should helper functions in helper run exactly", () => {
     ["wbnb", "0x38", false],
     ["wbnb", "Oraichain", true]
   ])("test-getTokenOnSpecificChainId", (coingeckoId, chainId, expectedResult) => {
-    const result = getTokenOnSpecificChainId(coingeckoId, chainId);
+    const result = getTokenOnSpecificChainId(coingeckoId, chainId, oraidexCommon.flattenTokens);
     expect(result === undefined).toEqual(expectedResult);
   });
 
@@ -361,7 +361,7 @@ describe("should helper functions in helper run exactly", () => {
       const token = oraidexCommon.cosmosTokens.find(
         (token) => token.coinGeckoId === expectedToken && token.chainId === "Oraichain"
       )!;
-      expect(getTokenOnOraichain(coingeckoId)).toEqual(token);
+      expect(getTokenOnOraichain(coingeckoId, oraidexCommon.oraichainTokens)).toEqual(token);
     } catch (error) {
       expect(error).toEqual(new Error(err));
     }
@@ -703,7 +703,7 @@ describe("should helper functions in helper run exactly", () => {
     ["orai", { native_token: { denom: "orai" } }],
     [BTC_CONTRACT, { token: { contract_addr: BTC_CONTRACT } }]
   ])("test-generateConvertErc20Cw20Message-should-return-correct-message", (addressOrDenom, expectedMessage) => {
-    const result = parseAssetInfoFromContractAddrOrDenom(addressOrDenom);
+    const result = parseAssetInfoFromContractAddrOrDenom(addressOrDenom, oraidexCommon.cosmosTokens);
     expect(result).toEqual(expectedMessage);
   });
 });

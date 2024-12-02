@@ -178,11 +178,11 @@ export const calculateMinReceive = (
   ).toString();
 };
 
-export const parseAssetInfoFromContractAddrOrDenom = (addressOrDenomToken: string) => {
+export const parseAssetInfoFromContractAddrOrDenom = (addressOrDenomToken: string, cosmosTokens: TokenItemType[]) => {
   if (!addressOrDenomToken) return null;
   const addressOrDenomLowerCase = addressOrDenomToken.toLowerCase();
 
-  const cosmosTokens = getOraidexCommonAttribute<TokenItemType[]>("cosmosTokens");
+  // const cosmosTokens = getOraidexCommonAttribute<TokenItemType[]>("cosmosTokens");
   const tokenItem = cosmosTokens.find((cosmosToken) => {
     return !cosmosToken.contractAddress
       ? cosmosToken.denom.toLowerCase() === addressOrDenomLowerCase
@@ -224,8 +224,8 @@ export const proxyContractInfo: { [x: string]: { wrapNativeAddr: string; routerA
   }
 };
 
-export const findToTokenOnOraiBridge = (fromCoingeckoId: CoinGeckoId, toNetwork: string) => {
-  const cosmosTokens = getOraidexCommonAttribute<TokenItemType[]>("cosmosTokens");
+export const findToTokenOnOraiBridge = (fromCoingeckoId: CoinGeckoId, toNetwork: string, cosmosTokens: TokenItemType[]) => {
+  // const cosmosTokens = getOraidexCommonAttribute<TokenItemType[]>("cosmosTokens");
   return cosmosTokens.find(
     (t) =>
       t.chainId === "oraibridge-subnet-2" &&
@@ -240,8 +240,8 @@ export const parseAssetInfo = (assetInfo: AssetInfo): string => {
   return assetInfo.token.contract_addr;
 };
 
-export const getTokenOnSpecificChainId = (coingeckoId: CoinGeckoId, chainId: string): TokenItemType | undefined => {
-  const flattenTokens = getOraidexCommonAttribute<TokenItemType[]>("flattenTokens");
+export const getTokenOnSpecificChainId = (coingeckoId: CoinGeckoId, chainId: string, flattenTokens: TokenItemType[]): TokenItemType | undefined => {
+  // const flattenTokens = getOraidexCommonAttribute<TokenItemType[]>("flattenTokens");
   return flattenTokens.find((t) => t.coinGeckoId === coingeckoId && t.chainId === chainId);
 };
 
@@ -252,8 +252,8 @@ export const getTokenOnSpecificChainId = (coingeckoId: CoinGeckoId, chainId: str
  * @returns token on oraichain
  */
 
-export const getTokenOnOraichain = (coingeckoId: CoinGeckoId, isNative?: boolean) => {
-  const oraichainTokens = getOraidexCommonAttribute<TokenItemType[]>("oraichainTokens");
+export const getTokenOnOraichain = (coingeckoId: CoinGeckoId, oraichainTokens: TokenItemType[], isNative?: boolean) => {
+  // const oraichainTokens = getOraidexCommonAttribute<TokenItemType[]>("oraichainTokens");
   const filterOraichainToken = oraichainTokens.filter((orai) => orai.coinGeckoId === coingeckoId);
   if (!filterOraichainToken.length) return undefined;
   if (filterOraichainToken.length === 1) return filterOraichainToken[0];
@@ -386,41 +386,41 @@ export const calcMaxAmount = ({
   return finalAmount;
 };
 
-export const getOraidexCommonAttribute = <T>(
-  key:
-    | "oraichainTokens"
-    | "otherChainTokens"
-    | "chainInfosCommon"
-    | "tokens"
-    | "flattenTokens"
-    | "tokenMap"
-    | "assetInfoMap"
-    | "cosmosTokens"
-    | "cw20Tokens"
-    | "cw20TokenMap"
-    | "evmTokens"
-    | "kawaiiTokens"
-    | "oraichainTokensWithIcon"
-    | "otherTokensWithIcon"
-    | "tokensWithIcon"
-    | "flattenTokensWithIcon"
-    | "oraichainNetwork"
-    | "chainInfos"
-    | "network"
-    | "evmChains"
-    | "cosmosChains"
-    | "chainInfosWithIcon"
-    | "celestiaNetwork"
-): T => {
-  if (!OraidexCommon.instance) throw new Error("OraidexCommon is not loaded");
-  return OraidexCommon.instance[key] as T;
-};
-export const getTotalUsd = (amounts: AmountDetails, prices: CoinGeckoPrices<string>): number => {
+// export const getOraidexCommonAttribute = <T>(
+//   key:
+//     | "oraichainTokens"
+//     | "otherChainTokens"
+//     | "chainInfosCommon"
+//     | "tokens"
+//     | "flattenTokens"
+//     | "tokenMap"
+//     | "assetInfoMap"
+//     | "cosmosTokens"
+//     | "cw20Tokens"
+//     | "cw20TokenMap"
+//     | "evmTokens"
+//     | "kawaiiTokens"
+//     | "oraichainTokensWithIcon"
+//     | "otherTokensWithIcon"
+//     | "tokensWithIcon"
+//     | "flattenTokensWithIcon"
+//     | "oraichainNetwork"
+//     | "chainInfos"
+//     | "network"
+//     | "evmChains"
+//     | "cosmosChains"
+//     | "chainInfosWithIcon"
+//     | "celestiaNetwork"
+// ): T => {
+//   if (!OraidexCommon.instance) throw new Error("OraidexCommon is not loaded");
+//   return OraidexCommon.instance[key] as T;
+// };
+export const getTotalUsd = (amounts: AmountDetails, prices: CoinGeckoPrices<string>, tokenMap: Record<string, TokenItemType>): number => {
   let usd = 0;
 
-  const tokenMap = getOraidexCommonAttribute<{
-    [k: string]: TokenItemType;
-  }>("tokenMap");
+  // const tokenMap = getOraidexCommonAttribute<{
+  //   [k: string]: TokenItemType;
+  // }>("tokenMap");
   for (const denom in amounts) {
     const tokenInfo = tokenMap[denom];
     if (!tokenInfo) continue;
@@ -430,23 +430,23 @@ export const getTotalUsd = (amounts: AmountDetails, prices: CoinGeckoPrices<stri
   return usd;
 };
 
-export const toSubDisplay = (amounts: AmountDetails, tokenInfo: TokenItemType): number => {
+export const toSubDisplay = (amounts: AmountDetails, tokenInfo: TokenItemType, tokenMap: Record<string, TokenItemType>): number => {
   const subAmounts = getSubAmountDetails(amounts, tokenInfo);
-  return toSumDisplay(subAmounts);
+  return toSumDisplay(subAmounts, tokenMap);
 };
 
-export const toSubAmount = (amounts: AmountDetails, tokenInfo: TokenItemType): bigint => {
-  const displayAmount = toSubDisplay(amounts, tokenInfo);
+export const toSubAmount = (amounts: AmountDetails, tokenInfo: TokenItemType, tokenMap: Record<string, TokenItemType>): bigint => {
+  const displayAmount = toSubDisplay(amounts, tokenInfo, tokenMap);
   return toAmount(displayAmount, tokenInfo.decimals);
 };
 
-export const toSumDisplay = (amounts: AmountDetails): number => {
+export const toSumDisplay = (amounts: AmountDetails, tokenMap: Record<string, TokenItemType>): number => {
   // get all native balances that are from oraibridge (ibc/...)
   let amount = 0;
 
-  const tokenMap = getOraidexCommonAttribute<{
-    [k: string]: TokenItemType;
-  }>("tokenMap");
+  // const tokenMap = getOraidexCommonAttribute<{
+  //   [k: string]: TokenItemType;
+  // }>("tokenMap");
   for (const denom in amounts) {
     // update later
     const balance = amounts[denom];

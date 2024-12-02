@@ -319,11 +319,11 @@ export const generateMessageSwapOperation = (
         const { actions } = path;
         for (const action of actions) {
           const { swapInfo, tokenIn } = action;
-          let currTokenIn = parseAssetInfoFromContractAddrOrDenom(tokenIn);
+          let currTokenIn = parseAssetInfoFromContractAddrOrDenom(tokenIn, oraidexCommon.cosmosTokens);
           for (const swap of swapInfo) {
             const { poolId } = swap;
             const [tokenX, tokenY, fee, tickSpacing] = poolId.split("-");
-            const tokenOut = parseAssetInfoFromContractAddrOrDenom(swap.tokenOut);
+            const tokenOut = parseAssetInfoFromContractAddrOrDenom(swap.tokenOut, oraidexCommon.cosmosTokens);
             if (tokenX && tokenY && fee && tickSpacing) {
               operations.push({
                 swap_v3: {

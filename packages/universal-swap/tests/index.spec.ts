@@ -492,6 +492,7 @@ describe("test universal swap handler functions", () => {
       // TODO: run tests without mocking to simulate actual swap logic
       vi.spyOn(UniversalSwapHelper, "simulateSwap").mockResolvedValue({ amount: relayerFeeAmount });
       const result = await checkFeeRelayer({
+        oraichainTokens: oraidexCommon.oraichainTokens,
         originalFromToken: originalFromToken as TokenItemType,
         fromAmount: 1,
         relayerFee: {
@@ -514,6 +515,7 @@ describe("test universal swap handler functions", () => {
       // TODO: run tests without mocking to simulate actual swap
       vi.spyOn(UniversalSwapHelper, "simulateSwap").mockResolvedValue({ amount: mockSimulateAmount });
       const result = await checkFeeRelayerNotOrai({
+        oraichainTokens: oraidexCommon.oraichainTokens,
         fromTokenInOrai: originalFromToken as TokenItemType,
         fromAmount: 1,
         relayerAmount: mockRelayerFee,
@@ -665,7 +667,8 @@ describe("test universal swap handler functions", () => {
         amount,
         client,
         IBC_WASM_CONTRACT_TEST,
-        oraidexCommon.network
+        oraidexCommon.network,
+        oraidexCommon.oraichainTokens
       );
       expect(willThrow).toEqual(false);
     } catch (error) {
@@ -751,7 +754,8 @@ describe("test universal swap handler functions", () => {
           simulateAmount,
           ics20Contract.client,
           ics20Contract.contractAddress,
-          oraidexCommon.network
+          oraidexCommon.network,
+          oraidexCommon.oraichainTokens
         );
         expect(willThrow).toEqual(false);
       } catch (error) {
@@ -1213,7 +1217,9 @@ describe("test universal swap handler functions", () => {
         originalFromInfo: oraichainTokens[0],
         originalToInfo: oraichainTokens[1],
         originalAmount: 0,
-        routerClient: new OraiswapRouterQueryClient(client, "")
+        routerClient: new OraiswapRouterQueryClient(client, ""),
+        flattenTokens: oraidexCommon.flattenTokens,
+        oraichainTokens: oraidexCommon.oraichainTokens,
       });
       expect(simulateData.amount).toEqual(expectedSimulateAmount);
     }

@@ -16,7 +16,7 @@ const cosmosToOraichain = async (
   const cosmosTokens = oraidexCommon.cosmosTokens;
   const originalFromToken = cosmosTokens.find((t) => t.chainId === chainId);
 
-  const originalToToken = getTokenOnOraichain(toTokenCoingeckoId);
+  const originalToToken = getTokenOnOraichain(toTokenCoingeckoId, oraidexCommon.oraichainTokens);
 
   if (!originalFromToken) throw generateError("Could not find original from token");
   if (!originalToToken) throw generateError("Could not find original to token");

@@ -18,7 +18,7 @@ import {
   NEUTARO_ORAICHAIN_DENOM as NEUTARO_ADDRESS,
   OCH_CONTRACT
 } from "./constant";
-import { getOraidexCommonAttribute, parseAssetInfo } from "./helper";
+import { parseAssetInfo } from "./helper";
 import { TokenItemType } from "./token";
 import uniq from "lodash/uniq";
 import flatten from "lodash/flatten";
@@ -153,10 +153,10 @@ export const isFactoryV1 = (assetInfos: [AssetInfo, AssetInfo]): boolean => {
   return pair.factoryV1 ?? false;
 };
 
-export const getPoolTokens = (): TokenItemType[] => {
-  const assetInfoMap = getOraidexCommonAttribute<{
-    [k: string]: TokenItemType;
-  }>("assetInfoMap");
+export const getPoolTokens = (assetInfoMap: Record<string, TokenItemType>): TokenItemType[] => {
+  // const assetInfoMap = getOraidexCommonAttribute<{
+  //   [k: string]: TokenItemType;
+  // }>("assetInfoMap");
   // @ts-ignore
   return uniq(flatten(PAIRS.map((pair) => pair.asset_infos)).map((info) => assetInfoMap[parseAssetInfo(info)]));
 };

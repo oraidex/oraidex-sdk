@@ -1,4 +1,4 @@
-import { ChainInfos, MULTICALL_CONTRACT, OraiCommon, TokenItems } from "@oraichain/common";
+import { ChainInfos, CoinType, MULTICALL_CONTRACT, OraiCommon, TokenItems } from "@oraichain/common";
 import { flatten } from "lodash";
 import { chainIcons, mapListWithIcon, tokensIcon } from "./config";
 import {
@@ -147,7 +147,7 @@ export class OraidexCommon {
       ...this.oraichainNetwork,
       prefix: this.oraichainNetwork.bech32Config.bech32PrefixAccAddr,
       denom: "orai",
-      coinType: this.oraichainNetwork.bip44.coinType,
+      coinType: this.oraichainNetwork.bip44.coinType as CoinType,
       fee: { gasPrice: "0.00506", amount: "1518", gas: "2000000" }, // 0.000500 ORAI
       factory: FACTORY_CONTRACT,
       factory_v2: FACTORY_V2_CONTRACT,
@@ -162,7 +162,8 @@ export class OraidexCommon {
       multicall: MULTICALL_CONTRACT,
       explorer: "https://scan.orai.io",
       pool_v3: AMM_V3_CONTRACT,
-      indexer_v3: "https://ammv3-indexer.oraidex.io/"
+      indexer_v3: "https://ammv3-indexer.oraidex.io/",
+      mixer_router: MIXED_ROUTER
     };
   }
 

@@ -53,6 +53,7 @@ import {
   getTokenOnOraichain,
   parseAssetInfoFromContractAddrOrDenom,
   IBC_TRANSFER_TIMEOUT,
+  CustomChainInfo,
   // cosmosChains
 } from "@oraichain/oraidex-common";
 import {
@@ -90,7 +91,6 @@ import { Affiliate } from "@oraichain/oraidex-contracts-sdk/build/OraiswapMixedR
 import { generateMemoSwap, generateMsgSwap } from "./msg/msgs";
 import { fromBech32, toBech32 } from "@cosmjs/encoding";
 import { COSMOS_CHAIN_IDS, CosmosChainId, EVM_CHAIN_IDS, EvmChainId } from "@oraichain/common/build/constants";
-import { CustomChainInfo } from "@oraichain/common/build/chain-infos";
 
 const caseSwapNativeAndWrapNative = (fromCoingecko, toCoingecko) => {
   const arr = ["ethereum", "weth"];

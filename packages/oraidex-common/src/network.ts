@@ -1,11 +1,4 @@
-import { Bech32Config, ChainInfo, Currency, FeeCurrency } from "@keplr-wallet/types";
-import {
-  BridgeAppCurrency,
-  CoinType,
-  CustomChainInfo as CustomChainInfoCommon,
-  NetworkChainId,
-  NetworkType
-} from "@oraichain/common";
+import { CoinType } from "@oraichain/common";
 
 // Incase when a new supported token is added, the coingecko id should be added here
 export type CoinGeckoId =
@@ -60,32 +53,6 @@ export interface NetworkConfig {
   staking_oraix: string;
   indexer_v3: string;
 }
-
-// Custom more: hiddenInUI, Icon + IconLight
-// export type CustomChainInfo = CustomChainInfoCommon & {
-//   readonly chainId: NetworkChainId;
-//   readonly chainName: string;
-//   readonly Icon?: any;
-//   readonly IconLight?: any;
-//   readonly bip44: {
-//     coinType: CoinType;
-//   };
-//   readonly hideInUI?: boolean;
-//   readonly networkType: NetworkType;
-//   readonly coinType: CoinType;
-//   readonly bech32Config?: Bech32Config;
-//   readonly rest?: string; // optional, rest api tron and lcd for cosmos
-//   readonly stakeCurrency?: Currency;
-//   readonly feeCurrencies?: FeeCurrency[];
-//   readonly currencies: BridgeAppCurrency[];
-//   readonly txExplorer?: {
-//     readonly name: string;
-//     readonly txUrl: string;
-//     readonly accountUrl?: string;
-//   };
-//   readonly chainLogoPng?: string;
-//   readonly chainLogoSvg?: string;
-// };
 
 export const defaultBech32Config = (
   mainPrefix: string,

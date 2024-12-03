@@ -1,6 +1,6 @@
 {
   "name": "@oraichain/oraidex-universal-swap",
-  "version": "1.2.0-beta9",
+  "version": "1.2.0-beta10",
   "main": "build/index.js",
   "files": [
     "build/"
@@ -11,7 +11,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@oraichain/oraidex-common": "2.0.0-beta.9",
+    "@oraichain/oraidex-common": "2.0.0-beta.10",
     "@oraichain/oraidex-contracts-sdk": "^1.0.49",
     "bech32": "1.1.4",
     "ethers": "^5.0.15",

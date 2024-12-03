@@ -222,6 +222,3 @@ export const mapListWithIcon = (list: any[], listIcon: ChainIcon[] | TokenIcon[]
     };
   });
 };
-
-// mapped chain info with icon
-// export const chainInfosWithIcon = mapListWithIcon(customChainInfos, chainIcons, "chainId");

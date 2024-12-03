@@ -24,8 +24,7 @@ import {
 } from "./constant";
 import { CoinGeckoId } from "./network";
 import { StargateMsg, Tx } from "./tx";
-import { AmountDetails, TokenInfo, CoinGeckoPrices, TokenItemType } from "./format-types";
-import { CustomChainInfo } from "@oraichain/common";
+import { AmountDetails, TokenInfo, CoinGeckoPrices, TokenItemType, CustomChainInfo } from "./format-types";
 
 export const getEvmAddress = (bech32Address: string) => {
   if (!bech32Address) throw new Error("bech32 address is empty");

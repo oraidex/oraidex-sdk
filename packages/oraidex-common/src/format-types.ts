@@ -1,4 +1,4 @@
-import { TokenItemType as TokenItemTypeCommon } from "@oraichain/common";
+import { TokenItemType as TokenItemTypeCommon, CustomChainInfo as CustomChainInfoCommon } from "@oraichain/common";
 import { PairInfo } from "@oraichain/oraidex-contracts-sdk";
 
 export type CoinGeckoPrices<T extends string> = {
@@ -16,6 +16,11 @@ export type TokenInfo = TokenItemType & {
   icon?: string;
   verified?: boolean;
 };
+
+export type CustomChainInfo = CustomChainInfoCommon & {
+  icon?: any;
+  iconLight?: any;
+}
 
 export type PairInfoExtend = PairInfo & {
   asset_infos_raw: [string, string];

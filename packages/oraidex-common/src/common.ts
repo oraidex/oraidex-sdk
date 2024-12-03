@@ -1,4 +1,4 @@
-import { ChainInfos, CoinType, CustomChainInfo, MULTICALL_CONTRACT, OraiCommon, TokenItems } from "@oraichain/common";
+import { ChainInfos, CoinType, MULTICALL_CONTRACT, OraiCommon, TokenItems } from "@oraichain/common";
 import { flatten } from "lodash";
 import { chainIcons, mapListWithIcon, tokensIcon } from "./config";
 import {
@@ -16,6 +16,7 @@ import {
   STAKING_CONTRACT
 } from "./constant";
 import { NetworkConfig } from "./network";
+import { CustomChainInfo } from "./format-types";
 
 export class OraidexCommon {
   static instance: OraidexCommon;

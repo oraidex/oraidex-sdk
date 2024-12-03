@@ -19,9 +19,9 @@ import {
   OCH_CONTRACT
 } from "./constant";
 import { parseAssetInfo } from "./helper";
-import { TokenItemType } from "./token";
 import uniq from "lodash/uniq";
 import flatten from "lodash/flatten";
+import { TokenItemType } from "@oraichain/common";
 
 export type PairMapping = {
   asset_infos: [AssetInfo, AssetInfo];
@@ -154,13 +154,10 @@ export const isFactoryV1 = (assetInfos: [AssetInfo, AssetInfo]): boolean => {
 };
 
 export const getPoolTokens = (assetInfoMap: Record<string, TokenItemType>): TokenItemType[] => {
-  // const assetInfoMap = getOraidexCommonAttribute<{
-  //   [k: string]: TokenItemType;
-  // }>("assetInfoMap");
-  // @ts-ignore
   return uniq(flatten(PAIRS.map((pair) => pair.asset_infos)).map((info) => assetInfoMap[parseAssetInfo(info)]));
 };
 
+// TODO: remove hardcode here
 export const PAIRS_CHART = PAIRS.map((pair) => {
   const assets = pair.asset_infos.map((info) => {
     if ("native_token" in info) return info.native_token.denom;

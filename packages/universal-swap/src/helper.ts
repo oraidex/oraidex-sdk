@@ -9,9 +9,7 @@ import {
   WRAP_ETH_CONTRACT,
   USDC_ETH_CONTRACT,
   USDT_ETH_CONTRACT,
-  EvmChainId,
   proxyContractInfo,
-  CosmosChainId,
   IBCInfo,
   generateError,
   ibcInfos,
@@ -50,11 +48,11 @@ import {
   calculateTimeoutTimestamp,
   COSMOS_CHAIN_ID_COMMON,
   OraidexCommon,
-  CustomChainInfo,
   NetworkConfig,
   checkValidateAddressWithNetwork,
   getTokenOnOraichain,
   parseAssetInfoFromContractAddrOrDenom,
+  IBC_TRANSFER_TIMEOUT,
   // cosmosChains
 } from "@oraichain/oraidex-common";
 import {
@@ -86,12 +84,13 @@ import { Amount, CwIcs20LatestQueryClient, Uint128 } from "@oraichain/common-con
 import { CosmWasmClient, ExecuteInstruction, toBinary } from "@cosmjs/cosmwasm-stargate";
 // import { swapFromTokens, swapToTokens } from "./swap-filter";
 import { Coin } from "@cosmjs/proto-signing";
-import { AXIOS_TIMEOUT, COSMOS_CHAIN_IDS, EVM_CHAIN_IDS, IBC_TRANSFER_TIMEOUT } from "@oraichain/common";
 import { TransferBackMsg } from "@oraichain/common-contracts-sdk/build/CwIcs20Latest.types";
 import { buildUniversalSwapMemo } from "./proto/universal-swap-memo-proto-handler";
 import { Affiliate } from "@oraichain/oraidex-contracts-sdk/build/OraiswapMixedRouter.types";
 import { generateMemoSwap, generateMsgSwap } from "./msg/msgs";
 import { fromBech32, toBech32 } from "@cosmjs/encoding";
+import { COSMOS_CHAIN_IDS, CosmosChainId, EVM_CHAIN_IDS, EvmChainId } from "@oraichain/common/build/constants";
+import { CustomChainInfo } from "@oraichain/common/build/chain-infos";
 
 const caseSwapNativeAndWrapNative = (fromCoingecko, toCoingecko) => {
   const arr = ["ethereum", "weth"];

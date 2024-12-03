@@ -1,6 +1,7 @@
-import { CosmosChainId, CosmosWallet, EvmResponse, EvmWallet, OraidexCommon, TokenItemType } from "@oraichain/oraidex-common";
+import { CosmosWallet, EvmResponse, EvmWallet, OraidexCommon, TokenItemType } from "@oraichain/oraidex-common";
 import { UniversalSwapHandler } from "./handler";
 import { ExecuteResult } from "@cosmjs/cosmwasm-stargate";
+import { CosmosChainId } from "@oraichain/common/build/constants";
 
 export const swapOraichainToOraichain = async (data: {
   cosmosWallet: CosmosWallet;

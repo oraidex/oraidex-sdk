@@ -5,8 +5,6 @@ import {
   AmountDetails,
   COSMOS_CHAIN_ID_COMMON,
   CoinGeckoId,
-  CosmosChainId,
-  EvmChainId,
   INJECTIVE_CONTRACT,
   INJECTIVE_ORAICHAIN_DENOM,
   KWT_BSC_CONTRACT,

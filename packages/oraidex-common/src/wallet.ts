@@ -1,9 +1,8 @@
 import { OfflineSigner } from "@cosmjs/proto-signing";
-import { CosmosChainId, EvmChainId, Networks } from "./network";
 import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
 import { SigningStargateClient, SigningStargateClientOptions } from "@cosmjs/stargate";
 import { ethToTronAddress, tronToEthAddress } from "./helper";
-import { TokenItemType } from "./token";
+import { TokenItemType } from "./format-types";
 import { ethers } from "ethers";
 import { IERC20Upgradeable__factory } from "./typechain-types";
 import { JsonRpcSigner } from "@ethersproject/providers";
@@ -12,6 +11,7 @@ import { EncodeObject } from "@cosmjs/proto-signing";
 import { Tendermint37Client } from "@cosmjs/tendermint-rpc";
 import { Stargate } from "@injectivelabs/sdk-ts";
 import { BROADCAST_POLL_INTERVAL } from "./constant";
+import { CosmosChainId, EVM_CHAIN_IDS_DECIMAL, EvmChainId } from "@oraichain/common";
 
 export interface EvmResponse {
   transactionHash: string;
@@ -108,7 +108,7 @@ export abstract class EvmWallet {
   public abstract getSigner(): JsonRpcSigner;
 
   public isTron(chainId: string | number) {
-    return Number(chainId) == Networks.tron;
+    return Number(chainId) == EVM_CHAIN_IDS_DECIMAL.tron;
   }
   public getFinalEvmAddress(
     chainId: string,

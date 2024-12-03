@@ -1,4 +1,5 @@
 import { Coin, EncodeObject, coin } from "@cosmjs/proto-signing";
+import { } from "@oraichain/common";
 import { fromBech32, toBech32 } from "@cosmjs/encoding";
 import { MsgTransfer } from "cosmjs-types/ibc/applications/transfer/v1/tx";
 import { ExecuteInstruction, ExecuteResult, toBinary } from "@cosmjs/cosmwasm-stargate";
@@ -16,7 +17,6 @@ import {
   tronToEthAddress,
   ORAI_BRIDGE_EVM_TRON_DENOM_PREFIX,
   oraichain2oraib,
-  CosmosChainId,
   // findToTokenOnOraiBridge,
   getTokenOnSpecificChainId,
   UNISWAP_ROUTER_DEADLINE,
@@ -61,9 +61,9 @@ import {
 import { GasPrice } from "@cosmjs/stargate";
 import { OraiswapRouterQueryClient } from "@oraichain/oraidex-contracts-sdk";
 import { Affiliate } from "@oraichain/oraidex-contracts-sdk/build/OraiswapMixedRouter.types";
-import { COSMOS_CHAIN_IDS, EVM_CHAIN_IDS } from "@oraichain/common";
 import { generateMsgSwap } from "./msg/msgs";
 import { notAllowBEP20Token, notAllowDenom, notAllowSwapCoingeckoIds, notAllowSwapFromChainIds, notAllowSwapToChainIds } from "./swap-filter";
+import { COSMOS_CHAIN_IDS, CosmosChainId, EVM_CHAIN_IDS } from "@oraichain/common/build/constants";
 
 const AFFILIATE_DECIMAL = 1e4; // 10_000
 export class UniversalSwapHandler {

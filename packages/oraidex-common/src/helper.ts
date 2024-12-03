@@ -1,30 +1,31 @@
 import { ExecuteInstruction, JsonObject, fromBinary, toBinary, wasmTypes } from "@cosmjs/cosmwasm-stargate";
 import { fromAscii, toUtf8 } from "@cosmjs/encoding";
 import { Coin, EncodeObject, Registry, decodeTxRaw } from "@cosmjs/proto-signing";
-import { Event, Attribute } from "@cosmjs/tendermint-rpc/build/tendermint37";
+import { defaultRegistryTypes as defaultStargateTypes, logs } from "@cosmjs/stargate";
+import { Attribute, Event } from "@cosmjs/tendermint-rpc/build/tendermint37";
 import { AssetInfo, Uint128 } from "@oraichain/oraidex-contracts-sdk";
 import { TokenInfoResponse } from "@oraichain/oraidex-contracts-sdk/build/OraiswapToken.types";
 import bech32 from "bech32";
+import { TextProposal } from "cosmjs-types/cosmos/gov/v1beta1/gov";
 import { Tx as CosmosTx } from "cosmjs-types/cosmos/tx/v1beta1/tx";
 import { MsgExecuteContract } from "cosmjs-types/cosmwasm/wasm/v1/tx";
 import { ethers } from "ethers";
 import Long from "long";
+import { BigDecimal } from "./bigdecimal";
+import { OraidexCommon } from "./common";
 import {
   AVERAGE_COSMOS_GAS_PRICE,
+  GAS_ESTIMATION_BRIDGE_DEFAULT,
+  MULTIPLIER,
   WRAP_BNB_CONTRACT,
   WRAP_ETH_CONTRACT,
   atomic,
-  truncDecimals,
-  GAS_ESTIMATION_BRIDGE_DEFAULT,
-  MULTIPLIER
+  truncDecimals
 } from "./constant";
-import { CoinGeckoId, CustomChainInfo } from "./network";
-import { AmountDetails, TokenInfo, TokenItemType, CoinGeckoPrices } from "./token";
+import { CoinGeckoId } from "./network";
 import { StargateMsg, Tx } from "./tx";
-import { BigDecimal } from "./bigdecimal";
-import { TextProposal } from "cosmjs-types/cosmos/gov/v1beta1/gov";
-import { defaultRegistryTypes as defaultStargateTypes, logs } from "@cosmjs/stargate";
-import { OraidexCommon } from "./test";
+import { AmountDetails, TokenInfo, CoinGeckoPrices, TokenItemType } from "./format-types";
+import { CustomChainInfo } from "@oraichain/common";
 
 export const getEvmAddress = (bech32Address: string) => {
   if (!bech32Address) throw new Error("bech32 address is empty");
@@ -224,7 +225,11 @@ export const proxyContractInfo: { [x: string]: { wrapNativeAddr: string; routerA
   }
 };
 
-export const findToTokenOnOraiBridge = (fromCoingeckoId: CoinGeckoId, toNetwork: string, cosmosTokens: TokenItemType[]) => {
+export const findToTokenOnOraiBridge = (
+  fromCoingeckoId: CoinGeckoId,
+  toNetwork: string,
+  cosmosTokens: TokenItemType[]
+) => {
   // const cosmosTokens = getOraidexCommonAttribute<TokenItemType[]>("cosmosTokens");
   return cosmosTokens.find(
     (t) =>
@@ -240,7 +245,11 @@ export const parseAssetInfo = (assetInfo: AssetInfo): string => {
   return assetInfo.token.contract_addr;
 };
 
-export const getTokenOnSpecificChainId = (coingeckoId: CoinGeckoId, chainId: string, flattenTokens: TokenItemType[]): TokenItemType | undefined => {
+export const getTokenOnSpecificChainId = (
+  coingeckoId: CoinGeckoId,
+  chainId: string,
+  flattenTokens: TokenItemType[]
+): TokenItemType | undefined => {
   // const flattenTokens = getOraidexCommonAttribute<TokenItemType[]>("flattenTokens");
   return flattenTokens.find((t) => t.coinGeckoId === coingeckoId && t.chainId === chainId);
 };
@@ -415,7 +424,11 @@ export const calcMaxAmount = ({
 //   if (!OraidexCommon.instance) throw new Error("OraidexCommon is not loaded");
 //   return OraidexCommon.instance[key] as T;
 // };
-export const getTotalUsd = (amounts: AmountDetails, prices: CoinGeckoPrices<string>, tokenMap: Record<string, TokenItemType>): number => {
+export const getTotalUsd = (
+  amounts: AmountDetails,
+  prices: CoinGeckoPrices<string>,
+  tokenMap: Record<string, TokenItemType>
+): number => {
   let usd = 0;
 
   // const tokenMap = getOraidexCommonAttribute<{
@@ -430,12 +443,20 @@ export const getTotalUsd = (amounts: AmountDetails, prices: CoinGeckoPrices<stri
   return usd;
 };
 
-export const toSubDisplay = (amounts: AmountDetails, tokenInfo: TokenItemType, tokenMap: Record<string, TokenItemType>): number => {
+export const toSubDisplay = (
+  amounts: AmountDetails,
+  tokenInfo: TokenItemType,
+  tokenMap: Record<string, TokenItemType>
+): number => {
   const subAmounts = getSubAmountDetails(amounts, tokenInfo);
   return toSumDisplay(subAmounts, tokenMap);
 };
 
-export const toSubAmount = (amounts: AmountDetails, tokenInfo: TokenItemType, tokenMap: Record<string, TokenItemType>): bigint => {
+export const toSubAmount = (
+  amounts: AmountDetails,
+  tokenInfo: TokenItemType,
+  tokenMap: Record<string, TokenItemType>
+): bigint => {
   const displayAmount = toSubDisplay(amounts, tokenInfo, tokenMap);
   return toAmount(displayAmount, tokenInfo.decimals);
 };

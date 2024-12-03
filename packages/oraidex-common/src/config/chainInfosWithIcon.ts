@@ -1,4 +1,4 @@
-import { TokenItemType } from "../token";
+import { TokenItemType } from "src/format-types";
 import {
   AiriIcon,
   AtomIcon,

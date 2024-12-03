@@ -518,7 +518,7 @@ describe("test oraiswap-v3 helper functions", () => {
     // TODO: add more expect
   });
 
-  it.each<[TokenItemType]>([
+  it.each<[any]>([
     [
       {
         name: "ORAI",

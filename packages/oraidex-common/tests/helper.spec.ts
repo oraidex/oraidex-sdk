@@ -1,8 +1,12 @@
 import { Coin } from "@cosmjs/amino";
 import { toBinary } from "@cosmjs/cosmwasm-stargate";
-import { StargateClient } from "@cosmjs/stargate";
 import { Event } from "@cosmjs/tendermint-rpc/build/tendermint37";
 import { AssetInfo } from "@oraichain/oraidex-contracts-sdk";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+import { beforeAll, describe, expect, it } from "vitest";
+import { OraidexCommon } from "../src/common";
 import { AIRI_CONTRACT, AVERAGE_COSMOS_GAS_PRICE, BTC_CONTRACT, MILKYBSC_ORAICHAIN_DENOM, ORAI } from "../src/constant";
 import {
   calculateMinReceive,
@@ -20,6 +24,7 @@ import {
   isEthAddress,
   marshalEncodeObjsToStargateMsgs,
   parseAssetInfo,
+  parseAssetInfoFromContractAddrOrDenom,
   parseTokenInfo,
   parseTokenInfoRawDenom,
   parseTxToMsgsAndEvents,
@@ -33,17 +38,11 @@ import {
   validateAndIdentifyCosmosAddress,
   validateEvmAddress,
   validateNumber,
-  validateTronAddress,
-  parseAssetInfoFromContractAddrOrDenom
+  validateTronAddress
 } from "../src/helper";
 import { CoinGeckoId } from "../src/network";
 import { isFactoryV1 } from "../src/pairs";
-import { AmountDetails, TokenItemType } from "../src/token";
-import fs from "fs";
-import path from "path";
-import { expect, afterAll, beforeAll, describe, it } from "vitest";
-import { fileURLToPath } from "url";
-import { OraidexCommon } from "../src/test";
+import { AmountDetails } from "../src/format-types";
 const __filename = fileURLToPath(import.meta.url);
 console.log("__filename: ", __filename);
 const __dirname = path.dirname(__filename);
@@ -73,7 +72,10 @@ describe("should helper functions in helper run exactly", () => {
 
   it("should get sub amount of evm token correctly and to sum display, to total display correctly", () => {
     // test for milky token that have evm denom => have sub amount.
-    console.log("oraidexCommon.flattenTokens: ", oraidexCommon.flattenTokens.filter((t) => t.evmDenoms)); 
+    console.log(
+      "oraidexCommon.flattenTokens: ",
+      oraidexCommon.flattenTokens.filter((t) => t.evmDenoms)
+    );
     const tokenInfo = oraidexCommon.flattenTokens.find((t) => t.evmDenoms && t.coinGeckoId === "milky-token")!;
     const subAmounts = getSubAmountDetails(amounts, tokenInfo);
     expect(subAmounts).toEqual({
@@ -301,7 +303,7 @@ describe("should helper functions in helper run exactly", () => {
 
   it.each<[string, AssetInfo]>([
     [ORAI, { native_token: { denom: ORAI } }],
-    ['airi', { token: { contract_addr: AIRI_CONTRACT } }]
+    ["airi", { token: { contract_addr: AIRI_CONTRACT } }]
   ])("test-toAssetInfo", (denom, expectedAssetInfo) => {
     // fixture
     const token = oraidexCommon.oraichainTokens.find((t) => t.denom === denom);
@@ -367,7 +369,7 @@ describe("should helper functions in helper run exactly", () => {
     }
   });
 
-  it.each<[{ coinGeckoId: CoinGeckoId, type: "token" | "native" }]>([
+  it.each<[{ coinGeckoId: CoinGeckoId; type: "token" | "native" }]>([
     [
       {
         coinGeckoId: "airight",
@@ -381,7 +383,9 @@ describe("should helper functions in helper run exactly", () => {
       }
     ]
   ])("test-parseTokenInfoRawDenom-given-%j-should-receive-%s", ({ coinGeckoId, type }) => {
-    const token = oraidexCommon.flattenTokens.find((item) => item.coinGeckoId === coinGeckoId && item.chainId === "Oraichain")!
+    const token = oraidexCommon.flattenTokens.find(
+      (item) => item.coinGeckoId === coinGeckoId && item.chainId === "Oraichain"
+    )!;
     const expectedDenom = type === "token" ? token.contractAddress! : token.denom;
     expect(parseTokenInfoRawDenom(token)).toEqual(expectedDenom);
   });
@@ -389,17 +393,17 @@ describe("should helper functions in helper run exactly", () => {
   it.each<[string, string | undefined, AssetInfo, any]>([
     [ORAI, "10", { native_token: { denom: ORAI } }, { denom: ORAI, amount: "10" }],
     [ORAI, undefined, { native_token: { denom: ORAI } }, undefined],
-    ['airi', "10", { token: { contract_addr: AIRI_CONTRACT } }, undefined],
-    ['airi', undefined, { token: { contract_addr: AIRI_CONTRACT } }, undefined]
+    ["airi", "10", { token: { contract_addr: AIRI_CONTRACT } }, undefined],
+    ["airi", undefined, { token: { contract_addr: AIRI_CONTRACT } }, undefined]
   ])("test-parseTokenInfo", (denom, amount, expectedInfo, expectedFund) => {
     // fixture
-    // console.log("oraichainTokens1: ", oraidexCommon.oraichainTokens);  
+    // console.log("oraichainTokens1: ", oraidexCommon.oraichainTokens);
     const token = oraidexCommon.oraichainTokens.find((t) => t.denom === denom)!;
     const expectedResult: { info: AssetInfo; fund: any } = {
       info: expectedInfo,
       fund: expectedFund
     };
-    // console.log("token: ", token);  
+    // console.log("token: ", token);
     expect(parseTokenInfo(token, amount)).toEqual(expectedResult);
   });
 

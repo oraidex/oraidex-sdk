@@ -8,7 +8,6 @@ import {
   toDisplay,
   ORAI_BRIDGE_EVM_TRON_DENOM_PREFIX,
   TokenItemType,
-  CosmosChainId,
   CoinGeckoId,
   AIRI_CONTRACT,
   IBC_WASM_CONTRACT,

@@ -21,7 +21,7 @@ import {
 import { parseAssetInfo } from "./helper";
 import uniq from "lodash/uniq";
 import flatten from "lodash/flatten";
-import { TokenItemType } from "@oraichain/common";
+import { TokenItemType } from "./format-types";
 
 export type PairMapping = {
   asset_infos: [AssetInfo, AssetInfo];

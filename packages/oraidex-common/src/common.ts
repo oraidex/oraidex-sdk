@@ -17,6 +17,7 @@ import {
 } from "./constant";
 import { NetworkConfig } from "./network";
 import { CustomChainInfo } from "./format-types";
+import { ChainIdEnum } from "./interface";
 
 export class OraidexCommon {
   static instance: OraidexCommon;
@@ -77,6 +78,10 @@ export class OraidexCommon {
 
   get kawaiiTokens() {
     return this.tokenConfig.kawaiiTokens;
+  }
+
+  get btcTokens() {
+    return this.flattenTokens.filter((token) => token.chainId === ChainIdEnum.Bitcoin);
   }
 
   get oraichainTokensWithIcon() {

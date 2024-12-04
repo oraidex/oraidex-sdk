@@ -298,5 +298,11 @@
       "denom": "usat",
       "coingecko_id": "bitcoin"
     }
+  },
+  "bitcoin": {
+    "BTC": {
+      "denom": "btc",
+      "coingecko_id": "bitcoin"
+    }
   }
 }

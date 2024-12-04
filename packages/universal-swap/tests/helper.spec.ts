@@ -5,8 +5,6 @@ import {
   AmountDetails,
   COSMOS_CHAIN_ID_COMMON,
   CoinGeckoId,
-  CosmosChainId,
-  EvmChainId,
   INJECTIVE_CONTRACT,
   INJECTIVE_ORAICHAIN_DENOM,
   KWT_BSC_CONTRACT,
@@ -887,12 +885,12 @@ describe("test helper functions", () => {
     });
   });
 
-  it.each<[AmountDetails, TokenItemType, Coin, number]>([
+  it.each<[AmountDetails, string, Coin, number]>([
     [
       {
         injective: "10000"
       },
-      getTokenOnOraichain("injective-protocol"),
+      "injective-protocol",
       coin(1000, INJECTIVE_ORAICHAIN_DENOM),
       1
     ],
@@ -901,15 +899,16 @@ describe("test helper functions", () => {
         [INJECTIVE_ORAICHAIN_DENOM]: "1000",
         injective: "10000"
       },
-      getTokenOnOraichain("injective-protocol"),
+      "injective-protocol",
       coin(1000, INJECTIVE_ORAICHAIN_DENOM),
       0
     ],
-    [{}, getTokenOnOraichain("injective-protocol"), coin(1000, INJECTIVE_ORAICHAIN_DENOM), 0]
+    [{}, "injective-protocol", coin(1000, INJECTIVE_ORAICHAIN_DENOM), 0]
   ])("test-generate-convert-msgs", async (currentBal: AmountDetails, tokenInfo, toSend, msgLength) => {
+    const token = getTokenOnOraichain(tokenInfo, oraidexCommon.oraichainTokens);
     const msg = universalHelper.generateConvertCw20Erc20Message(
       currentBal,
-      tokenInfo,
+      token,
       "orai123",
       toSend,
       oraidexCommon.tokenMap,
@@ -919,16 +918,17 @@ describe("test helper functions", () => {
     expect(msg.length).toEqual(msgLength);
   });
 
-  it.each<[AmountDetails, TokenItemType, number]>([
-    [{}, getTokenOnOraichain("cosmos"), 0],
-    [{ [`${INJECTIVE_ORAICHAIN_DENOM}`]: "10" }, getTokenOnOraichain("injective-protocol"), 1],
-    [{ injective: "10" }, getTokenOnOraichain("injective-protocol"), 0]
+  it.each<[AmountDetails, string, number]>([
+    [{}, "cosmos", 0],
+    [{ [`${INJECTIVE_ORAICHAIN_DENOM}`]: "10" }, "injective-protocol", 1],
+    [{ injective: "10" }, "injective-protocol", 0]
   ])(
     "test-generateConvertErc20Cw20Message-should-return-correct-message-length",
     (amountDetails, tokenInfo, expectedMessageLength) => {
+      const token = getTokenOnOraichain(tokenInfo, oraidexCommon.oraichainTokens);
       const result = universalHelper.generateConvertErc20Cw20Message(
         amountDetails,
-        tokenInfo,
+        token,
         oraidexCommon.tokenMap,
         oraidexCommon.network,
         "john doe"

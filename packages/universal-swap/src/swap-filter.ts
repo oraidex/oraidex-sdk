@@ -5,7 +5,7 @@ import {
   MILKYBSC_ORAICHAIN_DENOM,
   MILKY_BSC_CONTRACT,
   TokenItemType,
-  getOraidexCommonAttribute,
+  // getOraidexCommonAttribute,
 } from "@oraichain/oraidex-common";
 
 export const evmDenomsMap = {
@@ -51,8 +51,8 @@ export const notAllowSwapToChainIds = [
 //   );
 // });
 
-export const getSwapFromTokens = () => {
-  const flattenTokens = getOraidexCommonAttribute<TokenItemType[]>('flattenTokens');
+export const getSwapFromTokens = (flattenTokens: TokenItemType[]) => {
+  // const flattenTokens = getOraidexCommonAttribute<TokenItemType[]>('flattenTokens');
   return flattenTokens.filter((token) => {
     return (
       !notAllowDenom.includes(token?.denom) &&
@@ -63,8 +63,8 @@ export const getSwapFromTokens = () => {
   });
 }
 
-export const getSwapToTokens = () => {
-  const flattenTokens = getOraidexCommonAttribute<TokenItemType[]>('flattenTokens');
+export const getSwapToTokens = (flattenTokens: TokenItemType[]) => {
+  // const flattenTokens = getOraidexCommonAttribute<TokenItemType[]>('flattenTokens');
   return flattenTokens.filter((token) => {
     return (
       !notAllowDenom.includes(token?.denom) &&

@@ -1,5 +1,6 @@
 import { DirectSecp256k1HdWallet, OfflineSigner } from "@cosmjs/proto-signing";
-import { CosmosChainId, CosmosWallet, OraidexCommon, generateError } from "@oraichain/oraidex-common";
+import { CosmosChainId } from "@oraichain/common/build/constants";
+import { CosmosWallet, OraidexCommon, generateError } from "@oraichain/oraidex-common";
 
 export class CosmosWalletImpl extends CosmosWallet {
   constructor(private readonly mnemonic: string) {

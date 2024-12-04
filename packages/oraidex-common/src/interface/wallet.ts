@@ -1,3 +1,5 @@
+// FIXME: Still use?
+
 export enum NetworkEnum {
   Cosmos = "cosmos",
   Evm = "evm",

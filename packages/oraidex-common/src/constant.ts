@@ -1,4 +1,4 @@
-import { CosmosChainId, EvmChainId } from "./network";
+import { EvmChainId } from "@oraichain/common";
 
 export const truncDecimals = 6;
 export const atomic = 10 ** truncDecimals;
@@ -235,3 +235,18 @@ export const gravityContracts: Omit<Record<EvmChainId, string>, "0x1ae6"> = {
   "0x01": GRAVITY_EVM_CONTRACT,
   "0x2b6653dc": GRAVITY_TRON_CONTRACT
 };
+
+// mapping evm denom to a token from network not from evm
+export const evmDenomsMap = {
+  kwt: [KWTBSC_ORAICHAIN_DENOM],
+  milky: [MILKYBSC_ORAICHAIN_DENOM],
+  injective: [INJECTIVE_ORAICHAIN_DENOM]
+};
+
+// minimum amount user can swap for specific token
+export const minAmountSwapMap = {
+  trx: 10
+};
+
+export type EvmDenom = "bep20_orai" | "bep20_airi" | "erc20_orai" | "kawaii_orai";
+

@@ -1,4 +1,4 @@
-import { TokenItemType } from "../token";
+import { TokenItemType } from "src/format-types";
 import {
   AiriIcon,
   AtomIcon,
@@ -222,6 +222,3 @@ export const mapListWithIcon = (list: any[], listIcon: ChainIcon[] | TokenIcon[]
     };
   });
 };
-
-// mapped chain info with icon
-// export const chainInfosWithIcon = mapListWithIcon(customChainInfos, chainIcons, "chainId");

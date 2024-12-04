@@ -16,6 +16,8 @@ const simulate = async () => {
 
   try {
     const res = await handleSimulateSwap({
+      flattenTokens,
+      oraichainTokens: oraidexCommon.oraichainTokens,
       originalFromInfo: originalFromToken,
       originalToInfo: originalToToken,
       originalAmount: fromAmount,

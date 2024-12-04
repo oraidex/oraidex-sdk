@@ -53,7 +53,7 @@ import {
   getTokenOnOraichain,
   parseAssetInfoFromContractAddrOrDenom,
   IBC_TRANSFER_TIMEOUT,
-  CustomChainInfo,
+  CustomChainInfo
   // cosmosChains
 } from "@oraichain/oraidex-common";
 import {
@@ -226,9 +226,10 @@ export class UniversalSwapHelper {
   static getSourceReceiver = (
     oraiAddress: string,
     contractAddress?: string,
-    isSourceReceiverTest?: boolean
+    isSourceReceiverTest?: boolean,
+    cosmosChains?: CustomChainInfo[]
   ): string => {
-    const isValidRecipient = checkValidateAddressWithNetwork(oraiAddress, COSMOS_CHAIN_IDS.ORAICHAIN);
+    const isValidRecipient = checkValidateAddressWithNetwork(oraiAddress, COSMOS_CHAIN_IDS.ORAICHAIN, cosmosChains);
     if (!isValidRecipient.isValid) throw generateError("orai Address get source receiver invalid!");
 
     let sourceReceiver = `${oraib2oraichain}/${oraiAddress}`;
@@ -419,7 +420,8 @@ export class UniversalSwapHelper {
     const source = UniversalSwapHelper.getSourceReceiver(
       addresses.sourceReceiver,
       fromToken.contractAddress,
-      swapOption?.isSourceReceiverTest
+      swapOption?.isSourceReceiverTest,
+      cosmosChains
     );
 
     let { swapRoute, universalSwapType, isSmartRouter } = UniversalSwapHelper.getRoute(
@@ -819,7 +821,7 @@ export class UniversalSwapHelper {
     fromInfo: TokenItemType;
     toInfo: TokenItemType;
     amount: string;
-    flattenTokens: TokenItemType[]
+    flattenTokens: TokenItemType[];
   }): Promise<SimulateResponse> => {
     const { amount, fromInfo, toInfo } = query;
     // check swap native and wrap native
@@ -839,7 +841,11 @@ export class UniversalSwapHelper {
     try {
       // get proxy contract object so that we can query the corresponding router address
       const provider = new ethers.providers.JsonRpcProvider(fromInfo.rpc);
-      const toTokenInfoOnSameChainId = getTokenOnSpecificChainId(toInfo.coinGeckoId, fromInfo.chainId, query.flattenTokens);
+      const toTokenInfoOnSameChainId = getTokenOnSpecificChainId(
+        toInfo.coinGeckoId,
+        fromInfo.chainId,
+        query.flattenTokens
+      );
       const swapRouterV2 = IUniswapV2Router02__factory.connect(
         proxyContractInfo[fromInfo.chainId].routerAddr,
         provider
@@ -963,7 +969,7 @@ export class UniversalSwapHelper {
       fromTokenInOrai: getTokenOnOraichain(originalFromToken.coinGeckoId, query.oraichainTokens),
       fromAmount,
       relayerAmount: relayerFee.relayerAmount,
-      routerClient,
+      routerClient
     });
   };
 
@@ -1133,7 +1139,7 @@ export class UniversalSwapHelper {
     denom: string,
     searchTokenName: string,
     direction: SwapDirection, // direction = to means we are filtering to tokens
-    swapFromTokens: TokenItemType[],  
+    swapFromTokens: TokenItemType[],
     swapToTokens: TokenItemType[],
     oraichainTokens: TokenItemType[],
     flattenTokens: TokenItemType[]
@@ -1151,7 +1157,11 @@ export class UniversalSwapHelper {
       // tokens that dont have a pool on Oraichain like WETH or WBNB cannot be swapped from a token on Oraichain
       if (direction === SwapDirection.To)
         return [
-          ...new Set(filteredTokens.concat(filteredTokens.map((token) => getTokenOnOraichain(token.coinGeckoId, oraichainTokens))))
+          ...new Set(
+            filteredTokens.concat(
+              filteredTokens.map((token) => getTokenOnOraichain(token.coinGeckoId, oraichainTokens))
+            )
+          )
         ];
       filteredToTokens = filteredTokens;
     }
@@ -1191,12 +1201,15 @@ export class UniversalSwapHelper {
       // reset so we convert using native first
       const erc20TokenInfo = tokenMap[denom];
       if (balance > 0) {
-        const msgConvert: ExecuteInstruction = UniversalSwapHelper.generateConvertMsgs({
-          type: Type.CONVERT_TOKEN,
-          sender,
-          inputAmount: balance.toString(),
-          inputToken: erc20TokenInfo
-        }, network);
+        const msgConvert: ExecuteInstruction = UniversalSwapHelper.generateConvertMsgs(
+          {
+            type: Type.CONVERT_TOKEN,
+            sender,
+            inputAmount: balance.toString(),
+            inputToken: erc20TokenInfo
+          },
+          network
+        );
         return [msgConvert];
       }
     }
@@ -1230,13 +1243,16 @@ export class UniversalSwapHelper {
           contractAddress: undefined,
           decimals: evmToken.decimals
         };
-        const msgConvert = UniversalSwapHelper.generateConvertMsgs({
-          type: Type.CONVERT_TOKEN_REVERSE,
-          sender,
-          inputAmount: balance,
-          inputToken: tokenInfo,
-          outputToken,
-        }, network);
+        const msgConvert = UniversalSwapHelper.generateConvertMsgs(
+          {
+            type: Type.CONVERT_TOKEN_REVERSE,
+            sender,
+            inputAmount: balance,
+            inputToken: tokenInfo,
+            outputToken
+          },
+          network
+        );
         return [msgConvert];
       }
     }

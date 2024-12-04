@@ -639,7 +639,7 @@ export const validateTronAddress = (address: string, network: string) => {
   }
 };
 
-export const checkValidateAddressWithNetwork = (address: string, network: string) => {
+export const checkValidateAddressWithNetwork = (address: string, network: string, cosmosChains: CustomChainInfo[]) => {
   switch (network) {
     case "0x01":
     case "0x38":
@@ -650,7 +650,6 @@ export const checkValidateAddressWithNetwork = (address: string, network: string
       return validateTronAddress(address, network);
 
     default:
-      if (!OraidexCommon.instance) throw new Error("OraidexCommon is not loaded");
-      return validateAndIdentifyCosmosAddress(address, network, OraidexCommon.instance.cosmosChains);
+      return validateAndIdentifyCosmosAddress(address, network, cosmosChains);
   }
 };

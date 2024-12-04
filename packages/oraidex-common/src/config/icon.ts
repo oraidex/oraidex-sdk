@@ -1,5 +1,5 @@
-const OraiIcon = "https://s2.coinmarketcap.com/static/img/coins/64x64/7533.png";
-const OraiLightIcon = "https://s2.coinmarketcap.com/static/img/coins/64x64/7533.png";
+const OraiIcon = "https://raw.githubusercontent.com/cosmos/chain-registry/master/oraichain/images/orai-token.png";
+const OraiLightIcon = "https://raw.githubusercontent.com/cosmos/chain-registry/master/oraichain/images/orai-token.png";
 const AtomIcon = "https://s2.coinmarketcap.com/static/img/coins/64x64/3794.png";
 const AiriIcon = "https://i.ibb.co/m8mCyMr/airi.png";
 const UsdtIcon = "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png";
@@ -22,8 +22,8 @@ const OCHIcon =
   "https://assets.coingecko.com/coins/images/34236/standard/orchai_logo_white_copy_4x-8_%281%29.png?1704307670";
 const PepeIcon = "https://assets.coingecko.com/coins/images/29850/standard/pepe-token.jpeg?1696528776";
 const HamsterIcon = "https://assets.coingecko.com/coins/images/39102/standard/hamster-removebg-preview.png?1720514486";
-const CelestiaIcon = "https://assets.coingecko.com/coins/images/31967/standard/tia.jpg?1696530772"
-const NeutaroIcon = "https://assets.coingecko.com/coins/images/36277/standard/Neutaro_logo.jpg?1711371142"
+const CelestiaIcon = "https://assets.coingecko.com/coins/images/31967/standard/tia.jpg?1696530772";
+const NeutaroIcon = "https://assets.coingecko.com/coins/images/36277/standard/Neutaro_logo.jpg?1711371142";
 
 export {
   NeutaroIcon,

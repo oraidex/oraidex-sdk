@@ -182,6 +182,10 @@ export class OraidexCommon {
     return this.chainConfig.cosmosChains;
   }
 
+  get btcChains() {
+    return this.chainInfos.filter((c) => c.networkType === 'bitcoin');
+  }
+
   get chainInfosWithIcon() {
     return mapListWithIcon(this.chainInfos, chainIcons, "chainId");
   }

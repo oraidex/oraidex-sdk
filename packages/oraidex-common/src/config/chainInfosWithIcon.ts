@@ -4,11 +4,13 @@ import {
   AtomIcon,
   BnbIcon,
   BtcIcon,
+  CelestiaIcon,
   EthIcon,
   HamsterIcon,
   InjIcon,
   KwtIcon,
   MilkyIcon,
+  NeutaroIcon,
   NobleIcon,
   OCHIcon,
   OraiIcon,
@@ -147,6 +149,11 @@ export const chainIcons: ChainIcon[] = [
     IconLight: OraiLightIcon
   },
   {
+    chainId: "celestia",
+    Icon: CelestiaIcon,
+    IconLight: CelestiaIcon
+  },
+  {
     chainId: "kawaii_6886-1",
     Icon: KwtIcon,
     IconLight: KwtIcon
@@ -190,6 +197,26 @@ export const chainIcons: ChainIcon[] = [
     chainId: "noble-1",
     Icon: NobleIcon,
     IconLight: NobleIcon
+  },
+  {
+    chainId: "oraibridge-subnet-2",
+    Icon: OraiIcon,
+    IconLight: OraiLightIcon
+  },
+  {
+    chainId: "Neutaro-1",
+    Icon: NeutaroIcon,
+    IconLight: NeutaroIcon
+  },
+  {
+    chainId: "oraibtc-mainnet-1",
+    Icon: BtcIcon,
+    IconLight: BtcIcon
+  },
+  {
+    chainId: "bitcoin",
+    Icon: BtcIcon,
+    IconLight: BtcIcon
   }
 ];
 

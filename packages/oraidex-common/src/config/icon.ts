@@ -22,8 +22,12 @@ const OCHIcon =
   "https://assets.coingecko.com/coins/images/34236/standard/orchai_logo_white_copy_4x-8_%281%29.png?1704307670";
 const PepeIcon = "https://assets.coingecko.com/coins/images/29850/standard/pepe-token.jpeg?1696528776";
 const HamsterIcon = "https://assets.coingecko.com/coins/images/39102/standard/hamster-removebg-preview.png?1720514486";
+const CelestiaIcon = "https://assets.coingecko.com/coins/images/31967/standard/tia.jpg?1696530772"
+const NeutaroIcon = "https://assets.coingecko.com/coins/images/36277/standard/Neutaro_logo.jpg?1711371142"
 
 export {
+  NeutaroIcon,
+  CelestiaIcon,
   OraiIcon,
   OraiLightIcon,
   AtomIcon,

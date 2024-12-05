@@ -13,6 +13,7 @@ import {
   ORAIDEX_LISTING_CONTRACT,
   REWARDER_CONTRACT,
   ROUTER_V2_CONTRACT,
+  solChainId,
   STAKING_CONTRACT
 } from "./constant";
 import { NetworkConfig } from "./network";
@@ -82,6 +83,10 @@ export class OraidexCommon {
 
   get btcTokens() {
     return this.flattenTokens.filter((token) => token.chainId === ChainIdEnum.Bitcoin);
+  }
+
+  get solTokens() {
+    return this.flattenTokens.filter((token) => token.chainId === solChainId);
   }
 
   get oraichainTokensWithIcon() {
@@ -170,7 +175,7 @@ export class OraidexCommon {
       multicall: MULTICALL_CONTRACT,
       pool_v3: AMM_V3_CONTRACT,
       staking_oraix: CW20_STAKING_CONTRACT,
-      indexer_v3: "https://ammv3-indexer.oraidex.io/",
+      indexer_v3: "https://ammv3-indexer.oraidex.io/"
     };
   }
 
@@ -183,7 +188,7 @@ export class OraidexCommon {
   }
 
   get btcChains() {
-    return this.chainInfos.filter((c) => c.networkType === 'bitcoin');
+    return this.chainInfos.filter((c) => c.networkType === "bitcoin");
   }
 
   get chainInfosWithIcon() {

@@ -131,7 +131,7 @@ export class UniversalSwapHandler {
       if (tronWeb && tronWeb.defaultAddress?.base58) return tronToEthAddress(tronWeb.defaultAddress.base58);
       throw generateError("Cannot find tron web to nor tron address to send to Tron network");
     }
-    return this.config.cosmosWallet.getKeplrAddr(toChainId as any);
+    return this.config.cosmosWallet.getKeplrAddr(toChainId as CosmosChainId);
   }
 
   /**

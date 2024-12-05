@@ -29,8 +29,11 @@ export type CoinGeckoId =
   | "simon-s-cat"
   | "hamster-kombat"
   | "dogecoin"
-  | string;
+  | string
+  | "solana"
+  | "max-2";
 
+export type NetworkType = "cosmos" | "evm" | "svm";
 export interface NetworkConfig {
   coinType?: CoinType;
   explorer: string;

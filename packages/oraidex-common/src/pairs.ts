@@ -16,7 +16,8 @@ import {
   USDT_CONTRACT,
   WETH_CONTRACT,
   NEUTARO_ORAICHAIN_DENOM as NEUTARO_ADDRESS,
-  OCH_CONTRACT
+  OCH_CONTRACT,
+  MAX_ORAICHAIN_DENOM
 } from "./constant";
 import { parseAssetInfo } from "./helper";
 import uniq from "lodash/uniq";
@@ -105,6 +106,10 @@ export const PAIRS: PairMapping[] = [
   {
     asset_infos: [{ token: { contract_addr: OCH_CONTRACT } }, { native_token: { denom: ORAI } }],
     symbols: ["OCH", "ORAI"]
+  },
+  {
+    asset_infos: [{ native_token: { denom: MAX_ORAICHAIN_DENOM } }, { token: { contract_addr: ORAIX_CONTRACT } }],
+    symbols: ["MAX", "ORAIX"]
   }
 ];
 
@@ -126,7 +131,8 @@ export enum pairLpTokens {
   ORAI_WETH = "orai1rvr9wk6mdlfysvgp72ltthqvkkd5677mp892efq86yyr9alt0tms2a6lcs",
   ORAI_BTC = "orai1jd9lc2qt0ltjsatgnu38xsz8ngp89clp0dpeh8geyjj70yvkn4kqmrmh3m",
   NTMPI_USDC = "orai1rmvjmwd940ztafxue7630g75px8tqma4jskjuu57fkj0eqahqfgqqwjm00",
-  OCH_ORAI = "orai1xs5aj90d5m8kwfp9t6ghkcpk8d7sy5jsxdsyejjdxudhhfm7wegsdg929d"
+  OCH_ORAI = "orai1xs5aj90d5m8kwfp9t6ghkcpk8d7sy5jsxdsyejjdxudhhfm7wegsdg929d",
+  MAX_ORAIX = "orai1gswmxchtlkav289eq86z4ehaezntctdrptcww4yvpp20d93xza0qsqjxvv"
 }
 
 // token identifier can be denom or contract addr
@@ -188,5 +194,6 @@ export enum PairAddress {
   ORAI_WETH = "orai10jgd0l4l0p2h7ugpk2lz64wpefjxc0h7evnlxf76a3fspdplarnsl9ma4j",
   ORAI_BTC = "orai1fv5kwdv4z0gvp75ht378x8cg2j7prlywa0g35qmctez9q8u4xryspn6lrd",
   NTMPI_USDC = "orai1yemx80gvcw05trjehy94rl4jz5dqjf2qxhks6258uvxd5s0m7h2quavx0g",
-  OCH_ORAI = "orai1d3f3e3j400hxse5z8vxxnxdwmvljs7mh8xa3wp3spe8g4ngnc3cqx8scs3"
+  OCH_ORAI = "orai1d3f3e3j400hxse5z8vxxnxdwmvljs7mh8xa3wp3spe8g4ngnc3cqx8scs3",
+  MAX_ORAIX = "orai1s3746evfgwm7dtl3x4s7fmd37c4s8t566z0xvflr4shdculkxw5qa3pusc"
 }

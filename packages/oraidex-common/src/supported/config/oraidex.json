@@ -304,5 +304,15 @@
       "denom": "btc",
       "coingecko_id": "bitcoin"
     }
+  },
+  "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp": {
+    "MAX": {
+      "denom": "max",
+      "coingecko_id": "max-2"
+    },
+    "ORAI": {
+      "denom": "s20_orai",
+      "coingecko_id": "oraichain-token"
+    }
   }
 }

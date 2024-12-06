@@ -3814,6 +3814,28 @@
     ethers "^5.0.15"
     tronweb "6.0.0-beta.4"
 
+"@oraichain/oraidex-common@^1.1.32-beta.7":
+  version "1.1.39"
+  resolved "https://registry.yarnpkg.com/@oraichain/oraidex-common/-/oraidex-common-1.1.39.tgz#6fe8ab3435d131a412d9f5876801a8709fb50073"
+  integrity sha512-CggmZqynoSYUzah0n+Q4bbcIopDOaH09nfd4/w/0HbqWN9Sn0hWk0wIqotaXRxO2EXJk4NEsn+yZNrfwFY63vw==
+  dependencies:
+    "@cosmjs/amino" "^0.32.4"
+    "@cosmjs/cosmwasm-stargate" "^0.32.4"
+    "@cosmjs/crypto" "^0.32.4"
+    "@cosmjs/proto-signing" "^0.32.4"
+    "@cosmjs/stargate" "^0.32.4"
+    "@cosmjs/tendermint-rpc" "^0.32.4"
+    "@ethersproject/providers" "^5.0.10"
+    "@injectivelabs/sdk-ts" "1.12.1"
+    "@keplr-wallet/types" "^0.11.38"
+    "@oraichain/oraidex-contracts-sdk" latest
+    axios "1.7.2"
+    axios-extensions "3.1.7"
+    bignumber.js "^9.1.2"
+    cosmjs-types "^0.9.0"
+    ethers "^5.0.15"
+    tronweb "6.0.0-beta.4"
+
 "@oraichain/oraidex-contracts-sdk@latest":
   version "1.0.44"
   resolved "https://registry.yarnpkg.com/@oraichain/oraidex-contracts-sdk/-/oraidex-contracts-sdk-1.0.44.tgz#9ff41ec388dd92ba112c2eef545d11fd6e18c684"

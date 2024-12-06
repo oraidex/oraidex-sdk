@@ -67,7 +67,13 @@ import {
   DOGE_BNB_ORAICHAIN_DENOM,
   DOGE_BSC_CONTRACT,
   jUSDC_TON_CONTRACT,
-  HMSTR_TON_CONTRACT
+  HMSTR_TON_CONTRACT,
+  WSOL_WORMHOLE_BNB_ORAICHAIN_DENOM,
+  WSOL_WORMHOLE_BSC_CONTRACT,
+  solChainId,
+  MAX_SOL_CONTRACT_ADDRESS,
+  MAX_ORAICHAIN_DENOM,
+  ORAI_SOL_CONTRACT_ADDRESS
 } from "./constant";
 import { listOsmosisToken } from "./alpha-network";
 import { celestiaNetwork } from "./celestia-network";
@@ -86,7 +92,8 @@ export type NetworkName =
   | "Noble"
   | "Neutaro"
   | "Celestia"
-  | "TON";
+  | "TON"
+  | "Solana";
 
 export const cosmosChainIds = [
   "Oraichain", // oraichain
@@ -107,7 +114,8 @@ export type EvmChainId = (typeof evmChainIds)[number];
 export const tonChainId = ["ton"] as const; // FIXME: don;t know ton chainID
 export type TonChainId = (typeof tonChainId)[number];
 
-export type NetworkChainId = CosmosChainId | EvmChainId | TonChainId;
+export type SolChainId = "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp";
+export type NetworkChainId = CosmosChainId | EvmChainId | TonChainId | SolChainId;
 
 export type CoinGeckoId =
   | "oraichain-token"
@@ -136,9 +144,11 @@ export type CoinGeckoId =
   | "pepe"
   | "simon-s-cat"
   | "hamster-kombat"
-  | "dogecoin";
+  | "dogecoin"
+  | "solana"
+  | "max-2";
 
-export type NetworkType = "cosmos" | "evm" | "ton";
+export type NetworkType = "cosmos" | "evm" | "ton" | "svm";
 export interface NetworkConfig {
   coinType?: number;
   explorer: string;
@@ -172,7 +182,7 @@ export type BridgeAppCurrency = FeeCurrency & {
   readonly prefixToken?: string;
 };
 
-export type CoinType = 118 | 60 | 195 | 607;
+export type CoinType = 118 | 60 | 195 | 501 | 607;
 
 /**
  * A list of Cosmos chain infos. If we need to add / remove any chains, just directly update this variable.
@@ -223,7 +233,7 @@ export const OraiToken: BridgeAppCurrency = {
   coinMinimalDenom: "orai",
   coinDecimals: 6,
   coinGeckoId: "oraichain-token",
-  bridgeTo: ["0x38", "0x01", "injective-1"],
+  bridgeTo: ["0x38", "0x01", "injective-1", solChainId],
   coinImageUrl: "https://s2.coinmarketcap.com/static/img/coins/64x64/7533.png",
   gasPriceStep: {
     low: 0.003,
@@ -426,6 +436,14 @@ export const oraichainNetwork: CustomChainInfo = {
       bridgeTo: ["0x38"],
       coinGeckoId: "dogecoin",
       coinImageUrl: "https://assets.coingecko.com/coins/images/5/standard/dogecoin.png?1696501409"
+    },
+    {
+      coinDenom: "WSOL",
+      coinMinimalDenom: WSOL_WORMHOLE_BNB_ORAICHAIN_DENOM,
+      coinDecimals: 9,
+      bridgeTo: ["0x38"],
+      coinGeckoId: "solana",
+      coinImageUrl: "https://assets.coingecko.com/coins/images/4128/standard/solana.png?1718769756"
     },
     // {
     //   coinDenom: "CAT",
@@ -637,8 +655,81 @@ export const oraichainNetwork: CustomChainInfo = {
       coinDecimals: 9,
       coinGeckoId: "hamster-kombat",
       coinImageUrl: "https://assets.coingecko.com/coins/images/39102/standard/hamster-removebg-preview.png?1720514486"
+    },
+    {
+      coinDenom: "MAX",
+      coinGeckoId: "max-2",
+      coinMinimalDenom: MAX_ORAICHAIN_DENOM,
+      bridgeTo: [solChainId],
+      coinDecimals: 6,
+      coinImageUrl:
+        "https://pump.mypinata.cloud/ipfs/QmcGwYebsQfYbNSM9QDAMS2wKZ8fZNEiMbezJah1zgEWWS?img-width=256&img-dpr=2"
     }
   ]
+};
+
+export const solanaMainnet: CustomChainInfo = {
+  rpc: "https://swr.xnftdata.com/rpc-proxy/",
+  rest: "https://swr.xnftdata.com/rpc-proxy/",
+  chainId: solChainId,
+  chainName: "Solana",
+  bip44: {
+    coinType: 501
+  },
+  bech32Config: defaultBech32Config("sol"),
+  stakeCurrency: {
+    coinDenom: "SOL",
+    coinMinimalDenom: "sol",
+    coinDecimals: 9,
+    coinGeckoId: "solana",
+    coinImageUrl: "https://assets.coingecko.com/coins/images/4128/standard/solana.png?1718769756"
+  },
+  chainSymbolImageUrl: "https://upload.wikimedia.org/wikipedia/en/b/b9/Solana_logo.png",
+  networkType: "svm",
+  currencies: [
+    {
+      coinDenom: "MAX",
+      coinMinimalDenom: "max",
+      coinDecimals: 6,
+      bridgeTo: ["Oraichain"],
+      contractAddress: MAX_SOL_CONTRACT_ADDRESS,
+      coinGeckoId: "max-2",
+      coinImageUrl:
+        "https://pump.mypinata.cloud/ipfs/QmcGwYebsQfYbNSM9QDAMS2wKZ8fZNEiMbezJah1zgEWWS?img-width=256&img-dpr=2"
+    },
+    {
+      coinDenom: "ORAI",
+      coinMinimalDenom: "s20_orai",
+      coinDecimals: 8,
+      bridgeTo: ["Oraichain"],
+      contractAddress: ORAI_SOL_CONTRACT_ADDRESS,
+      coinGeckoId: "oraichain-token",
+      coinImageUrl: "https://s2.coinmarketcap.com/static/img/coins/64x64/7533.png"
+    }
+  ],
+  get feeCurrencies() {
+    return [
+      {
+        coinDenom: "SOL",
+        coinMinimalDenom: "sol",
+        coinDecimals: 9,
+        coinGeckoId: "solana",
+        coinImageUrl: "https://assets.coingecko.com/coins/images/4128/standard/solana.png?1718769756",
+        gasPriceStep: {
+          low: 1,
+          average: 1.25,
+          high: 1.5
+        }
+      }
+    ];
+  },
+
+  features: [],
+  txExplorer: {
+    name: "Sol Scan",
+    txUrl: "https://solscan.io/tx/{txHash}",
+    accountUrl: "https://solscan.io/address/{address}"
+  }
 };
 
 export const chainInfos: CustomChainInfo[] = [
@@ -646,6 +737,7 @@ export const chainInfos: CustomChainInfo[] = [
   oraichainNetwork,
   tonNetworkMainnet,
   celestiaNetwork,
+  solanaMainnet,
   {
     rpc: "https://bridge-v2.rpc.orai.io",
     rest: "https://bridge-v2.lcd.orai.io",
@@ -801,6 +893,15 @@ export const chainInfos: CustomChainInfo[] = [
         prefixToken: ORAI_BRIDGE_EVM_DENOM_PREFIX,
         coinGeckoId: "dogecoin",
         coinImageUrl: "https://assets.coingecko.com/coins/images/5/standard/dogecoin.png?1696501409"
+      },
+      {
+        coinDenom: "WSOL",
+        coinMinimalDenom: ORAI_BRIDGE_EVM_DENOM_PREFIX + WSOL_WORMHOLE_BSC_CONTRACT,
+        bridgeNetworkIdentifier: "0x38",
+        coinDecimals: 9,
+        prefixToken: ORAI_BRIDGE_EVM_DENOM_PREFIX,
+        coinGeckoId: "solana",
+        coinImageUrl: "https://assets.coingecko.com/coins/images/4128/standard/solana.png?1718769756"
       }
       // {
       //   coinDenom: "CAT",
@@ -1200,6 +1301,16 @@ export const chainInfos: CustomChainInfo[] = [
         bridgeTo: ["Oraichain"],
         prefixToken: ORAI_BRIDGE_EVM_DENOM_PREFIX,
         coinImageUrl: "https://assets.coingecko.com/coins/images/5/standard/dogecoin.png?1696501409"
+      },
+      {
+        coinDenom: "WSOL",
+        coinMinimalDenom: "bep20_wsol",
+        contractAddress: WSOL_WORMHOLE_BSC_CONTRACT,
+        coinDecimals: 9,
+        coinGeckoId: "solana",
+        bridgeTo: ["Oraichain"],
+        prefixToken: ORAI_BRIDGE_EVM_DENOM_PREFIX,
+        coinImageUrl: "https://assets.coingecko.com/coins/images/4128/standard/solana.png?1718769756"
       }
       // {
       //   coinDenom: "CAT",

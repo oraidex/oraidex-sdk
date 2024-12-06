@@ -19,7 +19,7 @@ import {
   MULTIPLIER,
   CW20_DECIMALS
 } from "./constant";
-import { CoinGeckoId, NetworkChainId, cosmosChains } from "./network";
+import { CoinGeckoId, NetworkChainId, cosmosChainIds, cosmosChains, evmChainIds, tonChainId } from "./network";
 import {
   AmountDetails,
   TokenInfo,
@@ -34,6 +34,7 @@ import { StargateMsg, Tx } from "./tx";
 import { BigDecimal } from "./bigdecimal";
 import { TextProposal } from "cosmjs-types/cosmos/gov/v1beta1/gov";
 import { defaultRegistryTypes as defaultStargateTypes, IndexedTx, logs, StargateClient } from "@cosmjs/stargate";
+import { Address } from "@ton/core";
 
 export const getEvmAddress = (bech32Address: string) => {
   if (!bech32Address) throw new Error("bech32 address is empty");
@@ -572,19 +573,30 @@ export const validateEvmAddress = (address: string, network: string) => {
   }
 };
 
-export const validateTronAddress = (address: string, network: string) => {
-  try {
-    if (!/T[a-zA-Z0-9]{32}/.test(address)) {
-      throw new Error("Invalid tron address");
-    }
+const isValidTronAddress = (address: string): boolean => /T[a-zA-Z0-9]{32}/.test(address);
+const isValidTonAddress = (address: string): boolean => !!Address.parse(address);
 
+export const validateAddressTonTron = (address: string, network: string) => {
+  try {
+    let isValid: boolean;
+    switch (network) {
+      case "0x2b6653dc":
+        isValid = isValidTronAddress(address);
+        break;
+      case "ton":
+        isValid = isValidTonAddress(address);
+        break;
+      default:
+        throw new Error("Unsupported network");
+    }
     return {
-      isValid: true,
+      isValid,
       network
     };
   } catch (error) {
     return {
-      isValid: false
+      isValid: false,
+      error: error.message
     };
   }
 };
@@ -595,11 +607,27 @@ export const checkValidateAddressWithNetwork = (address: string, network: Networ
     case "0x38":
       return validateEvmAddress(address, network);
 
-    // tron
+    // tron & ton
     case "0x2b6653dc":
-      return validateTronAddress(address, network);
+    case "ton":
+      return validateAddressTonTron(address, network);
 
     default:
       return validateAndIdentifyCosmosAddress(address, network);
   }
+};
+
+export const isCosmosChain = (chainId: string): boolean => {
+  const hasValue = cosmosChainIds.find((id) => id === chainId);
+  return Boolean(hasValue);
+};
+
+export const isEvmChain = (chainId: string): boolean => {
+  const hasValue = evmChainIds.find((id) => id === chainId);
+  return Boolean(hasValue);
+};
+
+export const isTonChain = (chainId: string): boolean => {
+  const hasValue = tonChainId.find((id) => id === chainId);
+  return Boolean(hasValue);
 };

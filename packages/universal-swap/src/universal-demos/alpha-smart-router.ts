@@ -5,32 +5,33 @@ import { cosmosTokens, flattenTokens, generateError, getTokenOnOraichain, toAmou
 
 const router = {
   swapAmount: "1000000",
-  returnAmount: "339961000000000000",
+  returnAmount: "98932",
   routes: [
     {
       swapAmount: "1000000",
-      returnAmount: "339961000000000000",
+      returnAmount: "98932",
       paths: [
         {
           chainId: "Oraichain",
           tokenIn: "orai12hzjxfh77wl572gdzct2fxv2arxcwh6gykc7qh",
           tokenInAmount: "1000000",
-          tokenOut: "0x55d398326f99059fF775485246999027B3197955",
-          tokenOutAmount: "339961000000000000",
-          tokenOutChainId: "0x38",
+          tokenOut: "orai",
+          tokenOutAmount: "98932",
+          tokenOutChainId: "Oraichain",
           actions: [
             {
-              type: "Bridge",
-              protocol: "Bridge",
+              type: "Swap",
+              protocol: "OraidexV3",
               tokenIn: "orai12hzjxfh77wl572gdzct2fxv2arxcwh6gykc7qh",
               tokenInAmount: "1000000",
-              tokenOut: "0x55d398326f99059fF775485246999027B3197955",
-              tokenOutAmount: "339961000000000000",
-              tokenOutChainId: "0x38",
-              bridgeInfo: {
-                port: "wasm.orai195269awwnt5m6c843q6w7hp8rt0k7syfu9de4h0wz384slshuzps8y7ccm",
-                channel: "channel-29"
-              }
+              tokenOut: "orai",
+              tokenOutAmount: "98932",
+              swapInfo: [
+                {
+                  poolId: "orai-orai12hzjxfh77wl572gdzct2fxv2arxcwh6gykc7qh-3000000000-100",
+                  tokenOut: "orai"
+                }
+              ]
             }
           ]
         }
@@ -45,7 +46,7 @@ const alphaSwapToOraichain = async () => {
   const fromAmount = 1;
   console.log("sender: ", sender);
   const originalFromToken = flattenTokens.find((t) => t.coinGeckoId === "tether" && t.chainId === "Oraichain");
-  const originalToToken = flattenTokens.find((t) => t.coinGeckoId === "tether" && t.chainId === "0x38");
+  const originalToToken = flattenTokens.find((t) => t.coinGeckoId === "oraichain-token" && t.chainId === "Oraichain");
 
   if (!originalToToken) throw generateError("Could not find original to token");
   if (!originalFromToken) throw generateError("Could not find original from token");
@@ -54,7 +55,7 @@ const alphaSwapToOraichain = async () => {
     {
       originalFromToken,
       originalToToken,
-      sender: { cosmos: sender, evm: "0x8c7E0A841269a01c0Ab389Ce8Fb3Cf150A94E797" },
+      sender: { cosmos: sender },
       fromAmount,
       userSlippage: 1,
       relayerFee: {
@@ -64,7 +65,7 @@ const alphaSwapToOraichain = async () => {
       // recipientAddress: "orai1hvr9d72r5um9lvt0rpkd4r75vrsqtw6yujhqs2",
       // recipientAddress: "osmo12zyu8w93h0q2lcnt50g3fn0w3yqnhy4fh4twhr",
       // recipientAddress: "inj133lq4pqjdxspcz4n388glv70z59ffeuh3ktnaj",
-      simulatePrice: "1000000",
+      simulatePrice: "98932",
       simulateAmount: router.returnAmount,
       alphaSmartRoutes: router
     },

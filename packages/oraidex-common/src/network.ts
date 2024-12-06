@@ -61,9 +61,13 @@ import {
   PEPE_BSC_CONTRACT,
   CAT_BSC_CONTRACT,
   HMSTR_ORAICHAIN_DENOM,
+  TON20_USDT_CONTRACT,
+  TON_CONTRACT,
   OBTC_ORAICHAIN_EXT_DENOM,
   DOGE_BNB_ORAICHAIN_DENOM,
   DOGE_BSC_CONTRACT,
+  jUSDC_TON_CONTRACT,
+  HMSTR_TON_CONTRACT,
   WSOL_WORMHOLE_BNB_ORAICHAIN_DENOM,
   WSOL_WORMHOLE_BSC_CONTRACT,
   solChainId,
@@ -88,28 +92,30 @@ export type NetworkName =
   | "Noble"
   | "Neutaro"
   | "Celestia"
+  | "TON"
   | "Solana";
 
-export type CosmosChainId =
-  | "Oraichain" // oraichain
-  | "oraibridge-subnet-2" // oraibridge
-  | "osmosis-1" // osmosis
-  | "cosmoshub-4" // cosmos hub
-  | "injective-1" // injective network
-  | "kawaii_6886-1" // kawaii subnetwork
-  | "noble-1" // noble network
-  | "Neutaro-1" // neutaro network;
-  | "celestia"; // Celestia
+export const cosmosChainIds = [
+  "Oraichain", // oraichain
+  "oraibridge-subnet-2", // oraibridge
+  "osmosis-1", // osmosis
+  "cosmoshub-4", // cosmos hub
+  "injective-1", // injective network
+  "kawaii_6886-1", // kawaii subnetwork
+  "noble-1", // noble network
+  "Neutaro-1", // neutaro network;
+  "celestia" // Celestia
+] as const;
+export type CosmosChainId = (typeof cosmosChainIds)[number];
 
-export type EvmChainId =
-  | "0x38" // bsc
-  | "0x01" // ethereum
-  | "0x1ae6" // kawaii
-  | "0x2b6653dc"; // tron
+export const evmChainIds = ["0x38", "0x01", "0x1ae6", "0x2b6653dc"] as const;
+export type EvmChainId = (typeof evmChainIds)[number];
+
+export const tonChainId = ["ton"] as const; // FIXME: don;t know ton chainID
+export type TonChainId = (typeof tonChainId)[number];
 
 export type SolChainId = "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp";
-
-export type NetworkChainId = CosmosChainId | EvmChainId | SolChainId;
+export type NetworkChainId = CosmosChainId | EvmChainId | TonChainId | SolChainId;
 
 export type CoinGeckoId =
   | "oraichain-token"
@@ -142,7 +148,7 @@ export type CoinGeckoId =
   | "solana"
   | "max-2";
 
-export type NetworkType = "cosmos" | "evm" | "svm";
+export type NetworkType = "cosmos" | "evm" | "ton" | "svm";
 export interface NetworkConfig {
   coinType?: number;
   explorer: string;
@@ -176,7 +182,7 @@ export type BridgeAppCurrency = FeeCurrency & {
   readonly prefixToken?: string;
 };
 
-export type CoinType = 118 | 60 | 195 | 501;
+export type CoinType = 118 | 60 | 195 | 501 | 607;
 
 /**
  * A list of Cosmos chain infos. If we need to add / remove any chains, just directly update this variable.
@@ -323,6 +329,77 @@ export const OsmoToken: BridgeAppCurrency = {
   }
 };
 
+export const tonNetworkMainnet: CustomChainInfo = {
+  rest: "https://toncenter.com/api/v2/jsonRPC",
+  rpc: "https://toncenter.com/api/v2/jsonRPC",
+  chainId: "ton",
+  chainName: "TON",
+  bip44: {
+    coinType: 607
+  },
+  coinType: 607,
+  stakeCurrency: {
+    coinDenom: "TON",
+    coinMinimalDenom: "ton",
+    coinDecimals: 9,
+    coinGeckoId: "the-open-network",
+    coinImageUrl: "https://assets.coingecko.com/coins/images/17980/standard/ton_symbol.png"
+  },
+  bech32Config: defaultBech32Config("ton"),
+  networkType: "ton",
+  currencies: [
+    {
+      coinDenom: "TON",
+      coinMinimalDenom: "ton",
+      coinDecimals: 9,
+      bridgeTo: ["Oraichain"],
+      prefixToken: "ton20_",
+      contractAddress: TON_CONTRACT,
+      coinGeckoId: "the-open-network",
+      coinImageUrl: "https://assets.coingecko.com/coins/images/17980/standard/ton_symbol.png"
+    },
+    {
+      coinDenom: "USDT",
+      coinMinimalDenom: "ton20_usdt",
+      coinDecimals: 6,
+      bridgeTo: ["Oraichain"],
+      contractAddress: TON20_USDT_CONTRACT,
+      prefixToken: "ton20_",
+      coinGeckoId: "tether",
+      coinImageUrl: "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png"
+    },
+    {
+      coinDenom: "HMSTR",
+      coinMinimalDenom: "ton20_hamster_kombat",
+      coinDecimals: 9,
+      bridgeTo: ["Oraichain"],
+      contractAddress: HMSTR_TON_CONTRACT,
+      prefixToken: "ton20_",
+      coinGeckoId: "hamster-kombat",
+      coinImageUrl: "https://assets.coingecko.com/coins/images/39102/standard/hamster-removebg-preview.png?1720514486"
+    },
+    {
+      coinDenom: "jUSDC",
+      coinMinimalDenom: "ton20_usdc",
+      coinDecimals: 6,
+      bridgeTo: ["Oraichain"],
+      contractAddress: jUSDC_TON_CONTRACT,
+      prefixToken: "ton20_",
+      coinGeckoId: "usd-coin",
+      coinImageUrl: "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
+    }
+  ],
+  get feeCurrencies() {
+    return this.currencies;
+  },
+  features: ["isTon"],
+  txExplorer: {
+    name: "BlockStream",
+    txUrl: "https://tonviewer.com/transaction/{txHash}",
+    accountUrl: `https://tonviewer.com/transaction/{address}`
+  }
+};
+
 export const oraichainNetwork: CustomChainInfo = {
   rpc: "https://rpc.orai.io",
   rest: "https://lcd.orai.io",
@@ -415,7 +492,7 @@ export const oraichainNetwork: CustomChainInfo = {
       coinMinimalDenom: "usdt",
       type: "cw20",
       contractAddress: USDT_CONTRACT,
-      bridgeTo: ["0x38", "0x2b6653dc", "0x01"],
+      bridgeTo: ["0x38", "0x2b6653dc", "0x01", "ton"],
       coinDecimals: 6,
       coinImageUrl: "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png"
     },
@@ -425,7 +502,7 @@ export const oraichainNetwork: CustomChainInfo = {
       coinMinimalDenom: "usdc",
       type: "cw20",
       contractAddress: USDC_CONTRACT,
-      bridgeTo: ["0x01", "noble-1"],
+      bridgeTo: ["0x01", "noble-1", "ton"],
       coinDecimals: 6,
       coinImageUrl: "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
     },
@@ -567,12 +644,14 @@ export const oraichainNetwork: CustomChainInfo = {
       coinDenom: "TON",
       coinMinimalDenom: TON_ORAICHAIN_DENOM,
       coinDecimals: 9,
+      bridgeTo: ["ton", "osmosis-1"],
       coinGeckoId: "the-open-network",
       coinImageUrl: "https://assets.coingecko.com/coins/images/17980/standard/ton_symbol.png?1696517498"
     },
     {
       coinDenom: "HMSTR",
       coinMinimalDenom: HMSTR_ORAICHAIN_DENOM,
+      bridgeTo: ["ton"],
       coinDecimals: 9,
       coinGeckoId: "hamster-kombat",
       coinImageUrl: "https://assets.coingecko.com/coins/images/39102/standard/hamster-removebg-preview.png?1720514486"
@@ -656,6 +735,7 @@ export const solanaMainnet: CustomChainInfo = {
 export const chainInfos: CustomChainInfo[] = [
   // networks to add on keplr
   oraichainNetwork,
+  tonNetworkMainnet,
   celestiaNetwork,
   solanaMainnet,
   {

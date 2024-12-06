@@ -30,7 +30,13 @@
     "@cosmjs/stargate": "^0.32.4",
     "@cosmjs/tendermint-rpc": "^0.32.4",
     "@oraichain/common-contracts-build": "1.0.35",
-    "@oraichain/common-contracts-sdk": "1.0.31"
+    "@oraichain/common-contracts-sdk": "1.0.31",
+    "@oraichain/ton-bridge-contracts": "^0.15.9",
+    "@oraichain/tonbridge-sdk": "^1.4.2",
+    "@orbs-network/ton-access": "^2.3.3",
+    "@ton/core": "0.56.3",
+    "@ton/crypto": "3.3.0",
+    "@ton/ton": "14.0.0"
   },
   "devDependencies": {
     "@babel/traverse": "7.24.1",

@@ -1,9 +1,18 @@
 import { expect, afterAll, beforeAll, describe, it, vi } from "vitest";
 import { BridgeMsgInfo, OraichainMsg } from "../../src/msg";
-import { calculateTimeoutTimestamp, generateError, IBC_TRANSFER_TIMEOUT } from "@oraichain/oraidex-common";
+import {
+  calculateTimeoutTimestamp,
+  generateError,
+  IBC_TRANSFER_TIMEOUT,
+  IBC_WASM_CONTRACT,
+  TON_CONTRACT
+} from "@oraichain/oraidex-common";
 import { Action } from "@oraichain/osor-api-contracts-sdk/src/EntryPoint.types";
 import { OsmosisMsg } from "../../build/msg";
 import { Memo } from "../../src/proto/universal_swap_memo";
+import { toBinary } from "@cosmjs/cosmwasm-stargate";
+import { MsgExecuteContract } from "cosmjs-types/cosmwasm/wasm/v1/tx";
+import { toUtf8 } from "@cosmjs/encoding";
 
 describe("test build oraichain msg", () => {
   const validPath = {
@@ -48,7 +57,7 @@ describe("test build oraichain msg", () => {
 
   it.each<[BridgeMsgInfo, Action, string]>([
     [
-      undefined,
+      undefined as any,
       {
         transfer: {
           to_address: receiver
@@ -207,7 +216,7 @@ describe("test build oraichain msg", () => {
               sourceChannel: bridgeInfo.sourceChannel,
               sourcePort: bridgeInfo.sourcePort,
               receiver: bridgeInfo.receiver,
-              memo: bridgeInfo.memo,
+              memo: bridgeInfo.memo as string,
               recoverAddress: currentAddress
             }
           },
@@ -304,8 +313,138 @@ describe("test build oraichain msg", () => {
               sourceChannel: bridgeInfo.sourceChannel,
               sourcePort: bridgeInfo.sourcePort,
               receiver: bridgeInfo.receiver,
-              memo: bridgeInfo.memo,
+              memo: bridgeInfo.memo as string,
               recoverAddress: currentAddress
+            }
+          },
+          recoveryAddr: currentAddress
+        }).finish()
+      ).toString("base64")
+    });
+  });
+
+  it("Valid path with ton bridge only", () => {
+    const nextMemo = "{}";
+    let validPathTonBridgeOnly = {
+      chainId: "Oraichain",
+      tokenIn: "factory/orai1wuvhex9xqs3r539mvc6mtm7n20fcj3qr2m0y9khx6n5vtlngfzes3k0rq9/ton",
+      tokenInAmount: "999000",
+      tokenOut: TON_CONTRACT,
+      tokenOutAmount: "999000",
+      tokenOutChainId: "ton",
+      actions: [
+        {
+          type: "Bridge",
+          protocol: "Bridge",
+          tokenIn: "factory/orai1wuvhex9xqs3r539mvc6mtm7n20fcj3qr2m0y9khx6n5vtlngfzes3k0rq9/ton",
+          tokenInAmount: "999000",
+          tokenOut: TON_CONTRACT,
+          tokenOutAmount: "999000",
+          tokenOutChainId: "ton",
+          bridgeInfo: {
+            port: "transfer", // fake port
+            channel: "ton-channel" // fake channel
+          }
+        }
+      ]
+    };
+    let oraichainMsg = new OraichainMsg(validPathTonBridgeOnly, "1", receiver, currentAddress, nextMemo);
+
+    let [swapOps, bridgeInfo] = oraichainMsg.getSwapAndBridgeInfo();
+    expect(bridgeInfo).toEqual({
+      amount: "999000",
+      sourceChannel: "ton-channel",
+      sourcePort: "transfer",
+      memo: nextMemo,
+      receiver: receiver,
+      timeout: +calculateTimeoutTimestamp(IBC_TRANSFER_TIMEOUT),
+      fromToken: "factory/orai1wuvhex9xqs3r539mvc6mtm7n20fcj3qr2m0y9khx6n5vtlngfzes3k0rq9/ton",
+      toToken: TON_CONTRACT,
+      fromChain: "Oraichain",
+      toChain: "ton"
+    });
+    expect(swapOps).toEqual([]);
+
+    let memoAsMiddleware = oraichainMsg.genMemoAsMiddleware();
+    let memo: Memo = {
+      userSwap: undefined, // no swap action
+      minimumReceive: "1",
+      timeoutTimestamp: +calculateTimeoutTimestamp(IBC_TRANSFER_TIMEOUT),
+      postSwapAction: {
+        contractCall: {
+          contractAddress: oraichainMsg.TON_BRIDGE_ADAPTER,
+          msg: toBinary({
+            bridge_to_ton: {
+              to: bridgeInfo.receiver,
+              denom: bridgeInfo.toToken,
+              timeout: Math.floor(new Date().getTime() / 1000) + IBC_TRANSFER_TIMEOUT,
+              recovery_addr: currentAddress
+            }
+          })
+        }
+      },
+      recoveryAddr: currentAddress
+    };
+    expect(memoAsMiddleware).toEqual({
+      receiver: IBC_WASM_CONTRACT,
+      memo: JSON.stringify({
+        wasm: {
+          contract: IBC_WASM_CONTRACT,
+          msg: {
+            ibc_hooks_receive: {
+              func: "universal_swap",
+              orai_receiver: currentAddress,
+              args: Buffer.from(Memo.encode(memo).finish()).toString("base64")
+            }
+          }
+        }
+      })
+    });
+
+    let executeMsg = oraichainMsg.genExecuteMsg();
+    expect(executeMsg).toEqual({
+      typeUrl: "/cosmwasm.wasm.v1.MsgExecuteContract",
+      value: MsgExecuteContract.fromPartial({
+        sender: currentAddress,
+        contract: oraichainMsg.TON_BRIDGE_ADAPTER,
+        msg: toUtf8(
+          JSON.stringify({
+            bridge_to_ton: {
+              to: bridgeInfo.receiver,
+              denom: bridgeInfo.toToken,
+              timeout: Math.floor(new Date().getTime() / 1000) + IBC_TRANSFER_TIMEOUT,
+              recovery_addr: currentAddress
+            }
+          })
+        ),
+        funds: [
+          {
+            denom: validPathTonBridgeOnly.tokenIn,
+            amount: validPathTonBridgeOnly.tokenInAmount
+          }
+        ]
+      })
+    });
+
+    let memoForIbcWasm = oraichainMsg.genMemoForIbcWasm();
+    expect(memoForIbcWasm).toEqual({
+      receiver: currentAddress,
+      memo: Buffer.from(
+        Memo.encode({
+          userSwap: undefined,
+          minimumReceive: "1",
+          timeoutTimestamp: +calculateTimeoutTimestamp(IBC_TRANSFER_TIMEOUT),
+          postSwapAction: {
+            contractCall: {
+              contractAddress: oraichainMsg.TON_BRIDGE_ADAPTER,
+              msg: toBinary({
+                bridge_to_ton: {
+                  to: bridgeInfo.receiver,
+                  denom: bridgeInfo.toToken,
+                  timeout: Math.floor(new Date().getTime() / 1000) + IBC_TRANSFER_TIMEOUT,
+                  recovery_addr: currentAddress
+                }
+              })
             }
           },
           recoveryAddr: currentAddress
@@ -595,11 +734,11 @@ describe("test build oraichain msg", () => {
     try {
       oraichainMsg.genMemoAsMiddleware();
     } catch (err) {
-      expect(err).toEqual(generateError(`Error on generate memo as middleware: Only support ibc bridge`));
+      expect(err).toEqual(generateError(`Error on generate memo as middleware: Only support ibc bridge & ton bridge`));
     }
   });
 
-  it("Valid path in genMemoForIbcWasm with ibc wasm bridge only", () => {
+  it("Valid path with ibc wasm bridge only - cw20 token", () => {
     const nextMemo = "{}";
     const validPath = {
       chainId: "Oraichain",
@@ -628,7 +767,8 @@ describe("test build oraichain msg", () => {
     let receiver = "0x0000000000000000000000000000000000000000";
     const currentAddress = "orai1hvr9d72r5um9lvt0rpkd4r75vrsqtw6yujhqs2";
     const oraiBridgeAddr = "oraib1hvr9d72r5um9lvt0rpkd4r75vrsqtw6ytnnvpf";
-    let oraichainMsg = new OraichainMsg(validPath, "1", receiver, currentAddress, nextMemo, "oraib", oraiBridgeAddr);
+    let destPrefix = "oraib";
+    let oraichainMsg = new OraichainMsg(validPath, "1", receiver, currentAddress, nextMemo, destPrefix, oraiBridgeAddr);
 
     let [swapOps, bridgeInfo] = oraichainMsg.getSwapAndBridgeInfo();
     expect(bridgeInfo).toEqual({
@@ -646,7 +786,30 @@ describe("test build oraichain msg", () => {
     expect(swapOps).toEqual([]);
 
     let executeMsg = oraichainMsg.genExecuteMsg();
-    expect(executeMsg.typeUrl).toEqual("/cosmwasm.wasm.v1.MsgExecuteContract");
+
+    expect(executeMsg).toEqual({
+      typeUrl: "/cosmwasm.wasm.v1.MsgExecuteContract",
+      value: MsgExecuteContract.fromPartial({
+        sender: currentAddress,
+        contract: validPath.tokenIn,
+        msg: toUtf8(
+          JSON.stringify({
+            send: {
+              contract: "orai195269awwnt5m6c843q6w7hp8rt0k7syfu9de4h0wz384slshuzps8y7ccm",
+              amount: validPath.tokenInAmount,
+              msg: toBinary({
+                local_channel_id: bridgeInfo.sourceChannel,
+                remote_address: oraiBridgeAddr,
+                remote_denom: destPrefix + bridgeInfo.toToken,
+                timeout: +calculateTimeoutTimestamp(IBC_TRANSFER_TIMEOUT),
+                memo: destPrefix + receiver
+              })
+            }
+          })
+        ),
+        funds: []
+      })
+    });
 
     let memoForIbcWasm = oraichainMsg.genMemoForIbcWasm();
     expect(memoForIbcWasm).toEqual({

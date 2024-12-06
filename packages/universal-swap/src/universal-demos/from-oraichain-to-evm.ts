@@ -10,11 +10,9 @@ const oraichainToEvm = async () => {
 
   const sender = await wallet.getKeplrAddr(chainId);
   const fromAmount = 10000;
-  let originalToToken = flattenTokens.find((t) => t.chainId === chainId && t.coinGeckoId === "pepe");
+  let originalToToken = flattenTokens.find((t) => t.chainId === chainId && t.coinGeckoId === "tether");
 
-  let originalFromToken = flattenTokens.find((t) => t.chainId === "0x38" && t.coinGeckoId === "pepe");
-
-  console.log({ originalFromToken, originalToToken });
+  let originalFromToken = flattenTokens.find((t) => t.chainId === "0x38" && t.coinGeckoId === "tether");
 
   if (!originalFromToken) throw generateError("Could not find original from token");
   if (!originalToToken) throw generateError("Could not find original to token");

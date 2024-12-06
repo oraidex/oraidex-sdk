@@ -7,53 +7,36 @@ import {
   flattenTokens,
   generateError,
   toAmount,
-  USDT_CONTRACT,
-  ORAI,
-  SCATOM_CONTRACT
+  USDT_CONTRACT
 } from "@oraichain/oraidex-common";
-import { UniversalSwapHelper } from "../helper";
 
-const oraichainToOraichain = async (chainId: "Oraichain") => {
+const cosmosToCosmos = async (chainId: "osmosis-1") => {
   const wallet = new CosmosWalletImpl(process.env.MNEMONIC);
 
   const sender = await wallet.getKeplrAddr(chainId);
-  const fromAmount = 0.01;
-  let originalFromToken = cosmosTokens.find(
-    (t) => t.chainId === chainId && t.contractAddress && t.contractAddress === USDT_CONTRACT
-  );
+  const fromAmount = 1;
+  let originalFromToken = cosmosTokens.find((t) => t.chainId === chainId && t.coinGeckoId === "osmosis");
 
-  let originalToToken = flattenTokens.find(
-    (t) => t.chainId === chainId && t.contractAddress && t.contractAddress === SCATOM_CONTRACT
-  );
-
+  let originalToToken = flattenTokens.find((t) => t.chainId === "Oraichain" && t.coinGeckoId === "osmosis");
   if (!originalFromToken) throw generateError("Could not find original from token");
   if (!originalToToken) throw generateError("Could not find original to token");
-
-  const smartRoutes = await UniversalSwapHelper.simulateSwapUsingSmartRoute({
-    fromInfo: originalFromToken,
-    toInfo: originalToToken,
-    amount: toAmount(fromAmount, originalToToken.decimals).toString()
-  });
-
   const universalHandler = new UniversalSwapHandler(
     {
       originalFromToken,
       originalToToken,
       sender: { cosmos: sender },
       relayerFee: {
-        relayerAmount: "0",
+        relayerAmount: "1000000",
         relayerDecimals: 6
       },
-      simulatePrice: "1000000",
       fromAmount,
-      simulateAmount: toAmount(fromAmount, originalToToken.decimals).toString(),
-      userSlippage: 0.01
+      simulateAmount: toAmount(fromAmount, originalToToken.decimals).toString()
     },
     {
       cosmosWallet: wallet,
       swapOptions: {
         isIbcWasm: false,
-        isAlphaIbcWasm: true
+        isAlphaSmartRouter: false
       }
     }
   );
@@ -67,5 +50,5 @@ const oraichainToOraichain = async (chainId: "Oraichain") => {
 };
 
 (() => {
-  return oraichainToOraichain("Oraichain");
+  return cosmosToCosmos("osmosis-1");
 })();

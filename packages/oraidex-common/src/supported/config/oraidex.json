@@ -103,10 +103,6 @@
     "HTT": {
       "denom": "cw20:orai1k5d5cgekt8kkzcrnxrx860wadvz5esjwtyv299g0ht75a92yfn6qvgu0ml:OCH",
       "coingecko_id": "osmosis"
-    },
-    "THT": {
-      "denom": "cw20:orai1fkz48mkvw9cs848kjmr69gn7znj9flyc3vd2xvzud7h2x36xaj7q6p48re:THT",
-      "coingecko_id": "polkadot"
     }
   },
   "celestia": {

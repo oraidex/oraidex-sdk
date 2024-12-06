@@ -1,5 +1,6 @@
 // exclude evm chain
 
+import { CosmosChainId } from "@oraichain/common";
 import {
   ATOM_ORAICHAIN_CHANNELS,
   IBC_TRANSFER_TIMEOUT,
@@ -15,7 +16,6 @@ import {
   OSMOSIS_ORAICHAIN_CHANNELS,
   NEUTARO_ORAICHAIN_CHANNELS
 } from "./constant";
-import { CosmosChainId, NetworkChainId } from "./network";
 
 export interface IBCInfo {
   source: string;
@@ -24,7 +24,7 @@ export interface IBCInfo {
   timeout: number;
 }
 
-export type IBCInfoMap = { [key in CosmosChainId]: { [key in NetworkChainId]?: IBCInfo } };
+export type IBCInfoMap = { [key in CosmosChainId]: { [key in string]?: IBCInfo } };
 
 // ibc constants
 
@@ -40,7 +40,7 @@ const [oraib2oraichain_old, oraichain2oraib_old] = ORAIB_ORAICHAIN_CHANNELS_OLD.
 const [kwt2oraichain, oraichain2kwt] = KWT_ORAICHAIN_CHANNELS.split(/\s+/);
 
 // exclude evm chain
-
+// FIXME: Callback info when Osor met problems
 export const ibcInfos: Omit<IBCInfoMap, "celestia"> = {
   "cosmoshub-4": {
     Oraichain: {

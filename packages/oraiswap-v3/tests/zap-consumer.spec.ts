@@ -34,6 +34,7 @@ import {
   OraiswapV3Handler
 } from "../src";
 import { MulticallQueryClient } from "@oraichain/common-contracts-sdk";
+import { OraidexCommon } from "@oraichain/oraidex-common";
 
 // move signer to dynamic signing of an object
 declare module "@oraichain/oraidex-contracts-sdk" {
@@ -104,8 +105,10 @@ describe("ZapConsumer", () => {
     let handler: OraiswapV3Handler;
     let feeTier1: OraiswapV3Types.FeeTier;
     let feeTier2: OraiswapV3Types.FeeTier;
+    let oraidexCommon: OraidexCommon;
 
     beforeEach(async () => {
+      oraidexCommon = await OraidexCommon.load();
       oraix = await createTokenWithDecimal("ORAIX", 6);
       usdt = await createTokenWithDecimal("USDT", 6);
       usdc = await createTokenWithDecimal("USDC", 6);
@@ -198,6 +201,7 @@ describe("ZapConsumer", () => {
       });
 
       zapConsumer = new ZapConsumer({
+        oraidexCommon,
         client: client,
         dexV3Address: oraiswapV3.contractAddress,
         deviation: 0,

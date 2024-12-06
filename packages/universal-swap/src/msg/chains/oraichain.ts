@@ -9,8 +9,7 @@ import {
   CONVERTER_CONTRACT,
   generateError,
   IBC_TRANSFER_TIMEOUT,
-  isEthAddress,
-  NetworkChainId
+  isEthAddress
 } from "@oraichain/oraidex-common";
 import { toBinary } from "@cosmjs/cosmwasm-stargate";
 import { Memo, Memo_PostAction, Memo_UserSwap } from "../../proto/universal_swap_memo";
@@ -138,8 +137,8 @@ export class OraichainMsg extends ChainMsg {
             timeout: +calculateTimeoutTimestamp(IBC_TRANSFER_TIMEOUT),
             fromToken: action.tokenIn,
             toToken: action.tokenOut,
-            fromChain: this.path.chainId as NetworkChainId,
-            toChain: this.path.tokenOutChainId as NetworkChainId
+            fromChain: this.path.chainId as string,
+            toChain: this.path.tokenOutChainId as string
           };
           break;
         }

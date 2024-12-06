@@ -1,35 +1,38 @@
-const OraiIcon = "https://s2.coinmarketcap.com/static/img/coins/64x64/7533.png";
-const OraiLightIcon = "https://s2.coinmarketcap.com/static/img/coins/64x64/7533.png";
-const AtomIcon = "https://s2.coinmarketcap.com/static/img/coins/64x64/3794.png";
-const AiriIcon = "https://i.ibb.co/m8mCyMr/airi.png";
-const UsdtIcon = "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png";
-const KwtIcon = "https://s2.coinmarketcap.com/static/img/coins/64x64/12313.png";
-const OsmoLightIcon = "https://assets.coingecko.com/coins/images/16724/large/osmo.png?1632763885";
-const OsmoIcon = "https://assets.coingecko.com/coins/images/16724/large/osmo.png?1632763885";
-const UsdcIcon = "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png";
-const ScOraiIcon = "https://s2.coinmarketcap.com/static/img/coins/64x64/7533.png";
-const OraixIcon = "https://assets.coingecko.com/coins/images/28104/standard/oraix.png?1696527113";
-const MilkyIcon = "https://s2.coinmarketcap.com/static/img/coins/64x64/14418.png";
-const TronIcon = "https://s2.coinmarketcap.com/static/img/coins/64x64/1958.png";
-const ScAtomIcon = "https://s2.coinmarketcap.com/static/img/coins/64x64/3794.png";
-const EthIcon = "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png";
-const BnbIcon = "https://s2.coinmarketcap.com/static/img/coins/64x64/1839.png";
-const InjIcon = "https://s2.coinmarketcap.com/static/img/coins/64x64/7226.png";
-const OraixLightIcon = "https://assets.coingecko.com/coins/images/28104/standard/oraix.png?1696527113";
-const NobleIcon = "https://raw.githubusercontent.com/cosmos/chain-registry/master/noble/images/stake.png";
-const BtcIcon = "https://s2.coinmarketcap.com/static/img/coins/64x64/1.png";
-const OCHIcon =
-  "https://assets.coingecko.com/coins/images/34236/standard/orchai_logo_white_copy_4x-8_%281%29.png?1704307670";
-const PepeIcon = "https://assets.coingecko.com/coins/images/29850/standard/pepe-token.jpeg?1696528776";
-const HamsterIcon = "https://assets.coingecko.com/coins/images/39102/standard/hamster-removebg-preview.png?1720514486";
+import { TokenItemType } from "src/format-types";
+import {
+  AiriIcon,
+  AtomIcon,
+  BnbIcon,
+  BtcIcon,
+  CelestiaIcon,
+  EthIcon,
+  HamsterIcon,
+  InjIcon,
+  KwtIcon,
+  MilkyIcon,
+  NeutaroIcon,
+  NobleIcon,
+  OCHIcon,
+  OraiIcon,
+  OraiLightIcon,
+  OraixIcon,
+  OraixLightIcon,
+  OsmoIcon,
+  OsmoLightIcon,
+  PepeIcon,
+  ScAtomIcon,
+  ScOraiIcon,
+  TronIcon,
+  UsdcIcon,
+  UsdtIcon
+} from "./icon";
 
-import { flatten } from "lodash";
-import { chainInfos as customChainInfos, CustomChainInfo } from "../network";
-import { TokenItemType, tokens } from "../token";
-
-const [otherChainTokens, oraichainTokens] = tokens;
-type TokenIcon = Pick<TokenItemType, "coinGeckoId" | "Icon" | "IconLight">;
-type ChainIcon = Pick<CustomChainInfo, "chainId" | "Icon" | "IconLight">;
+export type TokenIcon = Pick<TokenItemType, "coinGeckoId" | "Icon" | "IconLight">;
+export type ChainIcon = {
+  Icon: any;
+  IconLight?: any;
+  chainId: string;
+};
 
 export const tokensIcon: TokenIcon[] = [
   {
@@ -146,6 +149,11 @@ export const chainIcons: ChainIcon[] = [
     IconLight: OraiLightIcon
   },
   {
+    chainId: "celestia",
+    Icon: CelestiaIcon,
+    IconLight: CelestiaIcon
+  },
+  {
     chainId: "kawaii_6886-1",
     Icon: KwtIcon,
     IconLight: KwtIcon
@@ -189,8 +197,39 @@ export const chainIcons: ChainIcon[] = [
     chainId: "noble-1",
     Icon: NobleIcon,
     IconLight: NobleIcon
+  },
+  {
+    chainId: "oraibridge-subnet-2",
+    Icon: OraiIcon,
+    IconLight: OraiLightIcon
+  },
+  {
+    chainId: "Neutaro-1",
+    Icon: NeutaroIcon,
+    IconLight: NeutaroIcon
+  },
+  {
+    chainId: "oraibtc-mainnet-1",
+    Icon: BtcIcon,
+    IconLight: BtcIcon
+  },
+  {
+    chainId: "bitcoin",
+    Icon: BtcIcon,
+    IconLight: BtcIcon
   }
 ];
+
+export const tokenIconByCoingeckoId: Record<string, TokenIcon> = tokensIcon.reduce((acc, cur) => {
+  acc[cur.coinGeckoId] = cur;
+  return acc;
+}, {});
+
+export const chainIconByChainId: Record<string, ChainIcon> = chainIcons.reduce((acc, cur) => {
+  acc[cur.chainId] = cur;
+  return acc;
+}, {});
+
 export const mapListWithIcon = (list: any[], listIcon: ChainIcon[] | TokenIcon[], key: "chainId" | "coinGeckoId") => {
   return list.map((item) => {
     let Icon = OraiIcon;
@@ -210,13 +249,3 @@ export const mapListWithIcon = (list: any[], listIcon: ChainIcon[] | TokenIcon[]
     };
   });
 };
-
-// mapped chain info with icon
-export const chainInfosWithIcon = mapListWithIcon(customChainInfos, chainIcons, "chainId");
-
-// mapped token with icon
-export const oraichainTokensWithIcon = mapListWithIcon(oraichainTokens, tokensIcon, "coinGeckoId");
-export const otherTokensWithIcon = mapListWithIcon(otherChainTokens, tokensIcon, "coinGeckoId");
-
-export const tokensWithIcon = [otherTokensWithIcon, oraichainTokensWithIcon];
-export const flattenTokensWithIcon = flatten(tokensWithIcon);

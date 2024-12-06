@@ -99,6 +99,10 @@
     "DOGE": {
       "denom": "factory/orai1wuvhex9xqs3r539mvc6mtm7n20fcj3qr2m0y9khx6n5vtlngfzes3k0rq9/DogeBNB",
       "coingecko_id": "dogecoin"
+    },
+    "THT": {
+      "denom": "cw20:orai1fkz48mkvw9cs848kjmr69gn7znj9flyc3vd2xvzud7h2x36xaj7q6p48re:THT",
+      "coingecko_id": "polkadot"
     }
   },
   "celestia": {

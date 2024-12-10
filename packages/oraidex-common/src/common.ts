@@ -34,39 +34,6 @@ export class OraidexCommon {
     return OraidexCommon.instance;
   }
 
-  /**
-   * 
-  return network.currencies.map((currency) => {
-      return {
-        name: currency.coinDenom,
-        org: network.chainName,
-        coinType: network.bip44.coinType,
-        contractAddress: currency.contractAddress,
-        prefix:
-          currency?.prefixToken ?? network.bech32Config?.bech32PrefixAccAddr,
-        coinGeckoId: currency.coinGeckoId,
-        denom: currency.coinMinimalDenom,
-        bridgeNetworkIdentifier: currency.bridgeNetworkIdentifier,
-        decimals: currency.coinDecimals,
-        bridgeTo: currency.bridgeTo,
-        chainId: network.chainId,
-        rpc: network.rpc,
-        lcd: network.rest,
-        cosmosBased: network.networkType === NETWORK_TYPES.COSMOS,
-        maxGas: (network.feeCurrencies?.[0].gasPriceStep?.high ?? 0) * 20000,
-        gasPriceStep: currency.gasPriceStep,
-        feeCurrencies: network.feeCurrencies,
-        evmDenoms: evmDenomsMap[currency.coinMinimalDenom],
-        icon: currency.coinImageUrl,
-        iconLight: currency.coinImageUrl
-      };
-    });
-   */
-
-  addExtendedTokenItemsOnChain(tokenItems: BridgeAppCurrency[], chain: CustomChainInfo) {
-    this.tokenConfig.addExtendedTokenItemsOnChain(tokenItems as BridgeAppCurrency[], chain);
-  }
-
   get oraichainTokens() {
     return this.tokenConfig.oraichainTokens;
   }

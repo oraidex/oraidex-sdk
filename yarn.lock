@@ -3770,10 +3770,10 @@
     ethers "^5.5.1"
     lodash "^4.17.21"
 
-"@oraichain/common@^1.2.1-beta12":
-  version "1.2.1-beta12"
-  resolved "https://registry.yarnpkg.com/@oraichain/common/-/common-1.2.1-beta12.tgz#6297bd7e44feeecdf5e9937066b6f89fb0f77273"
-  integrity sha512-b8Cv07+kbzSEe+tMhH/XCQ+FSC/ORpQZxYRV1NvqKH/cWQA/Sz6aMh3+X0yinVUxEM7LEknWbzCag6YToAbc3g==
+"@oraichain/common@^1.2.1-beta13":
+  version "1.2.1-beta13"
+  resolved "https://registry.yarnpkg.com/@oraichain/common/-/common-1.2.1-beta13.tgz#81a56b2562308199c35a218815daa0851d487964"
+  integrity sha512-Kle7g2nbzmumsz/lZFU6EX+FP1xDgzT+XTOL3ZREuEcroZn7xo35cD+wcOeaifehVSBhPF/1NmknoSB2aV0+Yw==
   dependencies:
     "@keplr-wallet/types" "0.12.141"
     axios "0.21.4"

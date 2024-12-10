@@ -447,7 +447,12 @@ export class UniversalSwapHelper {
      * evm -> oraichain -> osmosis -> cosmos
      * ton -> others
      */
-    if (swapOption.isAlphaIbcWasm && !fromToken.cosmosBased && fromToken.chainId !== toToken.chainId) {
+    if (
+      swapOption.isAlphaIbcWasm &&
+      alphaSmartRoute?.routes?.length &&
+      !fromToken.cosmosBased &&
+      fromToken.chainId !== toToken.chainId
+    ) {
       if (!alphaSmartRoute) throw generateError(`Missing router with alpha ibc wasm!`);
       const routes = alphaSmartRoute.routes;
       const alphaRoutes = routes[0];
@@ -471,7 +476,6 @@ export class UniversalSwapHelper {
         };
         evmInfo[toToken.chainId] = addressMapping[toToken.chainId] || addresses.evmAddress;
       }
-
       let receiverAddresses = UniversalSwapHelper.generateAddress({
         injAddress: addresses.injAddress,
         oraiAddress: addresses.sourceReceiver,

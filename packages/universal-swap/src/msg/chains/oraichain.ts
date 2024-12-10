@@ -172,17 +172,28 @@ export class OraichainMsg extends ChainMsg {
       const jettonToToken = JETTONS_ADDRESS[bridgeInfo.toToken];
       if (!jettonToToken) throw `getProtoForPostAction: jetton address of ${bridgeInfo.toToken} not found!`;
 
+      let msg: unknown = {
+        bridge_to_ton: {
+          to: bridgeInfo.receiver,
+          denom: jettonToToken,
+          timeout: Math.floor(new Date().getTime() / 1000) + IBC_TRANSFER_TIMEOUT,
+          recovery_addr: this.currentChainAddress
+        }
+      };
+
+      if (isCw20Token(bridgeInfo.fromToken)) {
+        msg = {
+          to: bridgeInfo.receiver,
+          denom: jettonToToken,
+          timeout: Math.floor(new Date().getTime() / 1000) + IBC_TRANSFER_TIMEOUT,
+          recovery_addr: this.currentChainAddress
+        };
+      }
+
       return {
         contractCall: {
           contractAddress: this.TON_BRIDGE_ADAPTER,
-          msg: toBinary({
-            bridge_to_ton: {
-              to: bridgeInfo.receiver,
-              denom: jettonToToken,
-              timeout: Math.floor(new Date().getTime() / 1000) + IBC_TRANSFER_TIMEOUT,
-              recovery_addr: this.currentChainAddress
-            }
-          })
+          msg: toBinary(msg)
         }
       };
     }
@@ -278,17 +289,27 @@ export class OraichainMsg extends ChainMsg {
       const jettonToToken = JETTONS_ADDRESS[bridgeInfo.toToken];
       if (!jettonToToken) throw `getPostAction: jetton address of ${bridgeInfo.toToken} not found!`;
 
+      let msg: unknown = {
+        bridge_to_ton: {
+          to: bridgeInfo.receiver,
+          denom: jettonToToken,
+          timeout: Math.floor(new Date().getTime() / 1000) + IBC_TRANSFER_TIMEOUT,
+          recovery_addr: this.currentChainAddress
+        }
+      };
+
+      if (isCw20Token(bridgeInfo.fromToken)) {
+        msg = {
+          to: bridgeInfo.receiver,
+          denom: jettonToToken,
+          timeout: Math.floor(new Date().getTime() / 1000) + IBC_TRANSFER_TIMEOUT,
+          recovery_addr: this.currentChainAddress
+        };
+      }
       return {
         contract_call: {
           contract_address: this.TON_BRIDGE_ADAPTER,
-          msg: toBinary({
-            bridge_to_ton: {
-              to: bridgeInfo.receiver,
-              denom: jettonToToken,
-              timeout: Math.floor(new Date().getTime() / 1000) + IBC_TRANSFER_TIMEOUT,
-              recovery_addr: this.currentChainAddress
-            }
-          })
+          msg: toBinary(msg)
         }
       };
     }
@@ -563,6 +584,7 @@ export class OraichainMsg extends ChainMsg {
 
   genExecuteMsg(): EncodeObject {
     let [swapOps, bridgeInfo] = this.getSwapAndBridgeInfo();
+    console.log({ swapOps, bridgeInfo });
 
     // we have 2 cases:
     // - case 1: bridge only
@@ -573,6 +595,7 @@ export class OraichainMsg extends ChainMsg {
     }
 
     let tokenOutOfSwap = swapOps[swapOps.length - 1].denom_out;
+    console.log({ tokenOutOfSwap });
     let min_asset = isCw20Token(tokenOutOfSwap)
       ? {
           cw20: {

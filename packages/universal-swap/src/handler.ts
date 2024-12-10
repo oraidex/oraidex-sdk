@@ -766,6 +766,9 @@ export class UniversalSwapHandler {
     ].includes(universalSwapType);
 
     if (universalSwapTypeFromCosmos) {
+      if (!alphaSmartRoutes.routes?.length)
+        throw generateError(`Missing router universalSwapTypeFromCosmos: ${universalSwapType}!`);
+
       const isCheckBalance = ["oraichain-to-evm", "oraichain-to-cosmos"].includes(universalSwapType);
       if (!this.config?.swapOptions?.isCheckBalanceIbc && isCheckBalance) {
         const { client } = await this.config.cosmosWallet.getCosmWasmClient(
@@ -984,7 +987,7 @@ export class UniversalSwapHandler {
       alphaSmartRoutes
     );
 
-    if (isAlphaIbcWasmHasRoute) {
+    if (swapOptions?.isAlphaIbcWasm) {
       let receiverAddresses = UniversalSwapHelper.generateAddress(addressParams);
       if (recipientAddress) receiverAddresses[originalToToken.chainId] = toAddress;
       return this.alphaSmartRouterSwapNewMsg(swapRoute, universalSwapType, receiverAddresses);

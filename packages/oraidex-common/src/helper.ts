@@ -1,39 +1,30 @@
 import { ExecuteInstruction, JsonObject, fromBinary, toBinary, wasmTypes } from "@cosmjs/cosmwasm-stargate";
 import { fromAscii, toUtf8 } from "@cosmjs/encoding";
 import { Coin, EncodeObject, Registry, decodeTxRaw } from "@cosmjs/proto-signing";
-import { Event, Attribute } from "@cosmjs/tendermint-rpc/build/tendermint37";
+import { defaultRegistryTypes as defaultStargateTypes, logs } from "@cosmjs/stargate";
+import { Attribute, Event } from "@cosmjs/tendermint-rpc/build/tendermint37";
 import { AssetInfo, Uint128 } from "@oraichain/oraidex-contracts-sdk";
 import { TokenInfoResponse } from "@oraichain/oraidex-contracts-sdk/build/OraiswapToken.types";
 import bech32 from "bech32";
+import { TextProposal } from "cosmjs-types/cosmos/gov/v1beta1/gov";
 import { Tx as CosmosTx } from "cosmjs-types/cosmos/tx/v1beta1/tx";
 import { MsgExecuteContract } from "cosmjs-types/cosmwasm/wasm/v1/tx";
 import { ethers } from "ethers";
 import Long from "long";
+import { BigDecimal } from "./bigdecimal";
+import { OraidexCommon } from "./common";
 import {
   AVERAGE_COSMOS_GAS_PRICE,
+  GAS_ESTIMATION_BRIDGE_DEFAULT,
+  MULTIPLIER,
   WRAP_BNB_CONTRACT,
   WRAP_ETH_CONTRACT,
   atomic,
-  truncDecimals,
-  GAS_ESTIMATION_BRIDGE_DEFAULT,
-  MULTIPLIER,
-  CW20_DECIMALS
+  truncDecimals
 } from "./constant";
-import { CoinGeckoId, NetworkChainId, cosmosChains } from "./network";
-import {
-  AmountDetails,
-  TokenInfo,
-  TokenItemType,
-  cosmosTokens,
-  flattenTokens,
-  oraichainTokens,
-  CoinGeckoPrices,
-  tokenMap
-} from "./token";
+import { CoinGeckoId } from "./network";
 import { StargateMsg, Tx } from "./tx";
-import { BigDecimal } from "./bigdecimal";
-import { TextProposal } from "cosmjs-types/cosmos/gov/v1beta1/gov";
-import { defaultRegistryTypes as defaultStargateTypes, IndexedTx, logs, StargateClient } from "@cosmjs/stargate";
+import { AmountDetails, TokenInfo, CoinGeckoPrices, TokenItemType, CustomChainInfo } from "./format-types";
 
 export const getEvmAddress = (bech32Address: string) => {
   if (!bech32Address) throw new Error("bech32 address is empty");
@@ -187,14 +178,17 @@ export const calculateMinReceive = (
   ).toString();
 };
 
-export const parseAssetInfoFromContractAddrOrDenom = (addressOrDenomToken: string) => {
+export const parseAssetInfoFromContractAddrOrDenom = (addressOrDenomToken: string, cosmosTokens: TokenItemType[]) => {
   if (!addressOrDenomToken) return null;
   const addressOrDenomLowerCase = addressOrDenomToken.toLowerCase();
+
+  // const cosmosTokens = getOraidexCommonAttribute<TokenItemType[]>("cosmosTokens");
   const tokenItem = cosmosTokens.find((cosmosToken) => {
     return !cosmosToken.contractAddress
       ? cosmosToken.denom.toLowerCase() === addressOrDenomLowerCase
       : cosmosToken.contractAddress.toLowerCase() === addressOrDenomLowerCase;
   });
+  // @ts-ignore
   return tokenItem ? parseTokenInfo(tokenItem).info : null;
 };
 
@@ -230,7 +224,12 @@ export const proxyContractInfo: { [x: string]: { wrapNativeAddr: string; routerA
   }
 };
 
-export const findToTokenOnOraiBridge = (fromCoingeckoId: CoinGeckoId, toNetwork: NetworkChainId) => {
+export const findToTokenOnOraiBridge = (
+  fromCoingeckoId: CoinGeckoId,
+  toNetwork: string,
+  cosmosTokens: TokenItemType[]
+) => {
+  // const cosmosTokens = getOraidexCommonAttribute<TokenItemType[]>("cosmosTokens");
   return cosmosTokens.find(
     (t) =>
       t.chainId === "oraibridge-subnet-2" &&
@@ -247,8 +246,10 @@ export const parseAssetInfo = (assetInfo: AssetInfo): string => {
 
 export const getTokenOnSpecificChainId = (
   coingeckoId: CoinGeckoId,
-  chainId: NetworkChainId
+  chainId: string,
+  flattenTokens: TokenItemType[]
 ): TokenItemType | undefined => {
+  // const flattenTokens = getOraidexCommonAttribute<TokenItemType[]>("flattenTokens");
   return flattenTokens.find((t) => t.coinGeckoId === coingeckoId && t.chainId === chainId);
 };
 
@@ -259,7 +260,8 @@ export const getTokenOnSpecificChainId = (
  * @returns token on oraichain
  */
 
-export const getTokenOnOraichain = (coingeckoId: CoinGeckoId, isNative?: boolean) => {
+export const getTokenOnOraichain = (coingeckoId: CoinGeckoId, oraichainTokens: TokenItemType[], isNative?: boolean) => {
+  // const oraichainTokens = getOraidexCommonAttribute<TokenItemType[]>("oraichainTokens");
   const filterOraichainToken = oraichainTokens.filter((orai) => orai.coinGeckoId === coingeckoId);
   if (!filterOraichainToken.length) return undefined;
   if (filterOraichainToken.length === 1) return filterOraichainToken[0];
@@ -337,8 +339,8 @@ export const getSwapType = ({
   fromCoingeckoId,
   toCoingeckoId
 }: {
-  fromChainId: NetworkChainId;
-  toChainId: NetworkChainId;
+  fromChainId: string;
+  toChainId: string;
   fromCoingeckoId: CoinGeckoId;
   toCoingeckoId: CoinGeckoId;
 }): SwapType => {
@@ -392,8 +394,45 @@ export const calcMaxAmount = ({
   return finalAmount;
 };
 
-export const getTotalUsd = (amounts: AmountDetails, prices: CoinGeckoPrices<string>): number => {
+// export const getOraidexCommonAttribute = <T>(
+//   key:
+//     | "oraichainTokens"
+//     | "otherChainTokens"
+//     | "chainInfosCommon"
+//     | "tokens"
+//     | "flattenTokens"
+//     | "tokenMap"
+//     | "assetInfoMap"
+//     | "cosmosTokens"
+//     | "cw20Tokens"
+//     | "cw20TokenMap"
+//     | "evmTokens"
+//     | "kawaiiTokens"
+//     | "oraichainTokensWithIcon"
+//     | "otherTokensWithIcon"
+//     | "tokensWithIcon"
+//     | "flattenTokensWithIcon"
+//     | "oraichainNetwork"
+//     | "chainInfos"
+//     | "network"
+//     | "evmChains"
+//     | "cosmosChains"
+//     | "chainInfosWithIcon"
+//     | "celestiaNetwork"
+// ): T => {
+//   if (!OraidexCommon.instance) throw new Error("OraidexCommon is not loaded");
+//   return OraidexCommon.instance[key] as T;
+// };
+export const getTotalUsd = (
+  amounts: AmountDetails,
+  prices: CoinGeckoPrices<string>,
+  tokenMap: Record<string, TokenItemType>
+): number => {
   let usd = 0;
+
+  // const tokenMap = getOraidexCommonAttribute<{
+  //   [k: string]: TokenItemType;
+  // }>("tokenMap");
   for (const denom in amounts) {
     const tokenInfo = tokenMap[denom];
     if (!tokenInfo) continue;
@@ -403,20 +442,31 @@ export const getTotalUsd = (amounts: AmountDetails, prices: CoinGeckoPrices<stri
   return usd;
 };
 
-export const toSubDisplay = (amounts: AmountDetails, tokenInfo: TokenItemType): number => {
+export const toSubDisplay = (
+  amounts: AmountDetails,
+  tokenInfo: TokenItemType,
+  tokenMap: Record<string, TokenItemType>
+): number => {
   const subAmounts = getSubAmountDetails(amounts, tokenInfo);
-  return toSumDisplay(subAmounts);
+  return toSumDisplay(subAmounts, tokenMap);
 };
 
-export const toSubAmount = (amounts: AmountDetails, tokenInfo: TokenItemType): bigint => {
-  const displayAmount = toSubDisplay(amounts, tokenInfo);
+export const toSubAmount = (
+  amounts: AmountDetails,
+  tokenInfo: TokenItemType,
+  tokenMap: Record<string, TokenItemType>
+): bigint => {
+  const displayAmount = toSubDisplay(amounts, tokenInfo, tokenMap);
   return toAmount(displayAmount, tokenInfo.decimals);
 };
 
-export const toSumDisplay = (amounts: AmountDetails): number => {
+export const toSumDisplay = (amounts: AmountDetails, tokenMap: Record<string, TokenItemType>): number => {
   // get all native balances that are from oraibridge (ibc/...)
   let amount = 0;
 
+  // const tokenMap = getOraidexCommonAttribute<{
+  //   [k: string]: TokenItemType;
+  // }>("tokenMap");
   for (const denom in amounts) {
     // update later
     const balance = amounts[denom];
@@ -511,7 +561,7 @@ export const parseTxToMsgsAndEvents = (indexedTx: Tx, eventsParser?: (events: re
   });
 };
 
-export const validateAndIdentifyCosmosAddress = (address: string, network: string) => {
+export const validateAndIdentifyCosmosAddress = (address: string, network: string, cosmosChains: CustomChainInfo[]) => {
   try {
     const cosmosAddressRegex = /^[a-z]{1,6}[0-9a-z]{0,64}$/;
     if (!cosmosAddressRegex.test(address)) {
@@ -522,6 +572,7 @@ export const validateAndIdentifyCosmosAddress = (address: string, network: strin
     const prefix = decodedAddress.prefix;
 
     let chainInfo;
+
     const networkMap = cosmosChains.reduce((acc, cur) => {
       if (cur.chainId === network) chainInfo = cur;
       return {
@@ -543,7 +594,6 @@ export const validateAndIdentifyCosmosAddress = (address: string, network: strin
       throw new Error("Unsupported address network");
     }
   } catch (error) {
-    console.log("error:", error);
     return {
       isValid: false,
       error: error.message
@@ -589,7 +639,7 @@ export const validateTronAddress = (address: string, network: string) => {
   }
 };
 
-export const checkValidateAddressWithNetwork = (address: string, network: NetworkChainId) => {
+export const checkValidateAddressWithNetwork = (address: string, network: string, cosmosChains: CustomChainInfo[]) => {
   switch (network) {
     case "0x01":
     case "0x38":
@@ -600,6 +650,6 @@ export const checkValidateAddressWithNetwork = (address: string, network: Networ
       return validateTronAddress(address, network);
 
     default:
-      return validateAndIdentifyCosmosAddress(address, network);
+      return validateAndIdentifyCosmosAddress(address, network, cosmosChains);
   }
 };

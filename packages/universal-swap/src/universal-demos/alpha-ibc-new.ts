@@ -1,7 +1,7 @@
 import "dotenv/config";
-import { CosmosWalletImpl } from "./offline-wallet";
 import { UniversalSwapHandler } from "../handler";
-import { cosmosTokens, flattenTokens, generateError, getTokenOnOraichain, toAmount } from "@oraichain/oraidex-common";
+import { CosmosWalletImpl } from "./offline-wallet";
+import { generateError, OraidexCommon, toAmount } from "@oraichain/oraidex-common";
 
 const router = {
   swapAmount: "79297000000000000",
@@ -86,6 +86,9 @@ const alphaSwapToOraichain = async () => {
 
   const fromAmount = 0.079297;
   console.log("sender: ", sender);
+
+  const oraidexCommon = await OraidexCommon.load();
+  const flattenTokens = oraidexCommon.flattenTokens;
   const originalFromToken = flattenTokens.find(
     (t) => t.coinGeckoId === "injective-protocol" && t.chainId === "injective-1"
   );
@@ -113,7 +116,8 @@ const alphaSwapToOraichain = async () => {
     {
       cosmosWallet: wallet,
       swapOptions: { isIbcWasm: false, isAlphaIbcWasm: true }
-    }
+    },
+    oraidexCommon
   );
 
   try {
@@ -125,5 +129,7 @@ const alphaSwapToOraichain = async () => {
 };
 
 (() => {
-  alphaSwapToOraichain();
+  alphaSwapToOraichain().catch((error) => {
+    console.log({ error_alphaSwapToOraichain: error });
+  });
 })();

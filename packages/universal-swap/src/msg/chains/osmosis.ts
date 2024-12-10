@@ -3,13 +3,7 @@ import { ActionType, Path } from "../../types";
 import { SwapOperation } from "@oraichain/osor-api-contracts-sdk/src/types";
 import { Swap, Action, ExecuteMsg } from "@oraichain/osor-api-contracts-sdk/src/EntryPoint.types";
 import { isCw20Token } from "../common";
-import {
-  BigDecimal,
-  calculateTimeoutTimestamp,
-  generateError,
-  IBC_TRANSFER_TIMEOUT,
-  NetworkChainId
-} from "@oraichain/oraidex-common";
+import { BigDecimal, calculateTimeoutTimestamp, generateError, IBC_TRANSFER_TIMEOUT } from "@oraichain/oraidex-common";
 import { toBinary } from "@cosmjs/cosmwasm-stargate";
 import { EncodeObject } from "@cosmjs/proto-signing";
 import { MsgExecuteContract } from "cosmjs-types/cosmwasm/wasm/v1/tx";
@@ -87,8 +81,8 @@ export class OsmosisMsg extends ChainMsg {
             timeout: +calculateTimeoutTimestamp(IBC_TRANSFER_TIMEOUT),
             fromToken: action.tokenIn,
             toToken: action.tokenOut,
-            fromChain: this.path.chainId as NetworkChainId,
-            toChain: this.path.tokenOutChainId as NetworkChainId
+            fromChain: this.path.chainId as string,
+            toChain: this.path.tokenOutChainId as string
           };
           break;
         }

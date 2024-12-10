@@ -20,9 +20,9 @@ import {
   MAX_ORAICHAIN_DENOM
 } from "./constant";
 import { parseAssetInfo } from "./helper";
-import { TokenItemType, assetInfoMap } from "./token";
 import uniq from "lodash/uniq";
 import flatten from "lodash/flatten";
+import { TokenItemType } from "./format-types";
 
 export type PairMapping = {
   asset_infos: [AssetInfo, AssetInfo];
@@ -159,10 +159,11 @@ export const isFactoryV1 = (assetInfos: [AssetInfo, AssetInfo]): boolean => {
   return pair.factoryV1 ?? false;
 };
 
-export const getPoolTokens = (): TokenItemType[] => {
+export const getPoolTokens = (assetInfoMap: Record<string, TokenItemType>): TokenItemType[] => {
   return uniq(flatten(PAIRS.map((pair) => pair.asset_infos)).map((info) => assetInfoMap[parseAssetInfo(info)]));
 };
 
+// TODO: remove hardcode here
 export const PAIRS_CHART = PAIRS.map((pair) => {
   const assets = pair.asset_infos.map((info) => {
     if ("native_token" in info) return info.native_token.denom;

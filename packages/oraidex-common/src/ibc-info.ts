@@ -41,7 +41,7 @@ const [kwt2oraichain, oraichain2kwt] = KWT_ORAICHAIN_CHANNELS.split(/\s+/);
 
 // exclude evm chain
 // FIXME: Callback info when Osor met problems
-export const ibcInfos: Omit<IBCInfoMap, "celestia"> = {
+export const ibcInfos: Omit<IBCInfoMap, "celestia"> | any = {
   "cosmoshub-4": {
     Oraichain: {
       source: "transfer",
@@ -164,7 +164,7 @@ export const ibcInfos: Omit<IBCInfoMap, "celestia"> = {
         timeout: IBC_TRANSFER_TIMEOUT
       },
       timeout: IBC_TRANSFER_TIMEOUT
-    }
+    },
   },
   "oraibridge-subnet-2": {
     Oraichain: {
@@ -183,7 +183,7 @@ export const ibcInfos: Omit<IBCInfoMap, "celestia"> = {
 export const ibcInfosOld: Omit<
   IBCInfoMap,
   "osmosis-1" | "cosmoshub-4" | "injective-1" | "noble-1" | "Neutaro-1" | "celestia"
-> = {
+> | any= {
   Oraichain: {
     "oraibridge-subnet-2": {
       source: "transfer",

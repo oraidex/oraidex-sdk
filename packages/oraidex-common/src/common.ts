@@ -19,6 +19,7 @@ import {
 import { NetworkConfig } from "./network";
 import { CustomChainInfo } from "./format-types";
 import { ChainIdEnum } from "./interface";
+import { FeeCurrency } from "@keplr-wallet/types";
 
 export class OraidexCommon {
   static instance: OraidexCommon;
@@ -62,22 +63,8 @@ export class OraidexCommon {
     });
    */
 
-  addExtendedTokenItemsOnChain(
-    tokenItems: {
-      coinDenom: string;
-      contractAddress: string;
-      prefixToken: string;
-      coinGeckoId: string;
-      coinMinimalDenom: string;
-      bridgeNetworkIdentifier: string;
-      coinDecimals: number;
-      bridgeTo: string;
-      gasPriceStep: string;
-      coinImageUrl: string;
-    }[],
-    chain: CustomChainInfo
-  ) {
-    OraidexCommon.instance.addExtendedTokenItemsOnChain(tokenItems, chain);
+  addExtendedTokenItemsOnChain(tokenItems: BridgeAppCurrency[], chain: CustomChainInfo) {
+    this.tokenConfig.addExtendedTokenItemsOnChain(tokenItems as BridgeAppCurrency[], chain);
   }
 
   get oraichainTokens() {

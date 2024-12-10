@@ -1,4 +1,4 @@
-import { ChainInfos, CoinType, MULTICALL_CONTRACT, OraiCommon, TokenItems } from "@oraichain/common";
+import { BridgeAppCurrency, ChainInfos, CoinType, MULTICALL_CONTRACT, OraiCommon, TokenItems } from "@oraichain/common";
 import { flatten } from "lodash";
 import { chainIcons, mapListWithIcon, tokensIcon } from "./config";
 import {
@@ -31,6 +31,53 @@ export class OraidexCommon {
       OraidexCommon.instance = new OraidexCommon(oraiCommon.tokenItems, oraiCommon.chainInfos);
     }
     return OraidexCommon.instance;
+  }
+
+  /**
+   * 
+  return network.currencies.map((currency) => {
+      return {
+        name: currency.coinDenom,
+        org: network.chainName,
+        coinType: network.bip44.coinType,
+        contractAddress: currency.contractAddress,
+        prefix:
+          currency?.prefixToken ?? network.bech32Config?.bech32PrefixAccAddr,
+        coinGeckoId: currency.coinGeckoId,
+        denom: currency.coinMinimalDenom,
+        bridgeNetworkIdentifier: currency.bridgeNetworkIdentifier,
+        decimals: currency.coinDecimals,
+        bridgeTo: currency.bridgeTo,
+        chainId: network.chainId,
+        rpc: network.rpc,
+        lcd: network.rest,
+        cosmosBased: network.networkType === NETWORK_TYPES.COSMOS,
+        maxGas: (network.feeCurrencies?.[0].gasPriceStep?.high ?? 0) * 20000,
+        gasPriceStep: currency.gasPriceStep,
+        feeCurrencies: network.feeCurrencies,
+        evmDenoms: evmDenomsMap[currency.coinMinimalDenom],
+        icon: currency.coinImageUrl,
+        iconLight: currency.coinImageUrl
+      };
+    });
+   */
+
+  addExtendedTokenItemsOnChain(
+    tokenItems: {
+      coinDenom: string;
+      contractAddress: string;
+      prefixToken: string;
+      coinGeckoId: string;
+      coinMinimalDenom: string;
+      bridgeNetworkIdentifier: string;
+      coinDecimals: number;
+      bridgeTo: string;
+      gasPriceStep: string;
+      coinImageUrl: string;
+    }[],
+    chain: CustomChainInfo
+  ) {
+    OraidexCommon.instance.addExtendedTokenItemsOnChain(tokenItems, chain);
   }
 
   get oraichainTokens() {

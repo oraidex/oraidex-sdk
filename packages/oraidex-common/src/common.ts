@@ -107,50 +107,10 @@ export class OraidexCommon {
 
   get oraichainNetwork() {
     return this.chainConfig.getSpecificChainInfo("Oraichain");
-    // TODO: update later
-    //   bech32Config: defaultBech32Config("orai"),
-    // currencies: oraiCommon.chainInfos.getSpecificChainInfo("Oraichain").currencies.map((currency) => {
-    //   const coingeckoId =
-    //     mapDenomWithCoinGeckoId[currency.coinMinimalDenom] || mapDenomWithCoinGeckoId[currency.contractAddress];
-    //   if (coingeckoId) {
-    //     return {
-    //       ...currency,
-    //       coinGeckoId: coingeckoId,
-    //       bridgeTo: !supportedBridge.Oraichain?.[coingeckoId]?.length
-    //         ? undefined
-    //         : supportedBridge.Oraichain?.[coingeckoId]
-    //     };
-    //   }
-    //   return currency;
-    // })
   }
 
   get chainInfos() {
     return this.chainConfig.chainInfos;
-    // TODO: update later
-    //   .filter((chain) => supportedChainIds.includes(chain.chainId))
-    // .map((c) => {
-    //   const updatedCurrencies = c.currencies.map((currency) => {
-    //     const coingeckoId =
-    //       mapDenomWithCoinGeckoId[currency.coinMinimalDenom] || mapDenomWithCoinGeckoId[currency.contractAddress];
-    //     if (coingeckoId) {
-    //       return {
-    //         ...currency,
-    //         coinGeckoId: coingeckoId,
-    //         bridgeTo: !supportedBridge[c.chainId]?.[coingeckoId]?.length
-    //           ? undefined
-    //           : supportedBridge[c.chainId]?.[coingeckoId]
-    //       };
-    //     }
-    //     return currency;
-    //   });
-
-    //   return {
-    //     ...c,
-    //     currencies: updatedCurrencies,
-    //     Icon: c.chainLogoSvg || c.chainLogoPng,
-    //     IconLight: c.chainLogoSvg || c.chainLogoPng
-    // };
   }
 
   get network(): CustomChainInfo & NetworkConfig {

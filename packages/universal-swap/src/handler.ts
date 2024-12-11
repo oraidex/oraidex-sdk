@@ -1,6 +1,7 @@
 import { Coin, EncodeObject, coin } from "@cosmjs/proto-signing";
 import { fromBech32, toBech32 } from "@cosmjs/encoding";
 import { MsgTransfer } from "cosmjs-types/ibc/applications/transfer/v1/tx";
+import { MsgTransfer as MsgTransferInjective } from "@injectivelabs/sdk-ts/node_modules/cosmjs-types/ibc/applications/transfer/v1/tx";
 import { ExecuteInstruction, ExecuteResult, toBinary } from "@cosmjs/cosmwasm-stargate";
 import { TransferBackMsg } from "@oraichain/common-contracts-sdk/build/CwIcs20Latest.types";
 import {
@@ -709,7 +710,7 @@ export class UniversalSwapHandler {
     const swapRouteSplit = completeSwapRoute.split(":");
     const swapRoute = swapRouteSplit.length === 1 ? "" : swapRouteSplit[1];
 
-    let msgTransfer = MsgTransfer.fromPartial({
+    const msgTransferObj = {
       sourcePort: ibcInfo.source,
       receiver: this.getCwIcs20ContractAddr(),
       sourceChannel: ibcInfo.channel,
@@ -728,7 +729,15 @@ export class UniversalSwapHandler {
         }
       }),
       timeoutTimestamp: BigInt(calculateTimeoutTimestamp(ibcInfo.timeout))
-    });
+    };
+
+    let msgTransfer: MsgTransfer | MsgTransferInjective = MsgTransfer.fromPartial(msgTransferObj);
+    if (originalFromToken.chainId === "injective-1") {
+      msgTransfer = MsgTransferInjective.fromPartial({
+        ...msgTransferObj,
+        timeoutTimestamp: calculateTimeoutTimestamp(ibcInfo.timeout)
+      });
+    }
 
     // check if from chain is noble, use ibc-wasm instead of ibc-hooks
     if (originalFromToken.chainId === "noble-1") {

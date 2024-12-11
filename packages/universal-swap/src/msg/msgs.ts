@@ -93,7 +93,7 @@ const buildExecuteMsg = (
       let prefix = getDestPrefixForBridgeToEvmOnOrai(path.tokenOutChainId);
       const ORAIBRIDGE_SUBNET = "oraibridge-subnet-2";
       let oBridgeAddress = addresses[ORAIBRIDGE_SUBNET];
-      if (!oBridgeAddress) {
+      if (!oBridgeAddress && !isEvmChain(path.tokenOutChainId)) {
         throw generateError(`Missing oBridge address for ${ORAIBRIDGE_SUBNET}`);
       }
 

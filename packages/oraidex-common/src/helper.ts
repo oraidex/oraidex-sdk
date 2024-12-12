@@ -1,7 +1,6 @@
 import { ExecuteInstruction, JsonObject, fromBinary, toBinary, wasmTypes } from "@cosmjs/cosmwasm-stargate";
 import { fromAscii, toUtf8 } from "@cosmjs/encoding";
 import { Coin, EncodeObject, Registry, decodeTxRaw } from "@cosmjs/proto-signing";
-import { defaultRegistryTypes as defaultStargateTypes, logs } from "@cosmjs/stargate";
 import { Attribute, Event } from "@cosmjs/tendermint-rpc/build/tendermint37";
 import { AssetInfo, Uint128 } from "@oraichain/oraidex-contracts-sdk";
 import { TokenInfoResponse } from "@oraichain/oraidex-contracts-sdk/build/OraiswapToken.types";
@@ -12,7 +11,6 @@ import { MsgExecuteContract } from "cosmjs-types/cosmwasm/wasm/v1/tx";
 import { ethers } from "ethers";
 import Long from "long";
 import { BigDecimal } from "./bigdecimal";
-import { OraidexCommon } from "./common";
 import {
   AVERAGE_COSMOS_GAS_PRICE,
   GAS_ESTIMATION_BRIDGE_DEFAULT,
@@ -22,9 +20,13 @@ import {
   atomic,
   truncDecimals
 } from "./constant";
-import { CoinGeckoId } from "./network";
 import { StargateMsg, Tx } from "./tx";
 import { AmountDetails, TokenInfo, CoinGeckoPrices, TokenItemType, CustomChainInfo } from "./format-types";
+
+// TODO: get from oraidexCommon
+import { CoinGeckoId } from "./network";
+import { defaultRegistryTypes as defaultStargateTypes, logs } from "@cosmjs/stargate";
+import { Address } from "@ton/core";
 
 export const getEvmAddress = (bech32Address: string) => {
   if (!bech32Address) throw new Error("bech32 address is empty");
@@ -587,19 +589,30 @@ export const validateEvmAddress = (address: string, network: string) => {
   }
 };
 
-export const validateTronAddress = (address: string, network: string) => {
-  try {
-    if (!/T[a-zA-Z0-9]{32}/.test(address)) {
-      throw new Error("Invalid tron address");
-    }
+const isValidTronAddress = (address: string): boolean => /T[a-zA-Z0-9]{32}/.test(address);
+const isValidTonAddress = (address: string): boolean => !!Address.parse(address);
 
+export const validateAddressTonTron = (address: string, network: string) => {
+  try {
+    let isValid: boolean;
+    switch (network) {
+      case "0x2b6653dc":
+        isValid = isValidTronAddress(address);
+        break;
+      case "ton":
+        isValid = isValidTonAddress(address);
+        break;
+      default:
+        throw new Error("Unsupported network");
+    }
     return {
-      isValid: true,
+      isValid,
       network
     };
   } catch (error) {
     return {
-      isValid: false
+      isValid: false,
+      error: error.message
     };
   }
 };
@@ -610,11 +623,34 @@ export const checkValidateAddressWithNetwork = (address: string, network: string
     case "0x38":
       return validateEvmAddress(address, network);
 
-    // tron
+    // tron & ton
     case "0x2b6653dc":
-      return validateTronAddress(address, network);
+    case "ton":
+      return validateAddressTonTron(address, network);
 
     default:
       return validateAndIdentifyCosmosAddress(address, network, cosmosChains);
   }
+};
+
+// TODO: get from oraidexCommon
+export const isCosmosChain = (chainId: string, cosmosChains = []): boolean => {
+  // const oraidexCommon = await OraidexCommon.load();
+  // const hasValue = oraidexCommon.cosmosChains.find((chain) => chain.chainId === chainId);
+
+  const hasValue = cosmosChains.find((chain) => chain.chainId === chainId);
+  return Boolean(hasValue);
+};
+
+// TODO: get from oraidexCommon
+export const isEvmChain = (chainId: string, evmChains = []): boolean => {
+  // const oraidexCommon = await OraidexCommon.load();
+  // const hasValue = oraidexCommon.evmChains.find((chain) => chain.chainId === chainId);
+
+  const hasValue = evmChains.find((chain) => chain.chainId === chainId);
+  return Boolean(hasValue);
+};
+
+export const isTonChain = (chainId: string): boolean => {
+  return chainId === "ton";
 };

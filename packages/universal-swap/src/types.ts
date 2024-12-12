@@ -2,14 +2,16 @@ import { Coin } from "@cosmjs/amino";
 import { AmountDetails, CosmosWallet, EvmWallet, TokenItemType } from "@oraichain/oraidex-common";
 import { SwapOperation, Uint128 } from "@oraichain/oraidex-contracts-sdk";
 import { Affiliate } from "@oraichain/oraidex-contracts-sdk/build/OraiswapMixedRouter.types";
+import TonWallet from "@oraichain/tonbridge-sdk/build/wallet";
 
 export type UniversalSwapType =
   | "other-networks-to-oraichain"
   | "oraichain-to-oraichain"
   | "oraichain-to-evm"
   | "oraichain-to-cosmos"
+  | "oraichain-to-ton"
   | "cosmos-to-others"
-  | "smart-router";
+  | "ton-to-others";
 
 export enum ActionType {
   Bridge = "Bridge",
@@ -38,6 +40,7 @@ export interface Sender {
   cosmos: string;
   evm?: string;
   tron?: string;
+  ton?: string;
 }
 
 export interface RelayerFeeData {
@@ -74,6 +77,7 @@ export interface UniversalSwapData {
 export interface UniversalSwapConfig {
   readonly cosmosWallet?: CosmosWallet;
   readonly evmWallet?: EvmWallet;
+  readonly tonWallet?: TonWallet;
   readonly swapOptions?: SwapOptions;
 }
 

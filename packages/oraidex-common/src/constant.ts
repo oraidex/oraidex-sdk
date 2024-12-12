@@ -142,6 +142,36 @@ export const WETH_CONTRACT = "orai1dqa52a7hxxuv8ghe7q5v0s36ra0cthea960q2cukznleq
 export const BTC_CONTRACT = "orai10g6frpysmdgw5tdqke47als6f97aqmr8s3cljsvjce4n5enjftcqtamzsd";
 export const OCH_CONTRACT = "orai1hn8w33cqvysun2aujk5sv33tku4pgcxhhnsxmvnkfvdxagcx0p8qa4l98q";
 
+// config for Ton Token
+export const TON20_USDT_CONTRACT = "EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs";
+export const HMSTR_TON_CONTRACT = "EQAJ8uWd7EBqsmpSWaRdf_I-8R8-XHwh3gsNKhy-UrdrPcUo";
+export const jUSDC_TON_CONTRACT = "EQB-MPwrd1G6WKNkLz_VnV6WqBDd142KMQv-g1O-8QUA3728";
+export const TON_CONTRACT = "EQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAM9c";
+export const TON_BRIDGE_ADAPTER = "EQC-aFP0rJXwTgKZQJPbPfTSpBFc8wxOgKHWD9cPvOl_DnaY";
+export const TON_LIGHT_CLIENT = "EQDzy_POlimFDyzrHd3OQsb9sZCngyG3O7Za4GRFzM-rrO93";
+export const TON_WHITE_LIST = "EQATDM6mfPZjPDMD9TVa6D9dlbmAKY5w6xOJiTXJ9Nqj_dsu";
+/**
+ * TODO: This is the object containing the hardcoded addresses of cw20 TON Network. They are obtained from the formula below. We need to add more when we support new TON20.
+ * const client = await getTonClient();
+ * const jettonMinter = JettonMinter.createFromAddress(
+ *     Address.parse(TON20 contractAddress)  // exam: "EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs" => TON20_USDT_CONTRACT
+ * );
+ * const jettonMinterContract = client.open(jettonMinter);
+ * const jettonWalletAddress = await jettonMinterContract.getWalletAddress(
+ *    Address.parse("orai159l8l9c5ckhqpuwdfgs9p4v599nqt3cjlfahalmtrhfuncnec2ms5mz60e")
+ * );
+ */
+export const JETTONS_ADDRESS = {
+  [TON_CONTRACT]: TON_CONTRACT,
+  [TON20_USDT_CONTRACT]: "EQANiP_ggkS0lJbR12xmDNT7hgqphdnVG0cCiJN6BN35Z498",
+  [HMSTR_TON_CONTRACT]: "EQC6hNI8R02lWfTV7wKXo9zueMoUP7ZBY4KZp5fkvN_Ad9Um",
+  [jUSDC_TON_CONTRACT]: "EQAacZPtQpnIHS1PlQgVaceb_I4v2HE3rvrZC91ynSRqXd9d"
+};
+export const TON_NATIVE_DENOM = "ton";
+
+export const TON_BRIDGE_ADAPTER_ORAICHAIN = "orai159l8l9c5ckhqpuwdfgs9p4v599nqt3cjlfahalmtrhfuncnec2ms5mz60e";
+export const TOKEN_FACTORY = "orai1wuvhex9xqs3r539mvc6mtm7n20fcj3qr2m0y9khx6n5vtlngfzes3k0rq9";
+
 // config for oraichain contract
 export const FACTORY_CONTRACT = "orai1hemdkz4xx9kukgrunxu3yw0nvpyxf34v82d2c8";
 export const FACTORY_V2_CONTRACT = "orai167r4ut7avvgpp3rlzksz6vw5spmykluzagvmj3ht845fjschwugqjsqhst";
@@ -180,6 +210,14 @@ export const BASE_API_URL = "https://api.oraidex.io";
 
 // alpha smart router
 export const OSMOSIS_ROUTER_CONTRACT = "osmo1h3jkejkcpthl45xrrm5geed3eq75p5rgfce9taufkwfr89k63muqweu2y7";
+export const ATOM_OSMOSIS_CONTRACT = "ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2";
+export const USDC_OSMOSIS_CONTRACT = "ibc/498A0751C798A0D9A389AA3691123DADA57DAA4FE165D5C75894505B876BA6E4";
+export const ORAI_OSMOSIS_CONTRACT = "ibc/161D7D62BAB3B9C39003334F1671208F43C06B643CC9EDBBE82B64793C857F1D";
+export const TIA_OSMOSIS_CONTRACT = "ibc/D79E7D83AB399BFFF93433E54FAA480C191248FC556924A2A8351AE2638B3877";
+export const INJ_OSMOSIS_CONTRACT = "ibc/64BA6E31FE887D66C6F8F31C7B1A80C7CA179239677B4088BB55F5EA07DBE273";
+export const TON_ALL_OSMOSIS_CONTRACT =
+  "factory/osmo12lnwf54yd30p6amzaged2atln8k0l32n7ncxf04ctg7u7ymnsy7qkqgsw4/alloyed/allTON";
+export const TON_OSMOSIS_CONTRACT = "ibc/905889A7F0B94F1CE1506D9BADF13AE9141E4CBDBCD565E1DFC7AE418B3E3E98";
 
 // websocket consts
 export const WEBSOCKET_RECONNECT_ATTEMPTS = 5;

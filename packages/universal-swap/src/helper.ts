@@ -261,11 +261,16 @@ export class UniversalSwapHelper {
     if (!fromToken || !toToken || !destReceiver)
       return { swapRoute: "", universalSwapType: "other-networks-to-oraichain", isSmartRouter: false };
     // this is the simplest case. Both tokens on the same Oraichain network => simple swap with to token denom
+    if (fromToken.chainId === "ton") {
+      return { swapRoute: "", universalSwapType: "ton-to-others", isSmartRouter: true };
+    }
     if (fromToken.chainId === "Oraichain" && toToken.chainId === "Oraichain") {
       return { swapRoute: "", universalSwapType: "oraichain-to-oraichain", isSmartRouter: false };
     }
     // we dont need to have any swapRoute for this case
     if (fromToken.chainId === "Oraichain") {
+      if (toToken.chainId === "ton")
+        return { swapRoute: "", universalSwapType: "oraichain-to-ton", isSmartRouter: false };
       if (cosmosTokens.some((t) => t.chainId === toToken.chainId))
         return { swapRoute: "", universalSwapType: "oraichain-to-cosmos", isSmartRouter: false };
       return { swapRoute: "", universalSwapType: "oraichain-to-evm", isSmartRouter: false };
@@ -399,6 +404,7 @@ export class UniversalSwapHelper {
       recipientAddress?: string;
       evmAddress?: string;
       tronAddress?: string;
+      tonAddress?: string;
     },
     fromToken: TokenItemType,
     toToken: TokenItemType,
@@ -458,9 +464,15 @@ export class UniversalSwapHelper {
 
     /**
      * useAlphaIbcWasm case:
-     * evm -> oraichain -> osmosis -> inj/tia
+     * evm -> oraichain -> osmosis -> cosmos
+     * ton -> others
      */
-    if (swapOption.isAlphaIbcWasm && !fromToken.cosmosBased && fromToken.chainId !== toToken.chainId) {
+    if (
+      swapOption.isAlphaIbcWasm &&
+      alphaSmartRoute?.routes?.length &&
+      !fromToken.cosmosBased &&
+      fromToken.chainId !== toToken.chainId
+    ) {
       if (!alphaSmartRoute) throw generateError(`Missing router with alpha ibc wasm!`);
       const routes = alphaSmartRoute.routes;
       const alphaRoutes = routes[0];
@@ -476,15 +488,19 @@ export class UniversalSwapHelper {
         paths = alphaRoutes.paths.filter((_, index) => index > 0);
       }
 
+      let evmInfo = {};
+      if (!toToken.cosmosBased) {
+        const addressMapping = {
+          [EVM_CHAIN_IDS.TRON]: addresses.tronAddress,
+          ton: addresses.tonAddress
+        };
+        evmInfo[toToken.chainId] = addressMapping[toToken.chainId] || addresses.evmAddress;
+      }
       let receiverAddresses = UniversalSwapHelper.generateAddress({
         injAddress: addresses.injAddress,
         oraiAddress: addresses.sourceReceiver,
-        cosmosChains,
-        evmInfo: !toToken.cosmosBased
-          ? {
-              [toToken.chainId]: toToken.chainId === EVM_CHAIN_IDS.TRON ? addresses.tronAddress : addresses.evmAddress
-            }
-          : {}
+        evmInfo,
+        cosmosChains
       });
 
       if (addresses?.recipientAddress) receiverAddresses[toToken.chainId] = addresses?.recipientAddress;

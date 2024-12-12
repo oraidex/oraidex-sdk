@@ -33,7 +33,7 @@ export type CoinGeckoId =
   | "solana"
   | "max-2";
 
-export type NetworkType = "cosmos" | "evm" | "svm";
+export type NetworkType = "cosmos" | "evm" | "ton" | "svm";
 export interface NetworkConfig {
   coinType?: CoinType;
   explorer: string;

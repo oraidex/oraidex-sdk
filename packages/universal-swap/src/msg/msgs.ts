@@ -1,5 +1,7 @@
 import {
   generateError,
+  isEvmChain,
+  isTonChain,
   ORAI_BRIDGE_EVM_DENOM_PREFIX,
   ORAI_BRIDGE_EVM_TRON_DENOM_PREFIX,
   ORAI_BRIDGE_EVM_ETH_DENOM_PREFIX
@@ -35,12 +37,13 @@ const buildMemoSwap = (
 ): MiddlewareResponse => {
   let currentChain = path.chainId;
   let currentAddress = addresses[currentChain];
+
   switch (currentChain) {
     case "Oraichain": {
       let prefix = getDestPrefixForBridgeToEvmOnOrai(path.tokenOutChainId);
       const ORAIBRIDGE_SUBNET = "oraibridge-subnet-2";
       let oBridgeAddress = addresses[ORAIBRIDGE_SUBNET];
-      if (!oBridgeAddress) {
+      if (!oBridgeAddress && !isEvmChain(path.tokenOutChainId)) {
         throw generateError(`Missing oBridge address for ${ORAIBRIDGE_SUBNET}`);
       }
 
@@ -48,9 +51,9 @@ const buildMemoSwap = (
       oraichainMsg.setMinimumReceiveForSwap(slippage);
       // we have 2 cases:
       // - Previous chain use IBC bridge to Oraichain
-      // -  Previous chain use IBC Wasm bridge to Oraichain (EVM, noble)
+      // -  Previous chain use IBC Wasm bridge to Oraichain (EVM, noble, ton)
       let msgInfo =
-        previousChain && (previousChain == "noble-1" || previousChain.startsWith("0x"))
+        previousChain && (previousChain == "noble-1" || isEvmChain(previousChain) || isTonChain(previousChain))
           ? oraichainMsg.genMemoForIbcWasm()
           : oraichainMsg.genMemoAsMiddleware();
       return msgInfo;
@@ -90,7 +93,7 @@ const buildExecuteMsg = (
       let prefix = getDestPrefixForBridgeToEvmOnOrai(path.tokenOutChainId);
       const ORAIBRIDGE_SUBNET = "oraibridge-subnet-2";
       let oBridgeAddress = addresses[ORAIBRIDGE_SUBNET];
-      if (!oBridgeAddress) {
+      if (!oBridgeAddress && !isEvmChain(path.tokenOutChainId)) {
         throw generateError(`Missing oBridge address for ${ORAIBRIDGE_SUBNET}`);
       }
 

@@ -24,7 +24,6 @@ import {
   isEthAddress,
   marshalEncodeObjsToStargateMsgs,
   parseAssetInfo,
-  parseAssetInfoFromContractAddrOrDenom,
   parseTokenInfo,
   parseTokenInfoRawDenom,
   parseTxToMsgsAndEvents,
@@ -38,7 +37,8 @@ import {
   validateAndIdentifyCosmosAddress,
   validateEvmAddress,
   validateNumber,
-  validateTronAddress
+  validateAddressTonTron,
+  parseAssetInfoFromContractAddrOrDenom
 } from "../src/helper";
 import { CoinGeckoId } from "../src/network";
 import { isFactoryV1 } from "../src/pairs";
@@ -649,8 +649,10 @@ describe("should helper functions in helper run exactly", () => {
         error: "Invalid address"
       }
     ]
-  ])("test-check-validate-address-wallet-with-network", (address, network, expected) => {
-    const check = checkValidateAddressWithNetwork(address, network);
+  ])("test-check-validate-address-wallet-with-network", async (address, network, expected) => {
+    const oraidexCommon = await OraidexCommon.load();
+    const cosmosChains = oraidexCommon.cosmosChains;
+    const check = checkValidateAddressWithNetwork(address, network, cosmosChains);
 
     expect(check).toEqual(expected);
   });
@@ -674,11 +676,12 @@ describe("should helper functions in helper run exactly", () => {
     ["TEu6u8JLCFs6x1w5s8WosNqYqVx2JMC5hQ", "0x2b6653dc", true],
     ["0x1CE09E54A5d7432ecabf3b085BAda7920aeb7dab", "0x01", false],
     ["TEu6u8JLCFs6x1w5s8WosNqYqVx2JMC5hQ", "0x01", false],
+    ["UQDOAHXyCPFOXAXm9c1P_NeNEeSWy6IaRHqJRnBUp0jMZ6i3", "ton", true],
     ["TE", "0x2b6653dc", false],
     ["", "0x2b6653dc", false]
   ])("test-validateTronAddress", (value, network, expectation) => {
     try {
-      const { isValid } = validateTronAddress(value, network);
+      const { isValid } = validateAddressTonTron(value, network);
       expect(isValid).toEqual(expectation);
     } catch (error) {
       expect(expectation).toEqual(false);

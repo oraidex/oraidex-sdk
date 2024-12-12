@@ -11,9 +11,7 @@ import _m0 from "protobufjs/minimal";
 export const protobufPackage = "";
 
 export interface Memo {
-  userSwap:
-    | Memo_UserSwap
-    | undefined;
+  userSwap: Memo_UserSwap | undefined;
   /** string because the minimum receive may be very high due to decimal points */
   minimumReceive: string;
   timeoutTimestamp: number;
@@ -91,9 +89,7 @@ export interface Memo_IbcWasmTransfer {
    * / How long the packet lives in seconds. If not specified, use
    * / default_timeout
    */
-  timeout?:
-    | number
-    | undefined;
+  timeout?: number | undefined;
   /** / metadata of the transfer to suit the new fungible token transfer */
   memo?: string | undefined;
 }
@@ -188,7 +184,7 @@ export const Memo = {
       minimumReceive: isSet(object.minimumReceive) ? globalThis.String(object.minimumReceive) : "",
       timeoutTimestamp: isSet(object.timeoutTimestamp) ? globalThis.Number(object.timeoutTimestamp) : 0,
       postSwapAction: isSet(object.postSwapAction) ? Memo_PostAction.fromJSON(object.postSwapAction) : undefined,
-      recoveryAddr: isSet(object.recoveryAddr) ? globalThis.String(object.recoveryAddr) : "",
+      recoveryAddr: isSet(object.recoveryAddr) ? globalThis.String(object.recoveryAddr) : ""
     };
   },
 
@@ -217,17 +213,19 @@ export const Memo = {
   },
   fromPartial<I extends Exact<DeepPartial<Memo>, I>>(object: I): Memo {
     const message = createBaseMemo();
-    message.userSwap = (object.userSwap !== undefined && object.userSwap !== null)
-      ? Memo_UserSwap.fromPartial(object.userSwap)
-      : undefined;
+    message.userSwap =
+      object.userSwap !== undefined && object.userSwap !== null
+        ? Memo_UserSwap.fromPartial(object.userSwap)
+        : undefined;
     message.minimumReceive = object.minimumReceive ?? "";
     message.timeoutTimestamp = object.timeoutTimestamp ?? 0;
-    message.postSwapAction = (object.postSwapAction !== undefined && object.postSwapAction !== null)
-      ? Memo_PostAction.fromPartial(object.postSwapAction)
-      : undefined;
+    message.postSwapAction =
+      object.postSwapAction !== undefined && object.postSwapAction !== null
+        ? Memo_PostAction.fromPartial(object.postSwapAction)
+        : undefined;
     message.recoveryAddr = object.recoveryAddr ?? "";
     return message;
-  },
+  }
 };
 
 function createBaseMemo_SwapExactAssetIn(): Memo_SwapExactAssetIn {
@@ -269,7 +267,7 @@ export const Memo_SwapExactAssetIn = {
     return {
       operations: globalThis.Array.isArray(object?.operations)
         ? object.operations.map((e: any) => Memo_SwapOperation.fromJSON(e))
-        : [],
+        : []
     };
   },
 
@@ -288,7 +286,7 @@ export const Memo_SwapExactAssetIn = {
     const message = createBaseMemo_SwapExactAssetIn();
     message.operations = object.operations?.map((e) => Memo_SwapOperation.fromPartial(e)) || [];
     return message;
-  },
+  }
 };
 
 function createBaseMemo_SmartSwapExactAssetIn(): Memo_SmartSwapExactAssetIn {
@@ -328,7 +326,7 @@ export const Memo_SmartSwapExactAssetIn = {
 
   fromJSON(object: any): Memo_SmartSwapExactAssetIn {
     return {
-      routes: globalThis.Array.isArray(object?.routes) ? object.routes.map((e: any) => Memo_Route.fromJSON(e)) : [],
+      routes: globalThis.Array.isArray(object?.routes) ? object.routes.map((e: any) => Memo_Route.fromJSON(e)) : []
     };
   },
 
@@ -347,7 +345,7 @@ export const Memo_SmartSwapExactAssetIn = {
     const message = createBaseMemo_SmartSwapExactAssetIn();
     message.routes = object.routes?.map((e) => Memo_Route.fromPartial(e)) || [];
     return message;
-  },
+  }
 };
 
 function createBaseMemo_Route(): Memo_Route {
@@ -400,7 +398,7 @@ export const Memo_Route = {
       offerAmount: isSet(object.offerAmount) ? globalThis.String(object.offerAmount) : "",
       operations: globalThis.Array.isArray(object?.operations)
         ? object.operations.map((e: any) => Memo_SwapOperation.fromJSON(e))
-        : [],
+        : []
     };
   },
 
@@ -423,7 +421,7 @@ export const Memo_Route = {
     message.offerAmount = object.offerAmount ?? "";
     message.operations = object.operations?.map((e) => Memo_SwapOperation.fromPartial(e)) || [];
     return message;
-  },
+  }
 };
 
 function createBaseMemo_SwapOperation(): Memo_SwapOperation {
@@ -485,7 +483,7 @@ export const Memo_SwapOperation = {
     return {
       poolId: isSet(object.poolId) ? globalThis.String(object.poolId) : "",
       denomIn: isSet(object.denomIn) ? globalThis.String(object.denomIn) : "",
-      denomOut: isSet(object.denomOut) ? globalThis.String(object.denomOut) : "",
+      denomOut: isSet(object.denomOut) ? globalThis.String(object.denomOut) : ""
     };
   },
 
@@ -512,7 +510,7 @@ export const Memo_SwapOperation = {
     message.denomIn = object.denomIn ?? "";
     message.denomOut = object.denomOut ?? "";
     return message;
-  },
+  }
 };
 
 function createBaseMemo_UserSwap(): Memo_UserSwap {
@@ -578,7 +576,7 @@ export const Memo_UserSwap = {
         : undefined,
       smartSwapExactAssetIn: isSet(object.smartSwapExactAssetIn)
         ? Memo_SmartSwapExactAssetIn.fromJSON(object.smartSwapExactAssetIn)
-        : undefined,
+        : undefined
     };
   },
 
@@ -602,15 +600,16 @@ export const Memo_UserSwap = {
   fromPartial<I extends Exact<DeepPartial<Memo_UserSwap>, I>>(object: I): Memo_UserSwap {
     const message = createBaseMemo_UserSwap();
     message.swapVenueName = object.swapVenueName ?? "";
-    message.swapExactAssetIn = (object.swapExactAssetIn !== undefined && object.swapExactAssetIn !== null)
-      ? Memo_SwapExactAssetIn.fromPartial(object.swapExactAssetIn)
-      : undefined;
+    message.swapExactAssetIn =
+      object.swapExactAssetIn !== undefined && object.swapExactAssetIn !== null
+        ? Memo_SwapExactAssetIn.fromPartial(object.swapExactAssetIn)
+        : undefined;
     message.smartSwapExactAssetIn =
-      (object.smartSwapExactAssetIn !== undefined && object.smartSwapExactAssetIn !== null)
+      object.smartSwapExactAssetIn !== undefined && object.smartSwapExactAssetIn !== null
         ? Memo_SmartSwapExactAssetIn.fromPartial(object.smartSwapExactAssetIn)
         : undefined;
     return message;
-  },
+  }
 };
 
 function createBaseMemo_PostAction(): Memo_PostAction {
@@ -685,7 +684,7 @@ export const Memo_PostAction = {
         ? Memo_IbcWasmTransfer.fromJSON(object.ibcWasmTransferMsg)
         : undefined,
       contractCall: isSet(object.contractCall) ? Memo_ContractCall.fromJSON(object.contractCall) : undefined,
-      transferMsg: isSet(object.transferMsg) ? Memo_Transfer.fromJSON(object.transferMsg) : undefined,
+      transferMsg: isSet(object.transferMsg) ? Memo_Transfer.fromJSON(object.transferMsg) : undefined
     };
   },
 
@@ -711,20 +710,24 @@ export const Memo_PostAction = {
   },
   fromPartial<I extends Exact<DeepPartial<Memo_PostAction>, I>>(object: I): Memo_PostAction {
     const message = createBaseMemo_PostAction();
-    message.ibcTransferMsg = (object.ibcTransferMsg !== undefined && object.ibcTransferMsg !== null)
-      ? Memo_IbcTransfer.fromPartial(object.ibcTransferMsg)
-      : undefined;
-    message.ibcWasmTransferMsg = (object.ibcWasmTransferMsg !== undefined && object.ibcWasmTransferMsg !== null)
-      ? Memo_IbcWasmTransfer.fromPartial(object.ibcWasmTransferMsg)
-      : undefined;
-    message.contractCall = (object.contractCall !== undefined && object.contractCall !== null)
-      ? Memo_ContractCall.fromPartial(object.contractCall)
-      : undefined;
-    message.transferMsg = (object.transferMsg !== undefined && object.transferMsg !== null)
-      ? Memo_Transfer.fromPartial(object.transferMsg)
-      : undefined;
+    message.ibcTransferMsg =
+      object.ibcTransferMsg !== undefined && object.ibcTransferMsg !== null
+        ? Memo_IbcTransfer.fromPartial(object.ibcTransferMsg)
+        : undefined;
+    message.ibcWasmTransferMsg =
+      object.ibcWasmTransferMsg !== undefined && object.ibcWasmTransferMsg !== null
+        ? Memo_IbcWasmTransfer.fromPartial(object.ibcWasmTransferMsg)
+        : undefined;
+    message.contractCall =
+      object.contractCall !== undefined && object.contractCall !== null
+        ? Memo_ContractCall.fromPartial(object.contractCall)
+        : undefined;
+    message.transferMsg =
+      object.transferMsg !== undefined && object.transferMsg !== null
+        ? Memo_Transfer.fromPartial(object.transferMsg)
+        : undefined;
     return message;
-  },
+  }
 };
 
 function createBaseMemo_IbcTransfer(): Memo_IbcTransfer {
@@ -808,7 +811,7 @@ export const Memo_IbcTransfer = {
       sourcePort: isSet(object.sourcePort) ? globalThis.String(object.sourcePort) : "",
       receiver: isSet(object.receiver) ? globalThis.String(object.receiver) : "",
       memo: isSet(object.memo) ? globalThis.String(object.memo) : "",
-      recoverAddress: isSet(object.recoverAddress) ? globalThis.String(object.recoverAddress) : "",
+      recoverAddress: isSet(object.recoverAddress) ? globalThis.String(object.recoverAddress) : ""
     };
   },
 
@@ -843,7 +846,7 @@ export const Memo_IbcTransfer = {
     message.memo = object.memo ?? "";
     message.recoverAddress = object.recoverAddress ?? "";
     return message;
-  },
+  }
 };
 
 function createBaseMemo_IbcWasmTransfer(): Memo_IbcWasmTransfer {
@@ -927,7 +930,7 @@ export const Memo_IbcWasmTransfer = {
       remoteAddress: isSet(object.remoteAddress) ? globalThis.String(object.remoteAddress) : "",
       remoteDenom: isSet(object.remoteDenom) ? globalThis.String(object.remoteDenom) : "",
       timeout: isSet(object.timeout) ? globalThis.Number(object.timeout) : undefined,
-      memo: isSet(object.memo) ? globalThis.String(object.memo) : undefined,
+      memo: isSet(object.memo) ? globalThis.String(object.memo) : undefined
     };
   },
 
@@ -962,7 +965,7 @@ export const Memo_IbcWasmTransfer = {
     message.timeout = object.timeout ?? undefined;
     message.memo = object.memo ?? undefined;
     return message;
-  },
+  }
 };
 
 function createBaseMemo_ContractCall(): Memo_ContractCall {
@@ -1013,7 +1016,7 @@ export const Memo_ContractCall = {
   fromJSON(object: any): Memo_ContractCall {
     return {
       contractAddress: isSet(object.contractAddress) ? globalThis.String(object.contractAddress) : "",
-      msg: isSet(object.msg) ? globalThis.String(object.msg) : "",
+      msg: isSet(object.msg) ? globalThis.String(object.msg) : ""
     };
   },
 
@@ -1036,7 +1039,7 @@ export const Memo_ContractCall = {
     message.contractAddress = object.contractAddress ?? "";
     message.msg = object.msg ?? "";
     return message;
-  },
+  }
 };
 
 function createBaseMemo_Transfer(): Memo_Transfer {
@@ -1093,19 +1096,24 @@ export const Memo_Transfer = {
     const message = createBaseMemo_Transfer();
     message.toAddress = object.toAddress ?? "";
     return message;
-  },
+  }
 };
 
 type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
 
-export type DeepPartial<T> = T extends Builtin ? T
-  : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
-  : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
-  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
+export type DeepPartial<T> = T extends Builtin
+  ? T
+  : T extends globalThis.Array<infer U>
+  ? globalThis.Array<DeepPartial<U>>
+  : T extends ReadonlyArray<infer U>
+  ? ReadonlyArray<DeepPartial<U>>
+  : T extends {}
+  ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
-export type Exact<P, I extends P> = P extends Builtin ? P
+export type Exact<P, I extends P> = P extends Builtin
+  ? P
   : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
 
 function longToNumber(long: Long): number {

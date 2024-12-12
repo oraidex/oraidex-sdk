@@ -41,7 +41,9 @@ import {
   checkValidateAddressWithNetwork,
   getTokenOnOraichain,
   findToTokenOnOraiBridge,
-  isCosmosChain
+  isCosmosChain,
+  TON_BRIDGE_ADAPTER_ORAICHAIN,
+  TON_BRIDGE_ADAPTER
 } from "@oraichain/oraidex-common";
 import { ethers } from "ethers";
 import { UniversalSwapHelper } from "./helper";

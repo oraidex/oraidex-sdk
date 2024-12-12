@@ -21,11 +21,9 @@ import {
   truncDecimals
 } from "./constant";
 import { StargateMsg, Tx } from "./tx";
-import { AmountDetails, TokenInfo, CoinGeckoPrices, TokenItemType, CustomChainInfo } from "./format-types";
-
-// TODO: get from oraidexCommon
-import { CoinGeckoId } from "./network";
+import { CustomChainInfo, AmountDetails, TokenInfo, TokenItemType, CoinGeckoPrices } from "./format-types";
 import { defaultRegistryTypes as defaultStargateTypes, logs } from "@cosmjs/stargate";
+import { CoinGeckoId } from "./network";
 import { Address } from "@ton/core";
 
 export const getEvmAddress = (bech32Address: string) => {

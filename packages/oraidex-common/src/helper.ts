@@ -394,35 +394,6 @@ export const calcMaxAmount = ({
   return finalAmount;
 };
 
-// export const getOraidexCommonAttribute = <T>(
-//   key:
-//     | "oraichainTokens"
-//     | "otherChainTokens"
-//     | "chainInfosCommon"
-//     | "tokens"
-//     | "flattenTokens"
-//     | "tokenMap"
-//     | "assetInfoMap"
-//     | "cosmosTokens"
-//     | "cw20Tokens"
-//     | "cw20TokenMap"
-//     | "evmTokens"
-//     | "kawaiiTokens"
-//     | "oraichainTokensWithIcon"
-//     | "otherTokensWithIcon"
-//     | "tokensWithIcon"
-//     | "flattenTokensWithIcon"
-//     | "oraichainNetwork"
-//     | "chainInfos"
-//     | "network"
-//     | "evmChains"
-//     | "cosmosChains"
-//     | "chainInfosWithIcon"
-//     | "celestiaNetwork"
-// ): T => {
-//   if (!OraidexCommon.instance) throw new Error("OraidexCommon is not loaded");
-//   return OraidexCommon.instance[key] as T;
-// };
 export const getTotalUsd = (
   amounts: AmountDetails,
   prices: CoinGeckoPrices<string>,
@@ -430,9 +401,6 @@ export const getTotalUsd = (
 ): number => {
   let usd = 0;
 
-  // const tokenMap = getOraidexCommonAttribute<{
-  //   [k: string]: TokenItemType;
-  // }>("tokenMap");
   for (const denom in amounts) {
     const tokenInfo = tokenMap[denom];
     if (!tokenInfo) continue;
@@ -464,9 +432,6 @@ export const toSumDisplay = (amounts: AmountDetails, tokenMap: Record<string, To
   // get all native balances that are from oraibridge (ibc/...)
   let amount = 0;
 
-  // const tokenMap = getOraidexCommonAttribute<{
-  //   [k: string]: TokenItemType;
-  // }>("tokenMap");
   for (const denom in amounts) {
     // update later
     const balance = amounts[denom];

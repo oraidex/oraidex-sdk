@@ -631,20 +631,12 @@ export const checkValidateAddressWithNetwork = (address: string, network: string
   }
 };
 
-// TODO: get from oraidexCommon
 export const isCosmosChain = (chainId: string, cosmosChains = []): boolean => {
-  // const oraidexCommon = await OraidexCommon.load();
-  // const hasValue = oraidexCommon.cosmosChains.find((chain) => chain.chainId === chainId);
-
   const hasValue = cosmosChains.find((chain) => chain.chainId === chainId);
   return Boolean(hasValue);
 };
 
-// TODO: get from oraidexCommon
 export const isEvmChain = (chainId: string, evmChains = []): boolean => {
-  // const oraidexCommon = await OraidexCommon.load();
-  // const hasValue = oraidexCommon.evmChains.find((chain) => chain.chainId === chainId);
-
   const hasValue = evmChains.find((chain) => chain.chainId === chainId);
   return Boolean(hasValue);
 };

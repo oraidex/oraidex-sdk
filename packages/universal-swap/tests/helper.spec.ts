@@ -615,9 +615,7 @@ describe("test helper functions", () => {
       undefined as any,
       "0",
       1,
-      oraidexCommon.cosmosTokens,
-      oraidexCommon.cosmosChains,
-      oraidexCommon.evmChains,
+      oraidexCommon,
       {
         isSourceReceiverTest: false
       }
@@ -632,9 +630,7 @@ describe("test helper functions", () => {
         undefined as any,
         "0",
         1,
-        oraidexCommon.cosmosTokens,
-        oraidexCommon.cosmosChains,
-        oraidexCommon.evmChains,
+        oraidexCommon,
         {
           isSourceReceiverTest: false
         }

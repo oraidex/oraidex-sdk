@@ -5,7 +5,8 @@ import {
   generateError,
   IBC_TRANSFER_TIMEOUT,
   IBC_WASM_CONTRACT,
-  TON_CONTRACT
+  TON_CONTRACT,
+  OraidexCommon
 } from "@oraichain/oraidex-common";
 import { Action } from "@oraichain/osor-api-contracts-sdk/src/EntryPoint.types";
 import { OsmosisMsg } from "../../build/msg";
@@ -14,7 +15,12 @@ import { toBinary } from "@cosmjs/cosmwasm-stargate";
 import { MsgExecuteContract } from "cosmjs-types/cosmwasm/wasm/v1/tx";
 import { toUtf8 } from "@cosmjs/encoding";
 
+let oraidexCommon;
 describe("test build oraichain msg", () => {
+  beforeAll(async () => {
+    oraidexCommon = await OraidexCommon.load();
+  });
+
   const validPath = {
     chainId: "Oraichain",
     tokenIn: "orai",
@@ -116,7 +122,7 @@ describe("test build oraichain msg", () => {
       ""
     ]
   ])("oraichain test get post action", (bridgeInfo, expectedAction, expectedError) => {
-    let oraichain = new OraichainMsg(validPath, "1", receiver, currentAddress);
+    let oraichain = new OraichainMsg(validPath, "1", receiver, currentAddress, undefined, oraidexCommon);
     try {
       let postAction = oraichain.getPostAction(bridgeInfo);
       expect(postAction).toEqual(expectedAction);
@@ -127,7 +133,7 @@ describe("test build oraichain msg", () => {
 
   it("Valid path with swap + ibc bridge", () => {
     const nextMemo = "{}";
-    let oraichainMsg = new OraichainMsg(validPath, "1", receiver, currentAddress, nextMemo);
+    let oraichainMsg = new OraichainMsg(validPath, "1", receiver, currentAddress, nextMemo, oraidexCommon);
 
     let [swapOps, bridgeInfo] = oraichainMsg.getSwapAndBridgeInfo();
     expect(bridgeInfo).toEqual({
@@ -251,7 +257,8 @@ describe("test build oraichain msg", () => {
         }
       ]
     };
-    let oraichainMsg = new OraichainMsg(validPathBridgeOnly, "1", receiver, currentAddress, nextMemo);
+
+    let oraichainMsg = new OraichainMsg(validPathBridgeOnly, "1", receiver, currentAddress, nextMemo, oraidexCommon);
 
     let [swapOps, bridgeInfo] = oraichainMsg.getSwapAndBridgeInfo();
     expect(bridgeInfo).toEqual({
@@ -301,26 +308,26 @@ describe("test build oraichain msg", () => {
     });
 
     let memoForIbcWasm = oraichainMsg.genMemoForIbcWasm();
-    // expect(memoForIbcWasm).toEqual({
-    //   receiver: currentAddress,
-    //   memo: Buffer.from(
-    //     Memo.encode({
-    //       userSwap: undefined,
-    //       minimumReceive: "1",
-    //       timeoutTimestamp: +calculateTimeoutTimestamp(IBC_TRANSFER_TIMEOUT),
-    //       postSwapAction: {
-    //         ibcTransferMsg: {
-    //           sourceChannel: bridgeInfo.sourceChannel,
-    //           sourcePort: bridgeInfo.sourcePort,
-    //           receiver: bridgeInfo.receiver,
-    //           memo: bridgeInfo.memo as string,
-    //           recoverAddress: currentAddress
-    //         }
-    //       },
-    //       recoveryAddr: currentAddress
-    //     }).finish()
-    //   ).toString("base64")
-    // });
+    expect(memoForIbcWasm).toEqual({
+      receiver: currentAddress,
+      memo: Buffer.from(
+        Memo.encode({
+          userSwap: undefined,
+          minimumReceive: "1",
+          timeoutTimestamp: +calculateTimeoutTimestamp(IBC_TRANSFER_TIMEOUT),
+          postSwapAction: {
+            ibcTransferMsg: {
+              sourceChannel: bridgeInfo.sourceChannel,
+              sourcePort: bridgeInfo.sourcePort,
+              receiver: bridgeInfo.receiver,
+              memo: bridgeInfo.memo as string,
+              recoverAddress: currentAddress
+            }
+          },
+          recoveryAddr: currentAddress
+        }).finish()
+      ).toString("base64")
+    });
   });
 
   it("Valid path with ton bridge only", () => {
@@ -348,7 +355,7 @@ describe("test build oraichain msg", () => {
         }
       ]
     };
-    let oraichainMsg = new OraichainMsg(validPathTonBridgeOnly, "1", receiver, currentAddress, nextMemo);
+    let oraichainMsg = new OraichainMsg(validPathTonBridgeOnly, "1", receiver, currentAddress, nextMemo, oraidexCommon);
 
     let [swapOps, bridgeInfo] = oraichainMsg.getSwapAndBridgeInfo();
     expect(bridgeInfo).toEqual({
@@ -480,7 +487,7 @@ describe("test build oraichain msg", () => {
         }
       ]
     };
-    let oraichainMsg = new OraichainMsg(validPathSwapOnly, "1", receiver, currentAddress, nextMemo);
+    let oraichainMsg = new OraichainMsg(validPathSwapOnly, "1", receiver, currentAddress, nextMemo, oraidexCommon);
 
     let [swapOps, bridgeInfo] = oraichainMsg.getSwapAndBridgeInfo();
     expect(bridgeInfo).toEqual(undefined);
@@ -602,7 +609,16 @@ describe("test build oraichain msg", () => {
     let receiver = "0x0000000000000000000000000000000000000000";
     const currentAddress = "orai1hvr9d72r5um9lvt0rpkd4r75vrsqtw6yujhqs2";
     const oraiBridgeAddr = "oraib1hvr9d72r5um9lvt0rpkd4r75vrsqtw6ytnnvpf";
-    let oraichainMsg = new OraichainMsg(validPath, "1", receiver, currentAddress, nextMemo, "oraib", oraiBridgeAddr);
+    let oraichainMsg = new OraichainMsg(
+      validPath,
+      "1",
+      receiver,
+      currentAddress,
+      nextMemo,
+      oraidexCommon,
+      "oraib",
+      oraiBridgeAddr
+    );
 
     let [swapOps, bridgeInfo] = oraichainMsg.getSwapAndBridgeInfo();
     expect(bridgeInfo).toEqual({
@@ -729,7 +745,16 @@ describe("test build oraichain msg", () => {
     let receiver = "0x0000000000000000000000000000000000000000";
     const currentAddress = "orai1hvr9d72r5um9lvt0rpkd4r75vrsqtw6yujhqs2";
     const oraiBridgeAddr = "oraib1hvr9d72r5um9lvt0rpkd4r75vrsqtw6ytnnvpf";
-    let oraichainMsg = new OraichainMsg(invalidPath, "1", receiver, currentAddress, nextMemo, "oraib", oraiBridgeAddr);
+    let oraichainMsg = new OraichainMsg(
+      invalidPath,
+      "1",
+      receiver,
+      currentAddress,
+      nextMemo,
+      oraidexCommon,
+      "oraib",
+      oraiBridgeAddr
+    );
 
     try {
       oraichainMsg.genMemoAsMiddleware();
@@ -768,7 +793,16 @@ describe("test build oraichain msg", () => {
     const currentAddress = "orai1hvr9d72r5um9lvt0rpkd4r75vrsqtw6yujhqs2";
     const oraiBridgeAddr = "oraib1hvr9d72r5um9lvt0rpkd4r75vrsqtw6ytnnvpf";
     let destPrefix = "oraib";
-    let oraichainMsg = new OraichainMsg(validPath, "1", receiver, currentAddress, nextMemo, destPrefix, oraiBridgeAddr);
+    let oraichainMsg = new OraichainMsg(
+      validPath,
+      "1",
+      receiver,
+      currentAddress,
+      nextMemo,
+      oraidexCommon,
+      destPrefix,
+      oraiBridgeAddr
+    );
 
     let [swapOps, bridgeInfo] = oraichainMsg.getSwapAndBridgeInfo();
     expect(bridgeInfo).toEqual({
@@ -864,7 +898,15 @@ describe("test build oraichain msg", () => {
     const destPrefix = "oraib";
     // missing oraibridge address
     try {
-      let oraichainMsg = new OraichainMsg(validPath, "1", receiver, currentAddress, nextMemo, destPrefix);
+      let oraichainMsg = new OraichainMsg(
+        validPath,
+        "1",
+        receiver,
+        currentAddress,
+        nextMemo,
+        oraidexCommon,
+        destPrefix
+      );
       oraichainMsg.genExecuteMsg();
     } catch (err) {
       expect(err).toEqual(generateError(`Missing prefix or Obridge address for bridge to EVM`));
@@ -878,6 +920,7 @@ describe("test build oraichain msg", () => {
         receiver,
         currentAddress,
         nextMemo,
+        oraidexCommon,
         undefined,
         oraiBridgeAddr
       );

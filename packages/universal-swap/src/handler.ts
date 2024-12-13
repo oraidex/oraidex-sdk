@@ -144,7 +144,8 @@ export class UniversalSwapHandler {
       throw generateError("Cannot find tron web to nor tron address to send to Tron network");
     }
 
-    if (isCosmosChain(toChainId.toString())) return this.config.cosmosWallet.getKeplrAddr(toChainId as CosmosChainId);
+    if (isCosmosChain(toChainId.toString(), this.oraidexCommon.cosmosChains))
+      return this.config.cosmosWallet.getKeplrAddr(toChainId as CosmosChainId);
     throw generateError(`Cannot not get address for chain: ${toChainId}`);
   }
 
@@ -758,9 +759,7 @@ export class UniversalSwapHandler {
       originalToToken,
       minimumReceive,
       userSlippage,
-      this.oraidexCommon.cosmosTokens,
-      this.oraidexCommon.cosmosChains,
-      this.oraidexCommon.evmChains,
+      this.oraidexCommon,
       this.config.swapOptions,
       alphaSmartRoutes
     );
@@ -864,7 +863,7 @@ export class UniversalSwapHandler {
       }
 
       const msgs = alphaSmartRoutes.routes.map((route) => {
-        return generateMsgSwap(route, userSlippage / 100, receiverAddresses);
+        return generateMsgSwap(route, userSlippage / 100, receiverAddresses, this.oraidexCommon);
       });
 
       const { client } = await this.config.cosmosWallet.getCosmWasmClient(
@@ -1067,9 +1066,7 @@ export class UniversalSwapHandler {
       originalToToken,
       minimumReceive,
       userSlippage,
-      this.oraidexCommon.cosmosTokens,
-      this.oraidexCommon.cosmosChains,
-      this.oraidexCommon.evmChains,
+      this.oraidexCommon,
       this.config.swapOptions,
       alphaSmartRoutes
     );

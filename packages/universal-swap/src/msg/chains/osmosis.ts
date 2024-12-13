@@ -3,7 +3,13 @@ import { ActionType, Path } from "../../types";
 import { SwapOperation } from "@oraichain/osor-api-contracts-sdk/src/types";
 import { Swap, Action, ExecuteMsg } from "@oraichain/osor-api-contracts-sdk/src/EntryPoint.types";
 import { isCw20Token } from "../common";
-import { BigDecimal, calculateTimeoutTimestamp, generateError, IBC_TRANSFER_TIMEOUT } from "@oraichain/oraidex-common";
+import {
+  BigDecimal,
+  calculateTimeoutTimestamp,
+  generateError,
+  IBC_TRANSFER_TIMEOUT,
+  OraidexCommon
+} from "@oraichain/oraidex-common";
 import { toBinary } from "@cosmjs/cosmwasm-stargate";
 import { EncodeObject } from "@cosmjs/proto-signing";
 import { MsgExecuteContract } from "cosmjs-types/cosmwasm/wasm/v1/tx";
@@ -14,8 +20,15 @@ export class OsmosisMsg extends ChainMsg {
   SWAP_VENUE_NAME = "osmosis-poolmanager";
   ENTRY_POINT_CONTRACT = "osmo1h3jkejkcpthl45xrrm5geed3eq75p5rgfce9taufkwfr89k63muqweu2y7";
 
-  constructor(path: Path, minimumReceive: string, receiver: string, currentChainAddress: string, memo: string = "") {
-    super(path, minimumReceive, receiver, currentChainAddress, memo);
+  constructor(
+    path: Path,
+    minimumReceive: string,
+    receiver: string,
+    currentChainAddress: string,
+    memo: string = "",
+    oraidexCommon: OraidexCommon
+  ) {
+    super(path, minimumReceive, receiver, currentChainAddress, memo, oraidexCommon);
     // check chainId  = "osmosis-1"
     if (path.chainId !== "osmosis-1") {
       throw generateError("This path must be on Osmosis");

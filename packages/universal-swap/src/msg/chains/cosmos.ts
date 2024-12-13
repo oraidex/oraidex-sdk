@@ -1,14 +1,27 @@
 import { BridgeMsgInfo, MiddlewareResponse } from "../types";
 import { ActionType, Path } from "../../types";
 import { Action } from "@oraichain/osor-api-contracts-sdk/src/EntryPoint.types";
-import { BigDecimal, calculateTimeoutTimestamp, generateError, IBC_TRANSFER_TIMEOUT } from "@oraichain/oraidex-common";
+import {
+  BigDecimal,
+  calculateTimeoutTimestamp,
+  generateError,
+  IBC_TRANSFER_TIMEOUT,
+  OraidexCommon
+} from "@oraichain/oraidex-common";
 
 import { EncodeObject } from "@cosmjs/proto-signing";
 import { ChainMsg } from "./chain";
 
 export class CosmosMsg extends ChainMsg {
-  constructor(path: Path, minimumReceive: string, receiver: string, currentChainAddress: string, memo: string = "") {
-    super(path, minimumReceive, receiver, currentChainAddress, memo);
+  constructor(
+    path: Path,
+    minimumReceive: string,
+    receiver: string,
+    currentChainAddress: string,
+    memo: string = "",
+    oraidexCommon: OraidexCommon
+  ) {
+    super(path, minimumReceive, receiver, currentChainAddress, memo, oraidexCommon);
   }
 
   setMinimumReceiveForSwap(slippage: number = 0.01) {

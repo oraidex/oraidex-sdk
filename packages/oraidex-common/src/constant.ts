@@ -150,6 +150,7 @@ export const TON_CONTRACT = "EQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAM9c";
 export const TON_BRIDGE_ADAPTER = "EQC-aFP0rJXwTgKZQJPbPfTSpBFc8wxOgKHWD9cPvOl_DnaY";
 export const TON_LIGHT_CLIENT = "EQDzy_POlimFDyzrHd3OQsb9sZCngyG3O7Za4GRFzM-rrO93";
 export const TON_WHITE_LIST = "EQATDM6mfPZjPDMD9TVa6D9dlbmAKY5w6xOJiTXJ9Nqj_dsu";
+
 /**
  * TODO: This is the object containing the hardcoded addresses of cw20 TON Network. They are obtained from the formula below. We need to add more when we support new TON20.
  * const client = await getTonClient();

@@ -409,9 +409,7 @@ export class UniversalSwapHelper {
     toToken: TokenItemType,
     minimumReceive: string,
     userSlippage: number,
-    cosmosTokens: TokenItemType[],
-    cosmosChains: CustomChainInfo[],
-    evmChains: CustomChainInfo[],
+    oraidexCommon: OraidexCommon,
     swapOption?: {
       isSourceReceiverTest?: boolean;
       isIbcWasm?: boolean;
@@ -426,11 +424,11 @@ export class UniversalSwapHelper {
       addresses.sourceReceiver,
       fromToken.contractAddress,
       swapOption?.isSourceReceiverTest,
-      cosmosChains
+      oraidexCommon.cosmosChains
     );
 
     let { swapRoute, universalSwapType, isSmartRouter } = UniversalSwapHelper.getRoute(
-      cosmosTokens,
+      oraidexCommon.cosmosTokens,
       fromToken,
       toToken,
       addresses.destReceiver
@@ -456,7 +454,7 @@ export class UniversalSwapHelper {
           destChainId: toToken.chainId,
           destTokenPrefix: toToken.prefix
         },
-        evmChains,
+        oraidexCommon.evmChains,
         swapOption.ibcInfoTestMode
       );
     }
@@ -499,7 +497,7 @@ export class UniversalSwapHelper {
         injAddress: addresses.injAddress,
         oraiAddress: addresses.sourceReceiver,
         evmInfo,
-        cosmosChains
+        cosmosChains: oraidexCommon.cosmosChains
       });
 
       if (addresses?.recipientAddress) receiverAddresses[toToken.chainId] = addresses?.recipientAddress;
@@ -511,6 +509,7 @@ export class UniversalSwapHelper {
         },
         userSlippage / 100,
         receiverAddresses,
+        oraidexCommon,
         alphaRoutes.paths[0].chainId
       );
 

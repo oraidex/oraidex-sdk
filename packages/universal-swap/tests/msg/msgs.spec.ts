@@ -1,10 +1,21 @@
 import { expect, afterAll, beforeAll, describe, it, vi } from "vitest";
-import { calculateTimeoutTimestamp, generateError, IBC_TRANSFER_TIMEOUT } from "@oraichain/oraidex-common";
+import {
+  calculateTimeoutTimestamp,
+  generateError,
+  IBC_TRANSFER_TIMEOUT,
+  OraidexCommon
+} from "@oraichain/oraidex-common";
 import { Action } from "@oraichain/osor-api-contracts-sdk/src/EntryPoint.types";
 import { generateMsgSwap } from "../../src/msg/msgs";
 import { Memo } from "../../src/proto/universal_swap_memo";
 
 describe("test build swap msg", () => {
+  let oraidexCommon: OraidexCommon;
+
+  beforeAll(async () => {
+    oraidexCommon = await OraidexCommon.load();
+  });
+
   it("Test build universal swap msg from cosmos-base ecosystem", () => {
     let route = {
       swapAmount: "10000000",
@@ -79,7 +90,7 @@ describe("test build swap msg", () => {
 
     // case 1: missing receiver  address
     try {
-      let res = generateMsgSwap(route, 0.1, {});
+      let res = generateMsgSwap(route, 0.1, {}, oraidexCommon);
     } catch (err) {
       expect(err).toEqual(generateError(`Missing receiver when build msg in osmosis-1`));
     }
@@ -87,16 +98,26 @@ describe("test build swap msg", () => {
     // case 2: missing current chain address
 
     try {
-      let res = generateMsgSwap(route, 0.1, { Oraichain: "orai1hvr9d72r5um9lvt0rpkd4r75vrsqtw6yujhqs2" });
+      let res = generateMsgSwap(
+        route,
+        0.1,
+        { Oraichain: "orai1hvr9d72r5um9lvt0rpkd4r75vrsqtw6yujhqs2" },
+        oraidexCommon
+      );
     } catch (err) {
       expect(err).toEqual(generateError(`Missing address of osmosis-1`));
     }
 
-    let res = generateMsgSwap(route, 0.1, {
-      Oraichain: "orai1hvr9d72r5um9lvt0rpkd4r75vrsqtw6yujhqs2",
-      "cosmoshub-4": "cosmos1hvr9d72r5um9lvt0rpkd4r75vrsqtw6y0ppr3e",
-      "osmosis-1": "osmo1hvr9d72r5um9lvt0rpkd4r75vrsqtw6y86jn8t"
-    });
+    let res = generateMsgSwap(
+      route,
+      0.1,
+      {
+        Oraichain: "orai1hvr9d72r5um9lvt0rpkd4r75vrsqtw6yujhqs2",
+        "cosmoshub-4": "cosmos1hvr9d72r5um9lvt0rpkd4r75vrsqtw6y0ppr3e",
+        "osmosis-1": "osmo1hvr9d72r5um9lvt0rpkd4r75vrsqtw6y86jn8t"
+      },
+      oraidexCommon
+    );
     expect(res).toEqual({
       typeUrl: "/ibc.applications.transfer.v1.MsgTransfer",
       value: {
@@ -263,13 +284,18 @@ describe("test build swap msg", () => {
       ]
     };
 
-    let res = generateMsgSwap(route, 0.1, {
-      "0x38": "0x8c7E0A841269a01c0Ab389Ce8Fb3Cf150A94E797",
-      "oraibridge-subnet-2": "oraib1hvr9d72r5um9lvt0rpkd4r75vrsqtw6ytnnvpf",
-      Oraichain: "orai1hvr9d72r5um9lvt0rpkd4r75vrsqtw6yujhqs2",
-      "cosmoshub-4": "cosmos1hvr9d72r5um9lvt0rpkd4r75vrsqtw6y0ppr3e",
-      "osmosis-1": "osmo1hvr9d72r5um9lvt0rpkd4r75vrsqtw6y86jn8t"
-    });
+    let res = generateMsgSwap(
+      route,
+      0.1,
+      {
+        "0x38": "0x8c7E0A841269a01c0Ab389Ce8Fb3Cf150A94E797",
+        "oraibridge-subnet-2": "oraib1hvr9d72r5um9lvt0rpkd4r75vrsqtw6ytnnvpf",
+        Oraichain: "orai1hvr9d72r5um9lvt0rpkd4r75vrsqtw6yujhqs2",
+        "cosmoshub-4": "cosmos1hvr9d72r5um9lvt0rpkd4r75vrsqtw6y0ppr3e",
+        "osmosis-1": "osmo1hvr9d72r5um9lvt0rpkd4r75vrsqtw6y86jn8t"
+      },
+      oraidexCommon
+    );
 
     expect(res).toEqual({
       typeUrl: "/ibc.applications.transfer.v1.MsgTransfer",
@@ -412,14 +438,19 @@ describe("test build swap msg", () => {
       ]
     };
 
-    let res = generateMsgSwap(route, 0.1, {
-      "0x38": "0x8c7E0A841269a01c0Ab389Ce8Fb3Cf150A94E797",
-      "oraibridge-subnet-2": "oraib1hvr9d72r5um9lvt0rpkd4r75vrsqtw6ytnnvpf",
-      Oraichain: "orai1hvr9d72r5um9lvt0rpkd4r75vrsqtw6yujhqs2",
-      "cosmoshub-4": "cosmos1hvr9d72r5um9lvt0rpkd4r75vrsqtw6y0ppr3e",
-      "osmosis-1": "osmo1hvr9d72r5um9lvt0rpkd4r75vrsqtw6y86jn8t",
-      "noble-1": "noble1hvr9d72r5um9lvt0rpkd4r75vrsqtw6y8z5tfh"
-    });
+    let res = generateMsgSwap(
+      route,
+      0.1,
+      {
+        "0x38": "0x8c7E0A841269a01c0Ab389Ce8Fb3Cf150A94E797",
+        "oraibridge-subnet-2": "oraib1hvr9d72r5um9lvt0rpkd4r75vrsqtw6ytnnvpf",
+        Oraichain: "orai1hvr9d72r5um9lvt0rpkd4r75vrsqtw6yujhqs2",
+        "cosmoshub-4": "cosmos1hvr9d72r5um9lvt0rpkd4r75vrsqtw6y0ppr3e",
+        "osmosis-1": "osmo1hvr9d72r5um9lvt0rpkd4r75vrsqtw6y86jn8t",
+        "noble-1": "noble1hvr9d72r5um9lvt0rpkd4r75vrsqtw6y8z5tfh"
+      },
+      oraidexCommon
+    );
 
     expect(res).toEqual({
       typeUrl: "/ibc.applications.transfer.v1.MsgTransfer",
@@ -541,14 +572,19 @@ describe("test build swap msg", () => {
       ]
     };
 
-    let res = generateMsgSwap(route, 0.1, {
-      "0x38": "0x8c7E0A841269a01c0Ab389Ce8Fb3Cf150A94E797",
-      "oraibridge-subnet-2": "oraib1hvr9d72r5um9lvt0rpkd4r75vrsqtw6ytnnvpf",
-      Oraichain: "orai1hvr9d72r5um9lvt0rpkd4r75vrsqtw6yujhqs2",
-      "cosmoshub-4": "cosmos1hvr9d72r5um9lvt0rpkd4r75vrsqtw6y0ppr3e",
-      "osmosis-1": "osmo1hvr9d72r5um9lvt0rpkd4r75vrsqtw6y86jn8t",
-      "noble-1": "noble1hvr9d72r5um9lvt0rpkd4r75vrsqtw6y8z5tfh"
-    });
+    let res = generateMsgSwap(
+      route,
+      0.1,
+      {
+        "0x38": "0x8c7E0A841269a01c0Ab389Ce8Fb3Cf150A94E797",
+        "oraibridge-subnet-2": "oraib1hvr9d72r5um9lvt0rpkd4r75vrsqtw6ytnnvpf",
+        Oraichain: "orai1hvr9d72r5um9lvt0rpkd4r75vrsqtw6yujhqs2",
+        "cosmoshub-4": "cosmos1hvr9d72r5um9lvt0rpkd4r75vrsqtw6y0ppr3e",
+        "osmosis-1": "osmo1hvr9d72r5um9lvt0rpkd4r75vrsqtw6y86jn8t",
+        "noble-1": "noble1hvr9d72r5um9lvt0rpkd4r75vrsqtw6y8z5tfh"
+      },
+      oraidexCommon
+    );
 
     expect(res).toEqual({
       typeUrl: "/ibc.applications.transfer.v1.MsgTransfer",

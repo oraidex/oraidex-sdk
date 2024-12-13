@@ -40,9 +40,8 @@ import {
   validateAddressTonTron,
   parseAssetInfoFromContractAddrOrDenom
 } from "../src/helper";
-import { CoinGeckoId } from "../src/network";
-import { isFactoryV1 } from "../src/pairs";
 import { AmountDetails } from "../src/format-types";
+import { CoinGeckoId } from "../src/network";
 const __filename = fileURLToPath(import.meta.url);
 console.log("__filename: ", __filename);
 const __dirname = path.dirname(__filename);
@@ -131,22 +130,6 @@ describe("should helper functions in helper run exactly", () => {
     [{ token: { contract_addr: "foobar" } }, "foobar"]
   ])("test-parseAssetInfo-given-%j-should-receive-%s", (assetInfo, expectedResult) => {
     expect(parseAssetInfo(assetInfo)).toEqual(expectedResult);
-  });
-
-  it("test-isFactoryV1-true", () => {
-    const data = isFactoryV1([
-      { native_token: { denom: ORAI } },
-      { token: { contract_addr: "orai10ldgzued6zjp0mkqwsv2mux3ml50l97c74x8sg" } }
-    ]);
-    expect(data).toEqual(true);
-  });
-
-  it("test-isFactoryV1-false", () => {
-    const data = isFactoryV1([
-      { native_token: { denom: ORAI } },
-      { token: { contract_addr: "orai15un8msx3n5zf9ahlxmfeqd2kwa5wm0nrpxer304m9nd5q6qq0g6sku5pdd" } }
-    ]);
-    expect(data).toEqual(false);
   });
 
   it.each([

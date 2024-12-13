@@ -30,7 +30,6 @@ import {
   IUniswapV2Router02__factory,
   // cosmosTokens,
   StargateMsg,
-  isInPairList,
   BigDecimal,
   NEUTARO_INFO,
   USDC_INFO,
@@ -757,41 +756,6 @@ export class UniversalSwapHelper {
     };
   };
 
-  /**
-   * @deprecated. Use UniversalSwapHelper.handleSimulateSwap
-   */
-  static simulateSwap = async (query: {
-    fromInfo: TokenItemType;
-    toInfo: TokenItemType;
-    amount: string;
-    routerClient: OraiswapRouterReadOnlyInterface;
-  }): Promise<{ amount: Uint128 }> => {
-    const { amount, fromInfo, toInfo, routerClient } = query;
-
-    // check for universal-swap 2 tokens that have same coingeckoId, should return simulate data with average ratio 1-1.
-    if (fromInfo.coinGeckoId === toInfo.coinGeckoId) {
-      return {
-        amount
-      };
-    }
-
-    // check if they have pairs. If not then we go through ORAI
-    const { info: offerInfo } = parseTokenInfo(fromInfo, amount);
-    const { info: askInfo } = parseTokenInfo(toInfo);
-    const operations = UniversalSwapHelper.generateSwapOperationMsgs(offerInfo, askInfo);
-    console.log("operations: ", operations);
-    try {
-      let finalAmount = amount;
-      const data = await routerClient.simulateSwapOperations({
-        offerAmount: finalAmount,
-        operations
-      });
-      return data;
-    } catch (error) {
-      throw new Error(`Error when trying to simulate swap using router v2: ${JSON.stringify(error)}`);
-    }
-  };
-
   // simulate swap functions
   static simulateSwapUsingSmartRoute = async (query: {
     fromInfo: TokenItemType;
@@ -885,6 +849,23 @@ export class UniversalSwapHelper {
     }
   };
 
+  static getRouterConfig = (options: {
+    path?: string;
+    protocols?: string[];
+    dontAllowSwapAfter?: string[];
+    maxSplits?: number;
+    ignoreFee?: boolean;
+  }) => {
+    return {
+      url: "https://osor.oraidex.io",
+      path: options?.path ?? "/smart-router/alpha-router",
+      protocols: options?.protocols ?? ["Oraidex", "OraidexV3"],
+      dontAllowSwapAfter: options?.dontAllowSwapAfter ?? ["Oraidex", "OraidexV3"],
+      maxSplits: options?.maxSplits ?? 1,
+      ignoreFee: options?.ignoreFee ?? false
+    };
+  };
+
   static handleSimulateSwap = async (query: {
     flattenTokens: TokenItemType[];
     oraichainTokens: TokenItemType[];
@@ -920,15 +901,7 @@ export class UniversalSwapHelper {
       return { amount, displayAmount };
     }
 
-    const routerConfigDefault = {
-      url: query?.routerConfig?.url ?? "https://osor.oraidex.io",
-      path: query?.routerConfig?.path ?? "/smart-router/alpha-router",
-      protocols: query?.routerConfig?.protocols ?? ["Oraidex", "OraidexV3"],
-      dontAllowSwapAfter: query?.routerConfig?.dontAllowSwapAfter ?? ["Oraidex", "OraidexV3"],
-      maxSplits: query?.routerConfig?.maxSplits ?? 10,
-      ignoreFee: query?.routerConfig?.ignoreFee ?? false
-    };
-
+    const routerConfigDefault = UniversalSwapHelper.getRouterConfig({});
     let fromInfo = getTokenOnOraichain(query.originalFromInfo.coinGeckoId, query.oraichainTokens);
     let toInfo = getTokenOnOraichain(query.originalToInfo.coinGeckoId, query.oraichainTokens);
 
@@ -996,26 +969,25 @@ export class UniversalSwapHelper {
     relayerAmount: string;
     routerClient: OraiswapRouterReadOnlyInterface;
   }): Promise<boolean> => {
-    const { fromTokenInOrai, fromAmount, routerClient, relayerAmount } = query;
+    const { fromTokenInOrai, fromAmount, routerClient, relayerAmount, oraichainTokens } = query;
     if (!fromTokenInOrai) return true;
     if (fromTokenInOrai.chainId !== "Oraichain")
       throw generateError(
         "From token on Oraichain is not on Oraichain. The developers have made a mistake. Please notify them!"
       );
     // estimate exchange token when From Token not orai. Only need to swap & check if it is swappable with ORAI. Otherwise, we ignore the fees
-    if (isInPairList(fromTokenInOrai.denom) || isInPairList(fromTokenInOrai.contractAddress)) {
-      const oraiToken = getTokenOnOraichain("oraichain-token", query.oraichainTokens);
-      const { amount } = await UniversalSwapHelper.simulateSwap({
-        fromInfo: fromTokenInOrai,
-        toInfo: oraiToken,
-        amount: toAmount(fromAmount, fromTokenInOrai.decimals).toString(),
-        routerClient: routerClient
-      });
-      const amountDisplay = toDisplay(amount, fromTokenInOrai.decimals);
-      const relayerAmountDisplay = toDisplay(relayerAmount);
-      if (relayerAmountDisplay > amountDisplay) return false;
-      return true;
-    }
+    const oraiToken = getTokenOnOraichain("oraichain-token", oraichainTokens);
+    const { amount } = await UniversalSwapHelper.handleSimulateSwap({
+      flattenTokens: [],
+      oraichainTokens,
+      originalFromInfo: fromTokenInOrai,
+      originalToInfo: oraiToken,
+      originalAmount: fromAmount,
+      routerClient: routerClient
+    });
+    const amountDisplay = toDisplay(amount, fromTokenInOrai.decimals);
+    const relayerAmountDisplay = toDisplay(relayerAmount);
+    if (relayerAmountDisplay > amountDisplay) return false;
     return true;
   };
 
@@ -1067,10 +1039,12 @@ export class UniversalSwapHelper {
             throw generateError(
               `Error in checking balance channel ibc: cannot simulate from: ${fromToken.coinGeckoId} to: ${toToken.coinGeckoId}`
             );
-          const { amount } = await UniversalSwapHelper.simulateSwap({
-            fromInfo: fromTokenInfo,
-            toInfo: toTokenInfo,
-            amount: toAmount(_toAmount, fromTokenInfo.decimals).toString(),
+          const { amount } = await UniversalSwapHelper.handleSimulateSwap({
+            flattenTokens: [],
+            oraichainTokens,
+            originalFromInfo: fromTokenInfo,
+            originalToInfo: toTokenInfo,
+            originalAmount: _toAmount,
             routerClient
           });
           _toAmount = toDisplay(amount, fromTokenInfo.decimals);
@@ -1605,12 +1579,6 @@ export const generateSwapRoute = UniversalSwapHelper.generateSwapRoute;
  * @deprecated
  */
 export const generateSwapOperationMsgs = UniversalSwapHelper.generateSwapOperationMsgs;
-
-// simulate swap functions
-/**
- * @deprecated
- */
-export const simulateSwap = UniversalSwapHelper.simulateSwap;
 
 /**
  * @deprecated

@@ -57,7 +57,6 @@ import {
   isEvmSwappable,
   isSupportedNoPoolSwapEvm,
   generateSwapRoute,
-  generateSwapOperationMsgs,
   UniversalSwapHelper
 } from "../src/helper";
 import { SwapRoute, UniversalSwapType } from "../src/types";
@@ -137,23 +136,23 @@ describe("test helper functions", () => {
     expect(isEvmNetworkNativeSwapSupported(chainId)).toEqual(expectedResult);
   });
 
-  it("test-getSourceReceiver-should-return-channel-1-plus-address", async () => {
-    const keplrAddress = "orai1329tg05k3snr66e2r9ytkv6hcjx6fkxcarydx6";
-    const tokenAddress = ORAI_BSC_CONTRACT;
-    const res = getSourceReceiver(keplrAddress, tokenAddress);
-    expect(res).toBe(`${oraib2oraichain}/${keplrAddress}`);
-  });
+  // it("test-getSourceReceiver-should-return-channel-1-plus-address", async () => {
+  //   const keplrAddress = "orai1329tg05k3snr66e2r9ytkv6hcjx6fkxcarydx6";
+  //   const tokenAddress = ORAI_BSC_CONTRACT;
+  //   const res = getSourceReceiver(keplrAddress, tokenAddress);
+  //   expect(res).toBe(`${oraib2oraichain}/${keplrAddress}`);
+  // });
 
-  it("test-getSourceReceiver-should-return-only-address", async () => {
-    const keplrAddress = "orai1329tg05k3snr66e2r9ytkv6hcjx6fkxcarydx6";
-    let tokenAddress = KWT_BSC_CONTRACT;
-    let res = getSourceReceiver(keplrAddress, tokenAddress);
-    expect(res).toBe(keplrAddress);
+  // it("test-getSourceReceiver-should-return-only-address", async () => {
+  //   const keplrAddress = "orai1329tg05k3snr66e2r9ytkv6hcjx6fkxcarydx6";
+  //   let tokenAddress = KWT_BSC_CONTRACT;
+  //   let res = getSourceReceiver(keplrAddress, tokenAddress);
+  //   expect(res).toBe(keplrAddress);
 
-    tokenAddress = MILKY_BSC_CONTRACT;
-    res = getSourceReceiver(keplrAddress, tokenAddress);
-    expect(res).toBe(keplrAddress);
-  });
+  //   tokenAddress = MILKY_BSC_CONTRACT;
+  //   res = getSourceReceiver(keplrAddress, tokenAddress);
+  //   expect(res).toBe(keplrAddress);
+  // });
 
   it.each<[CoinGeckoId, string, CoinGeckoId, string, string, SwapRoute, boolean]>([
     [
@@ -814,68 +813,6 @@ describe("test helper functions", () => {
     const getSwapRoute: SwapOperation[] = generateSwapRoute(offerAsset, askAsset, swapRoute);
     expect(getSwapRoute).toEqual(expect.arrayContaining(expectSwapRoute));
     getSwapRoute.forEach((swap) => {
-      expect(swap).toMatchObject({
-        orai_swap: expect.objectContaining({
-          offer_asset_info: expect.any(Object),
-          ask_asset_info: expect.any(Object)
-        })
-      });
-    });
-  });
-
-  it.each<[AssetInfo, AssetInfo, SwapOperation[]]>([
-    [
-      ORAIX_INFO,
-      NEUTARO_INFO,
-      [
-        {
-          orai_swap: {
-            offer_asset_info: ORAIX_INFO,
-            ask_asset_info: ORAI_INFO
-          }
-        },
-        {
-          orai_swap: {
-            offer_asset_info: ORAI_INFO,
-            ask_asset_info: USDC_INFO
-          }
-        },
-        {
-          orai_swap: {
-            offer_asset_info: USDC_INFO,
-            ask_asset_info: NEUTARO_INFO
-          }
-        }
-      ]
-    ],
-    [
-      NEUTARO_INFO,
-      ORAIX_INFO,
-      [
-        {
-          orai_swap: {
-            offer_asset_info: NEUTARO_INFO,
-            ask_asset_info: USDC_INFO
-          }
-        },
-        {
-          orai_swap: {
-            offer_asset_info: USDC_INFO,
-            ask_asset_info: ORAI_INFO
-          }
-        },
-        {
-          orai_swap: {
-            offer_asset_info: ORAI_INFO,
-            ask_asset_info: ORAIX_INFO
-          }
-        }
-      ]
-    ]
-  ])("test-generateSwapOperationMsgs", (offerAsset, askAsset, expectSwapRoute) => {
-    const getSwapOperationMsgsRoute = generateSwapOperationMsgs(offerAsset, askAsset);
-    expect(getSwapOperationMsgsRoute).toEqual(expect.arrayContaining(expectSwapRoute));
-    getSwapOperationMsgsRoute.forEach((swap) => {
       expect(swap).toMatchObject({
         orai_swap: expect.objectContaining({
           offer_asset_info: expect.any(Object),

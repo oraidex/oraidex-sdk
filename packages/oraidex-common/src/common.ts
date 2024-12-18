@@ -90,6 +90,10 @@ export class OraidexCommon {
     return this.flattenTokens.filter((token) => token.chainId === solChainId);
   }
 
+  get tonTokens() {
+    return this.flattenTokens.filter((token) => token.chainId === "ton");
+  }
+
   get oraichainTokensWithIcon() {
     return mapListWithIcon(this.oraichainTokens, tokensIcon, "coinGeckoId");
   }
@@ -158,5 +162,9 @@ export class OraidexCommon {
 
   get celestiaNetwork() {
     return this.chainConfig.getSpecificChainInfo("celestia");
+  }
+
+  get tonNetworkMainnet() {
+    return this.chainConfig.getSpecificChainInfo("ton");
   }
 }

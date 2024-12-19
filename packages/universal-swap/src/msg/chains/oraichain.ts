@@ -14,7 +14,7 @@ import {
   isEthAddress,
   isTonChain,
   JETTONS_ADDRESS,
-  NetworkChainId
+  OraidexCommon
 } from "@oraichain/oraidex-common";
 import { toBinary } from "@cosmjs/cosmwasm-stargate";
 import { Memo, Memo_PostAction, Memo_UserSwap } from "../../proto/universal_swap_memo";
@@ -35,10 +35,12 @@ export class OraichainMsg extends ChainMsg {
     receiver: string,
     currentChainAddress: string,
     memo: string = "",
+    oraidexCommon: OraidexCommon,
+
     protected destPrefix: string = undefined,
     protected obridgeAddress: string = undefined
   ) {
-    super(path, minimumReceive, receiver, currentChainAddress, memo);
+    super(path, minimumReceive, receiver, currentChainAddress, memo, oraidexCommon);
     // check chainId  = "Oraichain"
     if (path.chainId !== "Oraichain") {
       throw generateError("This path must be on Oraichain");
@@ -143,8 +145,8 @@ export class OraichainMsg extends ChainMsg {
             timeout: +calculateTimeoutTimestamp(IBC_TRANSFER_TIMEOUT),
             fromToken: action.tokenIn,
             toToken: action.tokenOut,
-            fromChain: this.path.chainId as NetworkChainId,
-            toChain: this.path.tokenOutChainId as NetworkChainId
+            fromChain: this.path.chainId as string,
+            toChain: this.path.tokenOutChainId as string
           };
           break;
         }
@@ -463,9 +465,8 @@ export class OraichainMsg extends ChainMsg {
     // ibc transfer
     // ibc wasm transfer
     // ton bridge
-
     // ibc transfer
-    if (bridgeInfo.sourcePort == "transfer" && isCosmosChain(bridgeInfo.toChain)) {
+    if (bridgeInfo.sourcePort == "transfer" && isCosmosChain(bridgeInfo.toChain, this.oraidexCommon.cosmosChains)) {
       return {
         typeUrl: "/ibc.applications.transfer.v1.MsgTransfer",
         value: {
@@ -537,6 +538,8 @@ export class OraichainMsg extends ChainMsg {
       }
     }
 
+    console.log({ msg, contractAddr });
+
     if (!msg || !contractAddr) {
       throw generateError("Error on generate executeMsg on Oraichain: Only support ibc, ibc wasm bridge, ton bridge");
     }
@@ -595,7 +598,6 @@ export class OraichainMsg extends ChainMsg {
     }
 
     let tokenOutOfSwap = swapOps[swapOps.length - 1].denom_out;
-    console.log({ tokenOutOfSwap });
     let min_asset = isCw20Token(tokenOutOfSwap)
       ? {
           cw20: {

@@ -6,15 +6,22 @@ import {
   calculateTimeoutTimestamp,
   generateError,
   IBC_TRANSFER_TIMEOUT,
-  NetworkChainId
+  OraidexCommon
 } from "@oraichain/oraidex-common";
 
 import { EncodeObject } from "@cosmjs/proto-signing";
 import { ChainMsg } from "./chain";
 
 export class CosmosMsg extends ChainMsg {
-  constructor(path: Path, minimumReceive: string, receiver: string, currentChainAddress: string, memo: string = "") {
-    super(path, minimumReceive, receiver, currentChainAddress, memo);
+  constructor(
+    path: Path,
+    minimumReceive: string,
+    receiver: string,
+    currentChainAddress: string,
+    memo: string = "",
+    oraidexCommon: OraidexCommon
+  ) {
+    super(path, minimumReceive, receiver, currentChainAddress, memo, oraidexCommon);
   }
 
   setMinimumReceiveForSwap(slippage: number = 0.01) {
@@ -46,8 +53,8 @@ export class CosmosMsg extends ChainMsg {
           timeout: +calculateTimeoutTimestamp(IBC_TRANSFER_TIMEOUT),
           fromToken: action.tokenIn,
           toToken: action.tokenOut,
-          fromChain: this.path.chainId as NetworkChainId,
-          toChain: this.path.tokenOutChainId as NetworkChainId
+          fromChain: this.path.chainId as string,
+          toChain: this.path.tokenOutChainId as string
         };
         break;
       } else {

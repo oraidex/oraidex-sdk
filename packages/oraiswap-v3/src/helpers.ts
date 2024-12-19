@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
-  calculateAmountDelta,
-  calculateSqrtPrice,
-  getLiquidityByX,
-  getLiquidityByY,
-  getMaxSqrtPrice,
-  getMinSqrtPrice,
-  simulateSwap
-} from "./wasm/oraiswap_v3_wasm";
+  BigDecimal,
+  OraidexCommon,
+  parseAssetInfoFromContractAddrOrDenom,
+  TokenItemType
+} from "@oraichain/oraidex-common";
+import { Pool, PoolWithPoolKey, Position } from "@oraichain/oraidex-contracts-sdk/build/OraiswapV3.types";
+import { Asset, Route, SwapOperation } from "@oraichain/oraidex-contracts-sdk/build/Zapper.types";
+import { DENOMINATOR, LIQUIDITY_DENOMINATOR, PRICE_DENOMINATOR } from "./const";
 import {
   ActionRoute,
   AmountDeltaResult,
@@ -19,17 +19,20 @@ import {
   RouteResponse,
   SmartRouteResponse,
   Tickmap,
-  TokenData,
   VirtualRange,
   ZapInLiquidityResponse,
-  ZapInResult,
   ZapOutLiquidityResponse,
   ZapOutResult
 } from "./types";
-import { DENOMINATOR, LIQUIDITY_DENOMINATOR, PRICE_DENOMINATOR } from "./const";
-import { Pool, PoolWithPoolKey, Position } from "@oraichain/oraidex-contracts-sdk/build/OraiswapV3.types";
-import { BigDecimal, parseAssetInfoFromContractAddrOrDenom, TokenItemType } from "@oraichain/oraidex-common";
-import { Asset, Route, SwapOperation } from "@oraichain/oraidex-contracts-sdk/build/Zapper.types";
+import {
+  calculateAmountDelta,
+  calculateSqrtPrice,
+  getLiquidityByX,
+  getLiquidityByY,
+  getMaxSqrtPrice,
+  getMinSqrtPrice,
+  simulateSwap
+} from "./wasm/oraiswap_v3_wasm";
 
 export const getVolume = (pool: PoolWithPoolKey, protocolFee: number): { volumeX: bigint; volumeY: bigint } => {
   const feeDenominator = (BigInt(protocolFee) * BigInt(pool.pool_key.fee_tier.fee)) / DENOMINATOR;
@@ -296,27 +299,31 @@ export const parseAsset = (token: TokenItemType, amount: string): Asset => {
   };
 };
 
-export const generateMessageSwapOperation = (responses: SmartRouteResponse[], slippage: number): Route[] => {
+export const generateMessageSwapOperation = (
+  responses: SmartRouteResponse[],
+  slippage: number,
+  oraidexCommon: OraidexCommon
+): Route[] => {
   const flattenRoutes: Route[] = [];
 
   for (const response of responses) {
     if (!response.routes) continue;
     if (response.routes.length === 0) continue;
 
-    const { routes, returnAmount, swapAmount } = response;
+    const { routes } = response;
 
     for (const route of routes) {
       const { swapAmount, returnAmount, paths } = route;
       const operations: SwapOperation[] = [];
       for (const path of paths) {
-        const { actions, chainId, tokenIn, tokenInAmount, tokenOut, tokenOutAmount, tokenOutChainId } = path;
+        const { actions } = path;
         for (const action of actions) {
-          const { protocol, swapInfo, tokenIn, tokenInAmount, tokenOut, tokenOutAmount, type } = action;
-          let currTokenIn = parseAssetInfoFromContractAddrOrDenom(tokenIn);
+          const { swapInfo, tokenIn } = action;
+          let currTokenIn = parseAssetInfoFromContractAddrOrDenom(tokenIn, oraidexCommon.cosmosTokens);
           for (const swap of swapInfo) {
             const { poolId } = swap;
             const [tokenX, tokenY, fee, tickSpacing] = poolId.split("-");
-            const tokenOut = parseAssetInfoFromContractAddrOrDenom(swap.tokenOut);
+            const tokenOut = parseAssetInfoFromContractAddrOrDenom(swap.tokenOut, oraidexCommon.cosmosTokens);
             if (tokenX && tokenY && fee && tickSpacing) {
               operations.push({
                 swap_v3: {
@@ -451,7 +458,8 @@ export const buildZapOutMessage = (
   positionIndex: number,
   xRouteInfo: SmartRouteResponse,
   yRouteInfo: SmartRouteResponse,
-  slippage: number
+  slippage: number,
+  oraidexCommon: OraidexCommon
 ): ZapOutLiquidityResponse => {
   const minimumReceiveX = xRouteInfo.routes
     ? Math.trunc(new BigDecimal(xRouteInfo.returnAmount).mul((100 - slippage) / 100).toNumber()).toString()
@@ -460,7 +468,7 @@ export const buildZapOutMessage = (
     ? Math.trunc(new BigDecimal(yRouteInfo.returnAmount).mul((100 - slippage) / 100).toNumber()).toString()
     : yRouteInfo.returnAmount;
 
-  const routes = generateMessageSwapOperation([xRouteInfo, yRouteInfo], slippage);
+  const routes = generateMessageSwapOperation([xRouteInfo, yRouteInfo], slippage, oraidexCommon);
   let swapFee = 0;
   routes.forEach((route) => {
     route.operations.forEach((operation) => {
@@ -510,6 +518,7 @@ export const populateMessageZapIn = (
   lowerTick: number,
   upperTick: number,
   slippage: number,
+  oraidexCommon: OraidexCommon,
   buildZapInMessageOptions?: buildZapInMessageOptions
 ) => {
   message.amountX = actualAmountXReceived.returnAmount;
@@ -525,9 +534,13 @@ export const populateMessageZapIn = (
     } else {
       message.amountX = "0";
     }
-    message.routes = generateMessageSwapOperation([actualAmountXReceived], slippage);
+    message.routes = generateMessageSwapOperation([actualAmountXReceived], slippage, oraidexCommon);
   } else {
-    message.routes = generateMessageSwapOperation([actualAmountXReceived, actualAmountYReceived], slippage);
+    message.routes = generateMessageSwapOperation(
+      [actualAmountXReceived, actualAmountYReceived],
+      slippage,
+      oraidexCommon
+    );
   }
 
   calculateSwapFee(message);

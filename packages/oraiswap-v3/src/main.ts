@@ -18,7 +18,9 @@ import { getTickAtSqrtPrice } from "./wasm/oraiswap_v3_wasm";
 async function main() {
   const oraidexCommon = await OraidexCommon.load();
   const zapper = new ZapConsumer({
-    routerApi: "https://osor.oraidex.io/smart-router/alpha-router",
+    // routerApi: "https://osor.oraidex.io/smart-router/alpha-router",
+    // TODO: change to prod later
+    routerApi: "https://osor-staging.oraidex.io/smart-router/alpha-router",
     client: await CosmWasmClient.connect("https://rpc.orai.io"),
     dexV3Address: AMM_V3_CONTRACT,
     multiCallAddress: MULTICALL_CONTRACT,
@@ -36,8 +38,8 @@ async function main() {
   // const poolKey = parsePoolKey(pool);
 
   // for (let i = 0; i < 10; i++) {
-    // const poolInfo = await zapper.handler.getPool(poolKey);
-    // console.log("poolInfo", poolInfo);
+  // const poolInfo = await zapper.handler.getPool(poolKey);
+  // console.log("poolInfo", poolInfo);
   // }
 
   // const tickSpacing = poolKey.fee_tier.tick_spacing;
@@ -61,7 +63,7 @@ async function main() {
     owner: "orai1zyvk3n9r8sax4xvqph97pxuhduqqsqwq6dwzj2",
     tokenId: 12046,
     tokenOut: tokenIn,
-    zapFee: 0,
+    zapFee: 0
   });
   console.dir(res, { depth: null });
   // console.dir(res, { depth: null });

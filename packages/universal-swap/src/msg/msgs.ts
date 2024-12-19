@@ -4,7 +4,9 @@ import {
   isTonChain,
   ORAI_BRIDGE_EVM_DENOM_PREFIX,
   ORAI_BRIDGE_EVM_TRON_DENOM_PREFIX,
-  ORAI_BRIDGE_EVM_ETH_DENOM_PREFIX
+  ORAI_BRIDGE_EVM_ETH_DENOM_PREFIX,
+  checkValidateAddressWithNetwork,
+  NetworkChainId
 } from "@oraichain/oraidex-common";
 import { Path, Route } from "../types";
 import { CosmosMsg, OraichainMsg, OsmosisMsg } from "./chains";
@@ -123,13 +125,21 @@ const buildExecuteMsg = (
 export const generateMsgSwap = (
   route: Route,
   slippage: number = 0.01,
-  addresses: { [chainId: string]: string }
+  addresses: { [chainId: string]: string },
+  recipientAddress?: string
 ): EncodeObject => {
   if (route.paths.length == 0) {
     throw generateError("Require at least 1 action");
   }
   let memo: string = "";
-  let receiver = addresses[route.paths.at(-1)?.tokenOutChainId];
+  const tokenOutChainId = route.paths.at(-1)?.tokenOutChainId;
+  let receiver = addresses[tokenOutChainId];
+
+  if (recipientAddress) {
+    const isValidRecipient = checkValidateAddressWithNetwork(recipientAddress, tokenOutChainId as NetworkChainId);
+    if (!isValidRecipient.isValid) throw generateError("Recipient address invalid when generateMsgSwap!");
+    receiver = recipientAddress;
+  }
 
   // generate memo for univeral swap
   for (let i = route.paths.length - 1; i > 0; i--) {
@@ -145,6 +155,7 @@ export const generateMemoSwap = (
   route: Route,
   slippage: number = 0.01,
   addresses: { [chainId: string]: string },
+  recipientAddress?: string,
   previousChain?: string
 ): MiddlewareResponse => {
   if (route.paths.length == 0) {
@@ -155,7 +166,13 @@ export const generateMemoSwap = (
   }
 
   let memo: string = "";
-  let receiver = addresses[route.paths.at(-1)?.tokenOutChainId];
+  const tokenOutChainId = route.paths.at(-1)?.tokenOutChainId;
+  let receiver = addresses[tokenOutChainId];
+  if (recipientAddress) {
+    const isValidRecipient = checkValidateAddressWithNetwork(recipientAddress, tokenOutChainId as NetworkChainId);
+    if (!isValidRecipient.isValid) throw generateError("Recipient address invalid when generateMemoSwap!");
+    receiver = recipientAddress;
+  }
 
   // generate memo for univeral swap
   for (let i = route.paths.length - 1; i > 0; i--) {

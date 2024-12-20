@@ -182,7 +182,6 @@ export const parseAssetInfoFromContractAddrOrDenom = (addressOrDenomToken: strin
   if (!addressOrDenomToken) return null;
   const addressOrDenomLowerCase = addressOrDenomToken.toLowerCase();
 
-  // const cosmosTokens = getOraidexCommonAttribute<TokenItemType[]>("cosmosTokens");
   const tokenItem = cosmosTokens.find((cosmosToken) => {
     return !cosmosToken.contractAddress
       ? cosmosToken.denom.toLowerCase() === addressOrDenomLowerCase
@@ -229,7 +228,6 @@ export const findToTokenOnOraiBridge = (
   toNetwork: string,
   cosmosTokens: TokenItemType[]
 ) => {
-  // const cosmosTokens = getOraidexCommonAttribute<TokenItemType[]>("cosmosTokens");
   return cosmosTokens.find(
     (t) =>
       t.chainId === "oraibridge-subnet-2" &&

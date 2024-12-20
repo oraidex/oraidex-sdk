@@ -500,8 +500,6 @@ export class UniversalSwapHelper {
         cosmosChains: oraidexCommon.cosmosChains
       });
 
-      if (addresses?.recipientAddress) receiverAddresses[toToken.chainId] = addresses?.recipientAddress;
-
       const { memo } = generateMemoSwap(
         {
           ...alphaRoutes,
@@ -510,6 +508,7 @@ export class UniversalSwapHelper {
         userSlippage / 100,
         receiverAddresses,
         oraidexCommon,
+        addresses.recipientAddress,
         alphaRoutes.paths[0].chainId
       );
 

@@ -823,8 +823,15 @@ export class UniversalSwapHandler {
   }
 
   async alphaSmartRouterSwapNewMsg(swapRoute, universalSwapType, receiverAddresses) {
-    const { sender, originalFromToken, originalToToken, simulateAmount, alphaSmartRoutes, userSlippage } =
-      this.swapData;
+    const {
+      sender,
+      originalFromToken,
+      originalToToken,
+      simulateAmount,
+      alphaSmartRoutes,
+      userSlippage,
+      recipientAddress
+    } = this.swapData;
 
     const universalSwapTypeFromCosmos = [
       "oraichain-to-oraichain",
@@ -863,7 +870,8 @@ export class UniversalSwapHandler {
       }
 
       const msgs = alphaSmartRoutes.routes.map((route) => {
-        return generateMsgSwap(route, userSlippage / 100, receiverAddresses, this.oraidexCommon);
+        return generateMsgSwap(route, userSlippage / 100, receiverAddresses, this.oraidexCommon, recipientAddress);
+        // return generateMsgSwap(route, userSlippage / 100, receiverAddresses, recipientAddress);
       });
 
       const { client } = await this.config.cosmosWallet.getCosmWasmClient(
@@ -1073,7 +1081,6 @@ export class UniversalSwapHandler {
 
     if (swapOptions?.isAlphaIbcWasm) {
       let receiverAddresses = UniversalSwapHelper.generateAddress(addressParams);
-      if (recipientAddress) receiverAddresses[originalToToken.chainId] = toAddress;
       return this.alphaSmartRouterSwapNewMsg(swapRoute, universalSwapType, receiverAddresses);
     }
 

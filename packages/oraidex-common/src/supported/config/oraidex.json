@@ -318,5 +318,6 @@
       "denom": "s20_orai",
       "coingecko_id": "oraichain-token"
     }
-  }
+  },
+  "ton": {}
 }

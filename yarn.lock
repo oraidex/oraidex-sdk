@@ -3744,16 +3744,16 @@
   resolved "https://registry.yarnpkg.com/@oraichain/common-contracts-sdk/-/common-contracts-sdk-1.0.31.tgz#595f93b168438d69d64896909b37855c9afc92fb"
   integrity sha512-s8H20RXy5gCnu3DnM7L5ClQyj2mdQpbSBpZrXCpIAX9qY0LKsDdZG3sYaDQ8+VN333jz9Pp/qGWdFSYD+6PBsg==
 
-"@oraichain/common@1.2.1-beta8":
-  version "1.2.1-beta8"
-  resolved "https://registry.yarnpkg.com/@oraichain/common/-/common-1.2.1-beta8.tgz#835a6dc38e5543bfcd1a653edf41bd58e3189385"
-  integrity sha512-zV7Apkfjtwra5FD80AmG65LAXxEh6hZ3Rz4YKCPM2acVxCv+Ozaga7Tn8cg9uCKCyuBYFzx1aZnlAA4nUKAhJA==
+"@oraichain/common@1.2.5":
+  version "1.2.5"
+  resolved "https://registry.yarnpkg.com/@oraichain/common/-/common-1.2.5.tgz#6f9302f3d2a5e5784edf42c414aec0fc2b0e7f6e"
+  integrity sha512-xU/hhYTMSP1keR1d1KPOoBP3DxPKkDx/apYEHSs7bxUsSAI2Nx79LQJEDDCDJSFHneBEQcdRhoSntAKQVEMwtQ==
   dependencies:
     "@keplr-wallet/types" "0.12.141"
     axios "0.21.4"
     axios-extensions "3.1.6"
     bech32 "^1.1.4"
-    cosmjs-types "^0.8.0"
+    cosmjs-types "^0.9.0"
     ethers "^5.5.1"
     lodash "^4.17.21"
 
@@ -3819,31 +3819,6 @@
   version "4.3.9"
   resolved "https://registry.yarnpkg.com/@oraichain/immutable/-/immutable-4.3.9.tgz#ff8d5a7b39b5b01f3f72a902cffbfea32ccb20c3"
   integrity sha512-INpHnhL970OCkR7I71Kssb2aLl2l4Y/x8W6FlyRO0KmC8GHjxc/hlNB1t44BiI7lkOYmcWMRQoC8dwParsp1RQ==
-
-"@oraichain/oraidex-common@2.0.0-beta.24":
-  version "2.0.0-beta.24"
-  resolved "https://registry.yarnpkg.com/@oraichain/oraidex-common/-/oraidex-common-2.0.0-beta.24.tgz#4d728f8ff4fe1a65cc9e7bfea9f8d698a1aeb53d"
-  integrity sha512-4MxWFhrDwbn5tPbtBomUNmgX+waDWrO6fQR8At86xV8TtEHw8H92LzJ4EJytElOtkfKMVK964TixM/ehsSp/AA==
-  dependencies:
-    "@cosmjs/amino" "^0.32.4"
-    "@cosmjs/cosmwasm-stargate" "^0.32.4"
-    "@cosmjs/crypto" "^0.32.4"
-    "@cosmjs/proto-signing" "^0.32.4"
-    "@cosmjs/stargate" "^0.32.4"
-    "@cosmjs/tendermint-rpc" "^0.32.4"
-    "@ethersproject/providers" "^5.0.10"
-    "@injectivelabs/sdk-ts" "1.12.1"
-    "@keplr-wallet/types" "^0.11.38"
-    "@oraichain/common" "^1.2.1-beta13"
-    "@oraichain/oraidex-contracts-sdk" latest
-    "@ton/core" "0.56.3"
-    "@ton/crypto" "3.3.0"
-    axios "1.7.2"
-    axios-extensions "3.1.7"
-    bignumber.js "^9.1.2"
-    cosmjs-types "^0.9.0"
-    ethers "^5.0.15"
-    tronweb "6.0.0-beta.4"
 
 "@oraichain/oraidex-common@^1.1.27", "@oraichain/oraidex-common@^1.1.34":
   version "1.1.34"

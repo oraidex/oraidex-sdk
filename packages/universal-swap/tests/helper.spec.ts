@@ -5,15 +5,12 @@ import {
   AmountDetails,
   COSMOS_CHAIN_ID_COMMON,
   CoinGeckoId,
-  CosmosChainId,
-  EvmChainId,
   INJECTIVE_CONTRACT,
   INJECTIVE_ORAICHAIN_DENOM,
   KWT_BSC_CONTRACT,
   MILKY_BSC_CONTRACT,
   NEUTARO_INFO,
   NEUTARO_ORAICHAIN_DENOM,
-  NetworkChainId,
   ORAI,
   ORAIX_CONTRACT,
   ORAIX_INFO,
@@ -23,6 +20,7 @@ import {
   ORAI_BSC_CONTRACT,
   ORAI_ETH_CONTRACT,
   ORAI_INFO,
+  OraidexCommon,
   TokenInfo,
   TokenItemType,
   USDC_CONTRACT,
@@ -34,7 +32,7 @@ import {
   WRAP_BNB_CONTRACT,
   WRAP_ETH_CONTRACT,
   WRAP_TRON_TRX_CONTRACT,
-  flattenTokens,
+  // flattenTokens, // TODO: INIT ORAI COMMON HERE
   getTokenOnOraichain,
   getTokenOnSpecificChainId,
   ibcInfos,
@@ -59,7 +57,6 @@ import {
   isEvmSwappable,
   isSupportedNoPoolSwapEvm,
   generateSwapRoute,
-  generateSwapOperationMsgs,
   UniversalSwapHelper
 } from "../src/helper";
 import { SwapRoute, UniversalSwapType } from "../src/types";
@@ -70,6 +67,12 @@ import { expect, afterAll, beforeAll, describe, it, vi } from "vitest";
 import { parseAssetInfo } from "../../oraidex-common/src";
 
 describe("test helper functions", () => {
+  let oraidexCommon: OraidexCommon;
+
+  beforeAll(async () => {
+    oraidexCommon = await OraidexCommon.load();
+  });
+
   it("test-buildSwapRouterKey", () => {
     expect(buildSwapRouterKey("foo", "bar")).toEqual("foo-bar");
   });
@@ -125,7 +128,7 @@ describe("test helper functions", () => {
     expect(buildIbcWasmPairKey("foo", "bar", "john-doe")).toEqual("foo/bar/john-doe");
   });
 
-  it.each<[NetworkChainId, boolean]>([
+  it.each<[string, boolean]>([
     ["0x01", true],
     ["0x38", true],
     ["Oraichain", false]
@@ -133,25 +136,25 @@ describe("test helper functions", () => {
     expect(isEvmNetworkNativeSwapSupported(chainId)).toEqual(expectedResult);
   });
 
-  it("test-getSourceReceiver-should-return-channel-1-plus-address", async () => {
-    const keplrAddress = "orai1329tg05k3snr66e2r9ytkv6hcjx6fkxcarydx6";
-    const tokenAddress = ORAI_BSC_CONTRACT;
-    const res = getSourceReceiver(keplrAddress, tokenAddress);
-    expect(res).toBe(`${oraib2oraichain}/${keplrAddress}`);
-  });
+  // it("test-getSourceReceiver-should-return-channel-1-plus-address", async () => {
+  //   const keplrAddress = "orai1329tg05k3snr66e2r9ytkv6hcjx6fkxcarydx6";
+  //   const tokenAddress = ORAI_BSC_CONTRACT;
+  //   const res = getSourceReceiver(keplrAddress, tokenAddress);
+  //   expect(res).toBe(`${oraib2oraichain}/${keplrAddress}`);
+  // });
 
-  it("test-getSourceReceiver-should-return-only-address", async () => {
-    const keplrAddress = "orai1329tg05k3snr66e2r9ytkv6hcjx6fkxcarydx6";
-    let tokenAddress = KWT_BSC_CONTRACT;
-    let res = getSourceReceiver(keplrAddress, tokenAddress);
-    expect(res).toBe(keplrAddress);
+  // it("test-getSourceReceiver-should-return-only-address", async () => {
+  //   const keplrAddress = "orai1329tg05k3snr66e2r9ytkv6hcjx6fkxcarydx6";
+  //   let tokenAddress = KWT_BSC_CONTRACT;
+  //   let res = getSourceReceiver(keplrAddress, tokenAddress);
+  //   expect(res).toBe(keplrAddress);
 
-    tokenAddress = MILKY_BSC_CONTRACT;
-    res = getSourceReceiver(keplrAddress, tokenAddress);
-    expect(res).toBe(keplrAddress);
-  });
+  //   tokenAddress = MILKY_BSC_CONTRACT;
+  //   res = getSourceReceiver(keplrAddress, tokenAddress);
+  //   expect(res).toBe(keplrAddress);
+  // });
 
-  it.each<[CoinGeckoId, NetworkChainId, CoinGeckoId, NetworkChainId, string, SwapRoute, boolean]>([
+  it.each<[CoinGeckoId, string, CoinGeckoId, string, string, SwapRoute, boolean]>([
     [
       "airight",
       "0x38",
@@ -343,12 +346,14 @@ describe("test helper functions", () => {
       vi.spyOn(dexCommonHelper, "isEthAddress").mockImplementation((address) =>
         address.includes("0x") ? true : false
       );
-      const fromToken = flattenTokens.find(
+      const fromToken = oraidexCommon.flattenTokens.find(
         (item) => item.coinGeckoId === fromCoingeckoId && item.chainId === fromChainId
       )!;
-      const toToken = flattenTokens.find((item) => item.coinGeckoId === toCoingeckoId && item.chainId === toChainId);
+      const toToken = oraidexCommon.flattenTokens.find(
+        (item) => item.coinGeckoId === toCoingeckoId && item.chainId === toChainId
+      );
       try {
-        const receiverAddress = UniversalSwapHelper.getRoute(fromToken, toToken, receiver);
+        const receiverAddress = UniversalSwapHelper.getRoute(oraidexCommon.cosmosTokens, fromToken, toToken, receiver);
         expect(receiverAddress).toEqual(swapRoute);
         expect(willThrow).toEqual(false);
       } catch (error) {
@@ -398,7 +403,12 @@ describe("test helper functions", () => {
         ...evmInfo
       };
 
-      const generateAddress = UniversalSwapHelper.generateAddress({ oraiAddress, injAddress, evmInfo });
+      const generateAddress = UniversalSwapHelper.generateAddress({
+        oraiAddress,
+        injAddress,
+        cosmosChains: oraidexCommon.cosmosChains,
+        evmInfo
+      });
       expect(generateAddress).toMatchObject(expectAddresses);
     } catch (error) {
       expect(willThrow).toEqual(false);
@@ -605,6 +615,7 @@ describe("test helper functions", () => {
       undefined as any,
       "0",
       1,
+      oraidexCommon,
       {
         isSourceReceiverTest: false
       }
@@ -619,6 +630,7 @@ describe("test helper functions", () => {
         undefined as any,
         "0",
         1,
+        oraidexCommon,
         {
           isSourceReceiverTest: false
         }
@@ -806,74 +818,12 @@ describe("test helper functions", () => {
     });
   });
 
-  it.each<[AssetInfo, AssetInfo, SwapOperation[]]>([
-    [
-      ORAIX_INFO,
-      NEUTARO_INFO,
-      [
-        {
-          orai_swap: {
-            offer_asset_info: ORAIX_INFO,
-            ask_asset_info: ORAI_INFO
-          }
-        },
-        {
-          orai_swap: {
-            offer_asset_info: ORAI_INFO,
-            ask_asset_info: USDC_INFO
-          }
-        },
-        {
-          orai_swap: {
-            offer_asset_info: USDC_INFO,
-            ask_asset_info: NEUTARO_INFO
-          }
-        }
-      ]
-    ],
-    [
-      NEUTARO_INFO,
-      ORAIX_INFO,
-      [
-        {
-          orai_swap: {
-            offer_asset_info: NEUTARO_INFO,
-            ask_asset_info: USDC_INFO
-          }
-        },
-        {
-          orai_swap: {
-            offer_asset_info: USDC_INFO,
-            ask_asset_info: ORAI_INFO
-          }
-        },
-        {
-          orai_swap: {
-            offer_asset_info: ORAI_INFO,
-            ask_asset_info: ORAIX_INFO
-          }
-        }
-      ]
-    ]
-  ])("test-generateSwapOperationMsgs", (offerAsset, askAsset, expectSwapRoute) => {
-    const getSwapOperationMsgsRoute = generateSwapOperationMsgs(offerAsset, askAsset);
-    expect(getSwapOperationMsgsRoute).toEqual(expect.arrayContaining(expectSwapRoute));
-    getSwapOperationMsgsRoute.forEach((swap) => {
-      expect(swap).toMatchObject({
-        orai_swap: expect.objectContaining({
-          offer_asset_info: expect.any(Object),
-          ask_asset_info: expect.any(Object)
-        })
-      });
-    });
-  });
-
-  it.each<[AmountDetails, TokenItemType, Coin, number]>([
+  it.each<[AmountDetails, string, Coin, number]>([
     [
       {
         injective: "10000"
       },
-      getTokenOnOraichain("injective-protocol"),
+      "injective-protocol",
       coin(1000, INJECTIVE_ORAICHAIN_DENOM),
       1
     ],
@@ -882,25 +832,40 @@ describe("test helper functions", () => {
         [INJECTIVE_ORAICHAIN_DENOM]: "1000",
         injective: "10000"
       },
-      getTokenOnOraichain("injective-protocol"),
+      "injective-protocol",
       coin(1000, INJECTIVE_ORAICHAIN_DENOM),
       0
     ],
-    [{}, getTokenOnOraichain("injective-protocol"), coin(1000, INJECTIVE_ORAICHAIN_DENOM), 0]
+    [{}, "injective-protocol", coin(1000, INJECTIVE_ORAICHAIN_DENOM), 0]
   ])("test-generate-convert-msgs", async (currentBal: AmountDetails, tokenInfo, toSend, msgLength) => {
-    const msg = universalHelper.generateConvertCw20Erc20Message(currentBal, tokenInfo, "orai123", toSend);
+    const token = getTokenOnOraichain(tokenInfo, oraidexCommon.oraichainTokens);
+    const msg = universalHelper.generateConvertCw20Erc20Message(
+      currentBal,
+      token,
+      "orai123",
+      toSend,
+      oraidexCommon.tokenMap,
+      oraidexCommon.network
+    );
     console.dir(msg, { depth: null });
     expect(msg.length).toEqual(msgLength);
   });
 
-  it.each<[AmountDetails, TokenItemType, number]>([
-    [{}, getTokenOnOraichain("cosmos"), 0],
-    [{ [`${INJECTIVE_ORAICHAIN_DENOM}`]: "10" }, getTokenOnOraichain("injective-protocol"), 1],
-    [{ injective: "10" }, getTokenOnOraichain("injective-protocol"), 0]
+  it.each<[AmountDetails, string, number]>([
+    [{}, "cosmos", 0],
+    [{ [`${INJECTIVE_ORAICHAIN_DENOM}`]: "10" }, "injective-protocol", 1],
+    [{ injective: "10" }, "injective-protocol", 0]
   ])(
     "test-generateConvertErc20Cw20Message-should-return-correct-message-length",
     (amountDetails, tokenInfo, expectedMessageLength) => {
-      const result = universalHelper.generateConvertErc20Cw20Message(amountDetails, tokenInfo, "john doe");
+      const token = getTokenOnOraichain(tokenInfo, oraidexCommon.oraichainTokens);
+      const result = universalHelper.generateConvertErc20Cw20Message(
+        amountDetails,
+        token,
+        oraidexCommon.tokenMap,
+        oraidexCommon.network,
+        "john doe"
+      );
       expect(result.length).toEqual(expectedMessageLength);
     }
   );

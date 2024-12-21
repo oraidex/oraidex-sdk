@@ -1,5 +1,6 @@
 import { DirectSecp256k1HdWallet, OfflineSigner } from "@cosmjs/proto-signing";
-import { CosmosChainId, CosmosWallet, cosmosTokens, generateError } from "@oraichain/oraidex-common";
+import { CosmosChainId } from "@oraichain/common/build/constants";
+import { CosmosWallet, OraidexCommon, generateError } from "@oraichain/oraidex-common";
 
 export class CosmosWalletImpl extends CosmosWallet {
   constructor(private readonly mnemonic: string) {
@@ -12,6 +13,8 @@ export class CosmosWalletImpl extends CosmosWallet {
     return accounts[0].address;
   }
   async createCosmosSigner(chainId: CosmosChainId): Promise<OfflineSigner> {
+    const oraidexCommon = await OraidexCommon.load();
+    const cosmosTokens = oraidexCommon.cosmosTokens;
     const chainInfo = cosmosTokens.find((t) => t.chainId === chainId);
     if (!chainInfo) throw generateError(`Cannot find a matched chain info given a chain id ${chainId}`);
     if (!chainInfo.prefix)

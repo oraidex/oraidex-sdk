@@ -60,8 +60,9 @@ export const validateNumber = (amount: number | string): number => {
 
 // decimals always >= 6
 export const toAmount = (amount: number | string, decimals = 6): bigint => {
+  const validatedAmount = validateNumber(amount);
   return BigInt(
-    new BigDecimal(amount)
+    new BigDecimal(validatedAmount)
       .mul(10 ** decimals)
       .toString()
       .split(".")[0]

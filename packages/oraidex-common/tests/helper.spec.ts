@@ -220,7 +220,10 @@ describe("should helper functions in helper run exactly", () => {
       [2000000, 18, "2000000000000000000000000"],
       [6000.5043177, 6, "6000504317"],
       [6000.504317725654, 6, "6000504317"],
-      [0.0006863532, 6, "686"]
+      [0.0006863532, 6, "686"],
+      [1, 1, "10"],
+      [1.5555, 1, "15"],
+      [1.5555, 0, "1"]
     ])(
       "toAmount number %.7f with decimal %d should return %s",
       (amount: number, decimal: number, expectedAmount: string) => {

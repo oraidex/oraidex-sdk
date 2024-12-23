@@ -3757,6 +3757,19 @@
     ethers "^5.5.1"
     lodash "^4.17.21"
 
+"@oraichain/common@1.2.7", "@oraichain/common@^1.2.1-beta13":
+  version "1.2.7"
+  resolved "https://registry.yarnpkg.com/@oraichain/common/-/common-1.2.7.tgz#5063b20967eac14b5fc94e75f02afa6685565507"
+  integrity sha512-yOaEpjxtYwGkOxzSiqYwULfK0KSGdBj0ziQLZjQhM6yhW3MzTK70nAORW64ATKomSlBQFy9I/6MFsGkQBHiv3w==
+  dependencies:
+    "@keplr-wallet/types" "0.12.141"
+    axios "0.21.4"
+    axios-extensions "3.1.6"
+    bech32 "^1.1.4"
+    cosmjs-types "^0.9.0"
+    ethers "^5.5.1"
+    lodash "^4.17.21"
+
 "@oraichain/common@^1.0.3", "@oraichain/common@^1.2.0":
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/@oraichain/common/-/common-1.2.0.tgz#201dddcff7bbb0dd90a04cacf82dc3f6b9480788"
@@ -3806,6 +3819,31 @@
   version "4.3.9"
   resolved "https://registry.yarnpkg.com/@oraichain/immutable/-/immutable-4.3.9.tgz#ff8d5a7b39b5b01f3f72a902cffbfea32ccb20c3"
   integrity sha512-INpHnhL970OCkR7I71Kssb2aLl2l4Y/x8W6FlyRO0KmC8GHjxc/hlNB1t44BiI7lkOYmcWMRQoC8dwParsp1RQ==
+
+"@oraichain/oraidex-common@2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@oraichain/oraidex-common/-/oraidex-common-2.0.0.tgz#4498d1e470717bddab45502dcaaec47738a14516"
+  integrity sha512-IUZLBIiA89dXMrAoRNtg9yAAHYnysC1LE4gPa5ZGyyPuqXpRLMyAOwdHkgnOuFtglQyL+F2Q7cSV6ixM55AdVw==
+  dependencies:
+    "@cosmjs/amino" "^0.32.4"
+    "@cosmjs/cosmwasm-stargate" "^0.32.4"
+    "@cosmjs/crypto" "^0.32.4"
+    "@cosmjs/proto-signing" "^0.32.4"
+    "@cosmjs/stargate" "^0.32.4"
+    "@cosmjs/tendermint-rpc" "^0.32.4"
+    "@ethersproject/providers" "^5.0.10"
+    "@injectivelabs/sdk-ts" "1.12.1"
+    "@keplr-wallet/types" "^0.11.38"
+    "@oraichain/common" "^1.2.1-beta13"
+    "@oraichain/oraidex-contracts-sdk" latest
+    "@ton/core" "0.56.3"
+    "@ton/crypto" "3.3.0"
+    axios "1.7.2"
+    axios-extensions "3.1.7"
+    bignumber.js "^9.1.2"
+    cosmjs-types "^0.9.0"
+    ethers "^5.0.15"
+    tronweb "6.0.0-beta.4"
 
 "@oraichain/oraidex-common@^1.1.27", "@oraichain/oraidex-common@^1.1.34":
   version "1.1.34"

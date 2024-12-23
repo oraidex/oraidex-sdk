@@ -94,7 +94,12 @@ export const toDisplay = (amount: string | bigint, sourceDecimals: number = 6, d
   // guarding conditions to prevent crashing
   const validatedAmount = typeof amount === "string" ? BigInt(amount || "0") : amount;
   const displayDecimals = Math.min(truncDecimals, desDecimals);
-  const returnAmount = validatedAmount / BigInt(10 ** (sourceDecimals - displayDecimals));
+  const returnAmount = BigInt(
+    new BigDecimal(validatedAmount)
+      .div(10 ** (sourceDecimals - displayDecimals))
+      .toString()
+      .split(".")[0]
+  );
   // save calculation by using cached atomic
   return Number(returnAmount) / (displayDecimals === truncDecimals ? atomic : 10 ** displayDecimals);
 };

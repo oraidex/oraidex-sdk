@@ -223,7 +223,8 @@ describe("should helper functions in helper run exactly", () => {
       [0.0006863532, 6, "686"],
       [1, 1, "10"],
       [1.5555, 1, "15"],
-      [1.5555, 0, "1"]
+      [1.5555, 0, "1"],
+      [null, 0, "0"]
     ])(
       "toAmount number %.7f with decimal %d should return %s",
       (amount: number, decimal: number, expectedAmount: string) => {
@@ -238,7 +239,8 @@ describe("should helper functions in helper run exactly", () => {
       ["1000", 6, "0.001", 6],
       ["454136345353413531", 15, "454.136345", 6],
       ["454136345353413531", 15, "454.13", 2],
-      ["100000000000000", 18, "0.0001", 6]
+      ["100000000000000", 18, "0.0001", 6],
+      ["100", 0, "100", 6]
     ])(
       "toDisplay number %d with decimal %d should return %s",
       (amount: string, decimal: number, expectedAmount: string, desDecimal: number) => {

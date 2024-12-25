@@ -901,7 +901,7 @@ export class UniversalSwapHelper {
       return { amount, displayAmount };
     }
 
-    const routerConfigDefault = UniversalSwapHelper.getRouterConfig({});
+    const routerConfigDefault = UniversalSwapHelper.getRouterConfig(query.routerConfig);
     let fromInfo = getTokenOnOraichain(query.originalFromInfo.coinGeckoId, query.oraichainTokens);
     let toInfo = getTokenOnOraichain(query.originalToInfo.coinGeckoId, query.oraichainTokens);
 

@@ -31,7 +31,9 @@ export type CoinGeckoId =
   | "dogecoin"
   | string
   | "solana"
-  | "max-2";
+  | "max-2"
+  // | "black-rack"
+  | string;
 
 export type NetworkType = "cosmos" | "evm" | "ton" | "svm";
 export interface NetworkConfig {

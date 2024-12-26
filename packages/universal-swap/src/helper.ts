@@ -763,7 +763,7 @@ export class UniversalSwapHelper {
   }): Promise<SmartRouterResponse> => {
     const { amount, fromInfo, toInfo, routerConfig } = query;
     // check for universal-swap 2 tokens that have same coingeckoId, should return simulate data with average ratio 1-1.
-    if (fromInfo.chainId === toInfo.chainId && fromInfo.coinGeckoId === toInfo.coinGeckoId) {
+    if (fromInfo.chainId === toInfo.chainId && fromInfo.coinGeckoId && fromInfo.coinGeckoId === toInfo.coinGeckoId) {
       return {
         swapAmount: amount,
         returnAmount: amount,

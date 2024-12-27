@@ -26,9 +26,7 @@ const simulate = async () => {
         useIbcWasm: true
       },
       routerConfig: {
-        // url: "https://osor.oraidex.io",
-        // TODO: change to prod later
-        url: "https://osor-staging.oraidex.io",
+        url: "https://osor.oraidex.io",
         path: "/smart-router/alpha-router",
         protocols: ["Oraidex", "OraidexV3", "Osmosis"]
       }

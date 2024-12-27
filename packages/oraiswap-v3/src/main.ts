@@ -18,9 +18,7 @@ import { getTickAtSqrtPrice } from "./wasm/oraiswap_v3_wasm";
 async function main() {
   const oraidexCommon = await OraidexCommon.load();
   const zapper = new ZapConsumer({
-    // routerApi: "https://osor.oraidex.io/smart-router/alpha-router",
-    // TODO: change to prod later
-    routerApi: "https://osor-staging.oraidex.io/smart-router/alpha-router",
+    routerApi: "https://osor.oraidex.io/smart-router/alpha-router",
     client: await CosmWasmClient.connect("https://rpc.orai.io"),
     dexV3Address: AMM_V3_CONTRACT,
     multiCallAddress: MULTICALL_CONTRACT,

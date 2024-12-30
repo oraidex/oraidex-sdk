@@ -28,7 +28,7 @@ export class OraidexCommon {
 
   static async load(): Promise<OraidexCommon> {
     if (!OraidexCommon.instance) {
-      const oraiCommon = await OraiCommon.initializeFromBackend("https://oraicommon-staging.oraidex.io", "oraidex");
+      const oraiCommon = await OraiCommon.initializeFromBackend("https://oraicommon.oraidex.io", "oraidex");
       OraidexCommon.instance = new OraidexCommon(oraiCommon.tokenItems, oraiCommon.chainInfos);
     }
     return OraidexCommon.instance;

@@ -3744,6 +3744,19 @@
   resolved "https://registry.yarnpkg.com/@oraichain/common-contracts-sdk/-/common-contracts-sdk-1.0.31.tgz#595f93b168438d69d64896909b37855c9afc92fb"
   integrity sha512-s8H20RXy5gCnu3DnM7L5ClQyj2mdQpbSBpZrXCpIAX9qY0LKsDdZG3sYaDQ8+VN333jz9Pp/qGWdFSYD+6PBsg==
 
+"@oraichain/common@1.2.6":
+  version "1.2.6"
+  resolved "https://registry.yarnpkg.com/@oraichain/common/-/common-1.2.6.tgz#7b2f4bed1a7a93e54190a8409e289f6ebab7ba06"
+  integrity sha512-Ten4zmHnunmXtE4zBPO2e4zENvr/Iv1nOzDpZcdCoFJHd7Xe4JuKMWuDBfDy9FWW9AlMbnkcKB7jqaLq4uyP3A==
+  dependencies:
+    "@keplr-wallet/types" "0.12.141"
+    axios "0.21.4"
+    axios-extensions "3.1.6"
+    bech32 "^1.1.4"
+    cosmjs-types "^0.9.0"
+    ethers "^5.5.1"
+    lodash "^4.17.21"
+
 "@oraichain/common@1.2.7":
   version "1.2.7"
   resolved "https://registry.yarnpkg.com/@oraichain/common/-/common-1.2.7.tgz#5063b20967eac14b5fc94e75f02afa6685565507"
@@ -3820,10 +3833,10 @@
   resolved "https://registry.yarnpkg.com/@oraichain/immutable/-/immutable-4.3.9.tgz#ff8d5a7b39b5b01f3f72a902cffbfea32ccb20c3"
   integrity sha512-INpHnhL970OCkR7I71Kssb2aLl2l4Y/x8W6FlyRO0KmC8GHjxc/hlNB1t44BiI7lkOYmcWMRQoC8dwParsp1RQ==
 
-"@oraichain/oraidex-common@2.0.7":
-  version "2.0.7"
-  resolved "https://registry.yarnpkg.com/@oraichain/oraidex-common/-/oraidex-common-2.0.7.tgz#0f26727ab256e0d56e6fec39950689c14ffca690"
-  integrity sha512-UKGb+S9b1UYmW0Rvlx/lyPOQ6ExRs+r3zD8FYdwScOgtP7LUxlMrDL5JFHi3Ief6/W0vR8IZVQw9/4CrBjbQ4w==
+"@oraichain/oraidex-common@2.0.6":
+  version "2.0.6"
+  resolved "https://registry.yarnpkg.com/@oraichain/oraidex-common/-/oraidex-common-2.0.6.tgz#948acc4f93fd51365f2015be55a2d8a9dedb6309"
+  integrity sha512-S8Qtu6ajmrGQemPjcO2BzUx1zs0eqRKcxG17pnZXpZOX4mbI4GefwCTSUyBliSOms7ltMmZp9Xes/su7nVkhPg==
   dependencies:
     "@cosmjs/amino" "^0.32.4"
     "@cosmjs/cosmwasm-stargate" "^0.32.4"

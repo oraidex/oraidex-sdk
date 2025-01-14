@@ -11,10 +11,18 @@ import {
 
 import { EncodeObject } from "@cosmjs/proto-signing";
 import { ChainMsg } from "./chain";
+import { Affiliate } from "@oraichain/oraidex-contracts-sdk/build/OraiswapMixedRouter.types";
 
 export class CosmosMsg extends ChainMsg {
-  constructor(path: Path, minimumReceive: string, receiver: string, currentChainAddress: string, memo: string = "") {
-    super(path, minimumReceive, receiver, currentChainAddress, memo);
+  constructor(
+    path: Path,
+    minimumReceive: string,
+    receiver: string,
+    currentChainAddress: string,
+    memo: string = "",
+    affiliates: Affiliate[]
+  ) {
+    super(path, minimumReceive, receiver, currentChainAddress, memo, affiliates);
   }
 
   setMinimumReceiveForSwap(slippage: number = 0.01) {

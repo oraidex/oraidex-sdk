@@ -402,7 +402,8 @@ export class UniversalSwapHelper {
       ibcInfoTestMode?: boolean;
       isAlphaIbcWasm?: boolean;
     },
-    alphaSmartRoute?: RouterResponse
+    alphaSmartRoute?: RouterResponse,
+    affiliate?: Affiliate[]
   ): Promise<SwapRoute> => {
     // TODO: recheck cosmos address undefined (other-chain -> oraichain)
     if (!addresses.sourceReceiver) throw generateError(`Cannot get source if the sourceReceiver is empty!`);
@@ -490,7 +491,8 @@ export class UniversalSwapHelper {
         userSlippage / 100,
         receiverAddresses,
         addresses.recipientAddress,
-        alphaRoutes.paths[0].chainId
+        alphaRoutes.paths[0].chainId,
+        affiliate
       );
 
       swapRoute = memo;

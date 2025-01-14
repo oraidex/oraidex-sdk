@@ -15,13 +15,21 @@ import { EncodeObject } from "@cosmjs/proto-signing";
 import { MsgExecuteContract } from "cosmjs-types/cosmwasm/wasm/v1/tx";
 import { toUtf8 } from "@cosmjs/encoding";
 import { ChainMsg } from "./chain";
+import { Affiliate } from "@oraichain/oraidex-contracts-sdk/build/OraiswapMixedRouter.types";
 
 export class OsmosisMsg extends ChainMsg {
   SWAP_VENUE_NAME = "osmosis-poolmanager";
   ENTRY_POINT_CONTRACT = "osmo1h3jkejkcpthl45xrrm5geed3eq75p5rgfce9taufkwfr89k63muqweu2y7";
 
-  constructor(path: Path, minimumReceive: string, receiver: string, currentChainAddress: string, memo: string = "") {
-    super(path, minimumReceive, receiver, currentChainAddress, memo);
+  constructor(
+    path: Path,
+    minimumReceive: string,
+    receiver: string,
+    currentChainAddress: string,
+    memo: string = "",
+    affiliates: Affiliate[] = []
+  ) {
+    super(path, minimumReceive, receiver, currentChainAddress, memo, affiliates);
     // check chainId  = "osmosis-1"
     if (path.chainId !== "osmosis-1") {
       throw generateError("This path must be on Osmosis");
@@ -190,7 +198,7 @@ export class OsmosisMsg extends ChainMsg {
         min_asset: min_asset,
         timeout_timestamp: +calculateTimeoutTimestamp(IBC_TRANSFER_TIMEOUT),
         post_swap_action: this.getPostAction(bridgeInfo),
-        affiliates: []
+        affiliates: this.affiliates
       }
     };
 
@@ -257,7 +265,7 @@ export class OsmosisMsg extends ChainMsg {
     // swap and action
     let msg: ExecuteMsg = {
       swap_and_action: {
-        affiliates: [],
+        affiliates: this.affiliates,
         min_asset,
         post_swap_action: this.getPostAction(bridgeInfo),
         timeout_timestamp: +calculateTimeoutTimestamp(IBC_TRANSFER_TIMEOUT),

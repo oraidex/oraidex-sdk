@@ -1,3 +1,4 @@
+import { Affiliate } from "@oraichain/oraidex-contracts-sdk/build/OraiswapMixedRouter.types";
 import { Path } from "../../types";
 import { validatePath, validateReceiver } from "../common";
 
@@ -7,7 +8,8 @@ export class ChainMsg {
     protected minimumReceive: string,
     protected receiver: string,
     protected currentChainAddress: string,
-    protected memo: string = ""
+    protected memo: string = "",
+    protected affiliates: Affiliate[] = []
   ) {
     // validate path
     validatePath(path);

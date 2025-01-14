@@ -704,7 +704,8 @@ export class UniversalSwapHandler {
       minimumReceive,
       userSlippage,
       this.config.swapOptions,
-      alphaSmartRoutes
+      alphaSmartRoutes,
+      this.swapData.affiliates
     );
     const swapRouteSplit = completeSwapRoute.split(":");
     const swapRoute = swapRouteSplit.length === 1 ? "" : swapRouteSplit[1];
@@ -807,7 +808,13 @@ export class UniversalSwapHandler {
       }
 
       const msgs = alphaSmartRoutes.routes.map((route) => {
-        return generateMsgSwap(route, userSlippage / 100, receiverAddresses, recipientAddress);
+        return generateMsgSwap(
+          route,
+          userSlippage / 100,
+          receiverAddresses,
+          recipientAddress,
+          this.swapData.affiliates
+        );
       });
 
       const { client } = await this.config.cosmosWallet.getCosmWasmClient(
@@ -999,7 +1006,8 @@ export class UniversalSwapHandler {
       minimumReceive,
       userSlippage,
       this.config.swapOptions,
-      alphaSmartRoutes
+      alphaSmartRoutes,
+      this.swapData.affiliates
     );
 
     if (swapOptions?.isAlphaIbcWasm) {

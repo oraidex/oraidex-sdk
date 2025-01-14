@@ -23,6 +23,7 @@ import { MsgExecuteContract } from "cosmjs-types/cosmwasm/wasm/v1/tx";
 import { TransferBackMsg } from "@oraichain/common-contracts-sdk/build/CwIcs20Latest.types";
 import { toUtf8 } from "@cosmjs/encoding";
 import { ChainMsg } from "./chain";
+import { Affiliate } from "@oraichain/oraidex-contracts-sdk/build/OraiswapMixedRouter.types";
 
 export class OraichainMsg extends ChainMsg {
   SWAP_VENUE_NAME = "oraidex";
@@ -36,9 +37,10 @@ export class OraichainMsg extends ChainMsg {
     currentChainAddress: string,
     memo: string = "",
     protected destPrefix: string = undefined,
-    protected obridgeAddress: string = undefined
+    protected obridgeAddress: string = undefined,
+    affiliates: Affiliate[] = []
   ) {
-    super(path, minimumReceive, receiver, currentChainAddress, memo);
+    super(path, minimumReceive, receiver, currentChainAddress, memo, affiliates);
     // check chainId  = "Oraichain"
     if (path.chainId !== "Oraichain") {
       throw generateError("This path must be on Oraichain");
@@ -443,7 +445,7 @@ export class OraichainMsg extends ChainMsg {
         min_asset: min_asset,
         timeout_timestamp: +calculateTimeoutTimestamp(IBC_TRANSFER_TIMEOUT),
         post_swap_action: this.getPostAction(bridgeInfo),
-        affiliates: []
+        affiliates: this.affiliates
       }
     };
 
@@ -613,7 +615,7 @@ export class OraichainMsg extends ChainMsg {
     // swap and action
     let msg: ExecuteMsg = {
       swap_and_action: {
-        affiliates: [],
+        affiliates: this.affiliates,
         min_asset,
         post_swap_action: this.getPostAction(bridgeInfo),
         timeout_timestamp: +calculateTimeoutTimestamp(IBC_TRANSFER_TIMEOUT),

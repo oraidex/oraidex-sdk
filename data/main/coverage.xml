@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
-<coverage lines-valid="17348" lines-covered="11801" line-rate="0.6801999999999999" branches-valid="1238" branches-covered="990" branch-rate="0.7996" timestamp="1736135165952" complexity="0" version="0.1">
+<coverage lines-valid="17348" lines-covered="11801" line-rate="0.6801999999999999" branches-valid="1238" branches-covered="990" branch-rate="0.7996" timestamp="1736912379990" complexity="0" version="0.1">
   <sources>
     <source>/home/runner/work/oraidex-sdk/oraidex-sdk</source>
   </sources>
@@ -1800,8 +1800,8 @@
             <line number="192" hits="4" branch="true" condition-coverage="100% (2/2)"/>
             <line number="193" hits="3" branch="false"/>
             <line number="195" hits="3" branch="true" condition-coverage="100% (1/1)"/>
-            <line number="196" hits="139" branch="true" condition-coverage="100% (1/1)"/>
-            <line number="197" hits="108" branch="true" condition-coverage="100% (1/1)"/>
+            <line number="196" hits="140" branch="true" condition-coverage="100% (1/1)"/>
+            <line number="197" hits="109" branch="true" condition-coverage="100% (1/1)"/>
             <line number="198" hits="31" branch="false"/>
             <line number="199" hits="3" branch="false"/>
             <line number="201" hits="4" branch="true" condition-coverage="100% (2/2)"/>
@@ -1841,7 +1841,7 @@
             <line number="240" hits="5" branch="false"/>
             <line number="241" hits="5" branch="false"/>
             <line number="242" hits="5" branch="true" condition-coverage="100% (1/1)"/>
-            <line number="243" hits="132" branch="true" condition-coverage="100% (1/1)"/>
+            <line number="243" hits="134" branch="true" condition-coverage="100% (1/1)"/>
             <line number="244" hits="40" branch="true" condition-coverage="100% (1/1)"/>
             <line number="245" hits="3" branch="true" condition-coverage="100% (1/1)"/>
             <line number="246" hits="3" branch="false"/>

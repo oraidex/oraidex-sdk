@@ -668,16 +668,70 @@ export const oraichainNetwork: CustomChainInfo = {
       coinDecimals: 6,
       coinImageUrl:
         "https://pump.mypinata.cloud/ipfs/QmcGwYebsQfYbNSM9QDAMS2wKZ8fZNEiMbezJah1zgEWWS?img-width=256&img-dpr=2"
+    },
+    {
+      coinDenom: "RACKS",
+      coinMinimalDenom:
+        "factory/orai1wuvhex9xqs3r539mvc6mtm7n20fcj3qr2m0y9khx6n5vtlngfzes3k0rq9/D7yP4ycfsRWUGYionGpi64sLF2ddZ2JXxuRAti2M7uck",
+      coinDecimals: 6,
+      bridgeTo: ["solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp"],
+      coinGeckoId: "blackrack",
+      coinImageUrl: "https://ipfs.io/ipfs/QmVRPsBSHpamDzcDzVL9wsbB9gr4frtNrrFF7g44Xa9FuS"
+    },
+    {
+      coinDenom: "GNRT",
+      coinMinimalDenom:
+        "factory/orai1wuvhex9xqs3r539mvc6mtm7n20fcj3qr2m0y9khx6n5vtlngfzes3k0rq9/oraiJP7H3LAt57DkFXNLDbLdBFNRRPvS8jg2j5AZkd9",
+      coinDecimals: 6,
+      bridgeTo: ["solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp"],
+      coinGeckoId: "degenerator-project",
+      coinImageUrl: "https://ipfs.io/ipfs/QmNu1YU842i2imMX9bTV5kFK8ndUpUwxHD9ipRRXoBakD6"
+    },
+    {
+      coinDenom: "LEE",
+      coinMinimalDenom:
+        "factory/orai1wuvhex9xqs3r539mvc6mtm7n20fcj3qr2m0y9khx6n5vtlngfzes3k0rq9/oraix39mVDGnusyjag97Tz5H8GvGriSZmhVvkvXRoc4",
+      coinDecimals: 6,
+      bridgeTo: ["solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp"],
+      coinGeckoId: "lee-quid",
+      coinImageUrl: "https://ipfs.io/ipfs/QmWh89Xh8bVMD1vP4VLtkazQjM7TyYxfoufMn5SZHuEJY1"
+    },
+    {
+      coinDenom: "TRUMP",
+      coinMinimalDenom:
+        "factory/orai1wuvhex9xqs3r539mvc6mtm7n20fcj3qr2m0y9khx6n5vtlngfzes3k0rq9/6p6xgHyF7AeE6TZkSmFsko444wqoP15icUSqi2jfGiPN",
+      coinDecimals: 6,
+      bridgeTo: ["solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp"],
+      coinGeckoId: "official-trump",
+      coinImageUrl: "https://assets.coingecko.com/coins/images/53746/standard/trump.png?1737171561"
+    },
+    {
+      coinDenom: "JPOW",
+      coinMinimalDenom:
+        "factory/orai1wuvhex9xqs3r539mvc6mtm7n20fcj3qr2m0y9khx6n5vtlngfzes3k0rq9/orairHM3Yw2PbTfCty1PXy7tEUx3uBMfjouNbm4KnRJ",
+      coinDecimals: 6,
+      bridgeTo: ["solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp"],
+      coinGeckoId: "jpow",
+      coinImageUrl: "https://ipfs.io/ipfs/QmTNx93FdeSwBxsqbZF5NuhVU9AWwodpwqjuHtGEMRTV38"
+    },
+    {
+      coinDenom: "CRISIS",
+      coinMinimalDenom:
+        "factory/orai1wuvhex9xqs3r539mvc6mtm7n20fcj3qr2m0y9khx6n5vtlngfzes3k0rq9/moonznxqtXdzA81shGf6EQ8Rw36hgaoqRUeWREDYiVe",
+      coinDecimals: 6,
+      bridgeTo: ["solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp"],
+      coinGeckoId: "crisis",
+      coinImageUrl: "https://ipfs.io/ipfs/QmcJAjUjP4ruDBx4hgc1DG5BZVzSUQ13JGFSEFtibwwdcJ"
+    },
+    {
+      coinDenom: "MOOBS",
+      coinMinimalDenom:
+        "factory/orai1wuvhex9xqs3r539mvc6mtm7n20fcj3qr2m0y9khx6n5vtlngfzes3k0rq9/moonGvQw19jXedkQFf5qgdzSRCZvNv2eNbmvR6ZwSkk",
+      coinDecimals: 6,
+      bridgeTo: ["solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp"],
+      coinGeckoId: "moobs",
+      coinImageUrl: "https://ipfs.io/ipfs/QmQgDDuxwG5Ds5EfWbP7YgYi1BGFcGDv3c3D5NRU3wExes"
     }
-    // {
-    //   coinDenom: "RACKS",
-    //   coinGeckoId: "black-rack",
-    //   coinMinimalDenom: RACKS_ORAICHAIN_DENOM,
-    //   bridgeTo: [solChainId],
-    //   coinDecimals: 6,
-    //   coinImageUrl:
-    //     "https://pump.mypinata.cloud/ipfs/QmcGwYebsQfYbNSM9QDAMS2wKZ8fZNEiMbezJah1zgEWWS?img-width=256&img-dpr=2"
-    // }
   ]
 };
 

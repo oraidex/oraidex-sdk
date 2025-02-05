@@ -7,7 +7,14 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { beforeAll, describe, expect, it } from "vitest";
 import { OraidexCommon } from "../src/common";
-import { AIRI_CONTRACT, AVERAGE_COSMOS_GAS_PRICE, BTC_CONTRACT, MILKYBSC_ORAICHAIN_DENOM, ORAI } from "../src/constant";
+import {
+  AIRI_CONTRACT,
+  AVERAGE_COSMOS_GAS_PRICE,
+  BTC_CONTRACT,
+  MILKYBSC_ORAICHAIN_DENOM,
+  ORAI,
+  WETH_CONTRACT
+} from "../src/constant";
 import {
   calculateMinReceive,
   calculateTimeoutTimestamp,
@@ -706,7 +713,7 @@ describe("should helper functions in helper run exactly", () => {
     ["", null],
     ["orai333", null],
     ["orai", { native_token: { denom: "orai" } }],
-    [BTC_CONTRACT, { token: { contract_addr: BTC_CONTRACT } }]
+    [WETH_CONTRACT, { token: { contract_addr: WETH_CONTRACT } }]
   ])("test-generateConvertErc20Cw20Message-should-return-correct-message", (addressOrDenom, expectedMessage) => {
     const result = parseAssetInfoFromContractAddrOrDenom(addressOrDenom, oraidexCommon.cosmosTokens);
     expect(result).toEqual(expectedMessage);

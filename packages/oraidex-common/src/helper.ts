@@ -460,10 +460,20 @@ export type RetryOptions = {
 export const fetchRetry = async (url: RequestInfo | URL, options: RequestInit & RetryOptions = {}) => {
   let retry = options.retry ?? 3;
   const { callback, timeout = 30000, ...init } = options;
-  init.signal = AbortSignal.timeout(timeout);
+  // init.signal = AbortSignal.timeout(timeout);
+  const controller = new AbortController();
+  const abort = setTimeout(() => {
+    controller.abort();
+  }, timeout);
+
   while (retry > 0) {
     try {
-      return await fetch(url, init);
+      const response = await fetch(url, init);
+      if (response) {
+        clearTimeout(abort);
+      }
+
+      return response;
     } catch (e) {
       callback?.(retry);
       retry--;

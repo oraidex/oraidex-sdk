@@ -13,6 +13,7 @@ import { CosmosMsg, OraichainMsg, OsmosisMsg } from "./chains";
 import { MiddlewareResponse } from "./types";
 import { EncodeObject } from "@cosmjs/proto-signing";
 import { NetworkChainId } from "@oraichain/common";
+import { Affiliate } from "@oraichain/oraidex-contracts-sdk/build/OraiswapMixedRouter.types";
 
 const getDestPrefixForBridgeToEvmOnOrai = (chainId: string): string => {
   const prefixMap: { [key: string]: string } = {
@@ -37,7 +38,8 @@ const buildMemoSwap = (
   addresses: { [chainId: string]: string },
   slippage: number = 0.01,
   oraidexCommon: OraidexCommon,
-  previousChain?: string
+  previousChain?: string,
+  affiliates?: Affiliate[]
 ): MiddlewareResponse => {
   let currentChain = path.chainId;
   let currentAddress = addresses[currentChain];
@@ -59,7 +61,8 @@ const buildMemoSwap = (
         memo,
         oraidexCommon,
         prefix,
-        oBridgeAddress
+        oBridgeAddress,
+        affiliates
       );
       oraichainMsg.setMinimumReceiveForSwap(slippage);
       // we have 2 cases:
@@ -73,7 +76,7 @@ const buildMemoSwap = (
       return msgInfo;
     }
     case "osmosis-1": {
-      let cosmosMsg = new OsmosisMsg(path, "1", receiver, currentAddress, memo, oraidexCommon);
+      let cosmosMsg = new OsmosisMsg(path, "1", receiver, currentAddress, memo, oraidexCommon, []);
       cosmosMsg.setMinimumReceiveForSwap(slippage);
       let msgInfo = cosmosMsg.genMemoAsMiddleware();
       return msgInfo;
@@ -85,7 +88,7 @@ const buildMemoSwap = (
       if (currentChain.startsWith("0x")) {
         throw generateError("Don't support universal swap in EVM");
       }
-      let cosmosMsg = new CosmosMsg(path, "1", receiver, currentAddress, memo, oraidexCommon);
+      let cosmosMsg = new CosmosMsg(path, "1", receiver, currentAddress, memo, oraidexCommon, []);
       cosmosMsg.setMinimumReceiveForSwap(slippage);
       let msgInfo = cosmosMsg.genMemoAsMiddleware();
       return msgInfo;
@@ -99,7 +102,8 @@ const buildExecuteMsg = (
   memo: string,
   addresses: { [chainId: string]: string },
   slippage: number = 0.01,
-  oraidexCommon: OraidexCommon
+  oraidexCommon: OraidexCommon,
+  affiliates?: Affiliate[]
 ): EncodeObject => {
   let currentChain = path.chainId;
   let currentAddress = addresses[currentChain];
@@ -120,13 +124,14 @@ const buildExecuteMsg = (
         memo,
         oraidexCommon,
         prefix,
-        oBridgeAddress
+        oBridgeAddress,
+        affiliates
       );
       oraichainMsg.setMinimumReceiveForSwap(slippage);
       return oraichainMsg.genExecuteMsg();
     }
     case "osmosis-1": {
-      let cosmosMsg = new OsmosisMsg(path, "1", receiver, currentAddress, memo, oraidexCommon);
+      let cosmosMsg = new OsmosisMsg(path, "1", receiver, currentAddress, memo, oraidexCommon, []);
       cosmosMsg.setMinimumReceiveForSwap(slippage);
       return cosmosMsg.genExecuteMsg();
     }
@@ -137,7 +142,7 @@ const buildExecuteMsg = (
       if (currentChain.startsWith("0x")) {
         throw generateError("Don't support universal swap in EVM");
       }
-      let cosmosMsg = new CosmosMsg(path, "1", receiver, currentAddress, memo, oraidexCommon);
+      let cosmosMsg = new CosmosMsg(path, "1", receiver, currentAddress, memo, oraidexCommon, []);
       cosmosMsg.setMinimumReceiveForSwap(slippage);
       return cosmosMsg.genExecuteMsg();
     }
@@ -149,7 +154,8 @@ export const generateMsgSwap = (
   slippage: number = 0.01,
   addresses: { [chainId: string]: string },
   oraidexCommon: OraidexCommon,
-  recipientAddress?: string
+  recipientAddress?: string,
+  affiliates?: Affiliate[]
 ): EncodeObject => {
   if (route.paths.length == 0) {
     throw generateError("Require at least 1 action");
@@ -177,13 +183,14 @@ export const generateMsgSwap = (
       addresses,
       slippage,
       oraidexCommon,
-      route.paths[i - 1].chainId
+      route.paths[i - 1].chainId,
+      affiliates
     );
     memo = swapInfo.memo;
     receiver = swapInfo.receiver;
   }
 
-  return buildExecuteMsg(route.paths[0], receiver, memo, addresses, slippage, oraidexCommon);
+  return buildExecuteMsg(route.paths[0], receiver, memo, addresses, slippage, oraidexCommon, affiliates);
 };
 
 export const generateMemoSwap = (
@@ -192,7 +199,8 @@ export const generateMemoSwap = (
   addresses: { [chainId: string]: string },
   oraidexCommon: OraidexCommon,
   recipientAddress?: string,
-  previousChain?: string
+  previousChain?: string,
+  affiliates?: Affiliate[]
 ): MiddlewareResponse => {
   if (route.paths.length == 0) {
     return {
@@ -223,7 +231,8 @@ export const generateMemoSwap = (
       addresses,
       slippage,
       oraidexCommon,
-      route.paths[i - 1].chainId
+      route.paths[i - 1].chainId,
+      affiliates
     );
     memo = swapInfo.memo;
     receiver = swapInfo.receiver;

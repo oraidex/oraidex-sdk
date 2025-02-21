@@ -1,6 +1,6 @@
 import { BridgeMsgInfo, MiddlewareResponse } from "../types";
 import { ActionType, Path } from "../../types";
-import { Action } from "@oraichain/osor-api-contracts-sdk/src/EntryPoint.types";
+import { Action, Affiliate } from "@oraichain/osor-api-contracts-sdk/src/EntryPoint.types";
 import {
   BigDecimal,
   calculateTimeoutTimestamp,
@@ -19,9 +19,10 @@ export class CosmosMsg extends ChainMsg {
     receiver: string,
     currentChainAddress: string,
     memo: string = "",
-    oraidexCommon: OraidexCommon
+    oraidexCommon: OraidexCommon,
+    affiliates: Affiliate[]
   ) {
-    super(path, minimumReceive, receiver, currentChainAddress, memo, oraidexCommon);
+    super(path, minimumReceive, receiver, currentChainAddress, memo, oraidexCommon, affiliates);
   }
 
   setMinimumReceiveForSwap(slippage: number = 0.01) {

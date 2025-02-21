@@ -830,7 +830,8 @@ export class UniversalSwapHandler {
       simulateAmount,
       alphaSmartRoutes,
       userSlippage,
-      recipientAddress
+      recipientAddress,
+      affiliates
     } = this.swapData;
 
     const universalSwapTypeFromCosmos = [
@@ -870,8 +871,14 @@ export class UniversalSwapHandler {
       }
 
       const msgs = alphaSmartRoutes.routes.map((route) => {
-        return generateMsgSwap(route, userSlippage / 100, receiverAddresses, this.oraidexCommon, recipientAddress);
-        // return generateMsgSwap(route, userSlippage / 100, receiverAddresses, recipientAddress);
+        return generateMsgSwap(
+          route,
+          userSlippage / 100,
+          receiverAddresses,
+          this.oraidexCommon,
+          recipientAddress,
+          affiliates
+        );
       });
 
       const { client } = await this.config.cosmosWallet.getCosmWasmClient(

@@ -1,7 +1,7 @@
 import { BridgeMsgInfo, MiddlewareResponse } from "../types";
 import { ActionType, Path } from "../../types";
 import { SwapOperation } from "@oraichain/osor-api-contracts-sdk/src/types";
-import { Swap, Action, ExecuteMsg } from "@oraichain/osor-api-contracts-sdk/src/EntryPoint.types";
+import { Swap, Action, ExecuteMsg, Affiliate } from "@oraichain/osor-api-contracts-sdk/src/EntryPoint.types";
 import { isCw20Token } from "../common";
 import {
   BigDecimal,
@@ -26,9 +26,10 @@ export class OsmosisMsg extends ChainMsg {
     receiver: string,
     currentChainAddress: string,
     memo: string = "",
-    oraidexCommon: OraidexCommon
+    oraidexCommon: OraidexCommon,
+    affiliates: Affiliate[] = []
   ) {
-    super(path, minimumReceive, receiver, currentChainAddress, memo, oraidexCommon);
+    super(path, minimumReceive, receiver, currentChainAddress, memo, oraidexCommon, affiliates);
     // check chainId  = "osmosis-1"
     if (path.chainId !== "osmosis-1") {
       throw generateError("This path must be on Osmosis");
@@ -197,7 +198,7 @@ export class OsmosisMsg extends ChainMsg {
         min_asset: min_asset,
         timeout_timestamp: +calculateTimeoutTimestamp(IBC_TRANSFER_TIMEOUT),
         post_swap_action: this.getPostAction(bridgeInfo),
-        affiliates: []
+        affiliates: this.affiliates
       }
     };
 
@@ -264,7 +265,7 @@ export class OsmosisMsg extends ChainMsg {
     // swap and action
     let msg: ExecuteMsg = {
       swap_and_action: {
-        affiliates: [],
+        affiliates: this.affiliates,
         min_asset,
         post_swap_action: this.getPostAction(bridgeInfo),
         timeout_timestamp: +calculateTimeoutTimestamp(IBC_TRANSFER_TIMEOUT),

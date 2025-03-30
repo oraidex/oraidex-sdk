@@ -1,7 +1,7 @@
 import { BridgeMsgInfo, MiddlewareResponse } from "../types";
 import { ActionType, Path } from "../../types";
 import { SwapOperation } from "@oraichain/osor-api-contracts-sdk/src/types";
-import { Action, ExecuteMsg } from "@oraichain/osor-api-contracts-sdk/src/EntryPoint.types";
+import { Action, Affiliate, ExecuteMsg } from "@oraichain/osor-api-contracts-sdk/src/EntryPoint.types";
 import { isCw20Token } from "../common";
 import {
   BigDecimal,
@@ -36,11 +36,11 @@ export class OraichainMsg extends ChainMsg {
     currentChainAddress: string,
     memo: string = "",
     oraidexCommon: OraidexCommon,
-
     protected destPrefix: string = undefined,
-    protected obridgeAddress: string = undefined
+    protected obridgeAddress: string = undefined,
+    affiliates: Affiliate[] = []
   ) {
-    super(path, minimumReceive, receiver, currentChainAddress, memo, oraidexCommon);
+    super(path, minimumReceive, receiver, currentChainAddress, memo, oraidexCommon, affiliates);
     // check chainId  = "Oraichain"
     if (path.chainId !== "Oraichain") {
       throw generateError("This path must be on Oraichain");
@@ -445,7 +445,7 @@ export class OraichainMsg extends ChainMsg {
         min_asset: min_asset,
         timeout_timestamp: +calculateTimeoutTimestamp(IBC_TRANSFER_TIMEOUT),
         post_swap_action: this.getPostAction(bridgeInfo),
-        affiliates: []
+        affiliates: this.affiliates
       }
     };
 
@@ -615,7 +615,7 @@ export class OraichainMsg extends ChainMsg {
     // swap and action
     let msg: ExecuteMsg = {
       swap_and_action: {
-        affiliates: [],
+        affiliates: this.affiliates,
         min_asset,
         post_swap_action: this.getPostAction(bridgeInfo),
         timeout_timestamp: +calculateTimeoutTimestamp(IBC_TRANSFER_TIMEOUT),

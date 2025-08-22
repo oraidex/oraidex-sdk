@@ -1,7 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useLocalStorage, useMedia } from "react-use";
 import { SaveLoadAdapter } from "./SaveLoadAdapter";
-import { ChartData, ChartingLibraryWidgetOptions, IChartingLibraryWidget, ResolutionString } from "./charting_library";
+import {
+  ChartData,
+  ChartingLibraryWidgetOptions,
+  IChartingLibraryWidget,
+  Overrides,
+  ResolutionString
+} from "./charting_library";
 import {
   DARK_BACKGROUND_CHART,
   DEFAULT_PERIOD,
@@ -48,6 +54,7 @@ export type TVChartContainerProsp = {
     description: string;
   }>;
   customExchangeName?: string;
+  customOverrideChartProps?: Overrides;
 };
 
 export default function TVChartContainer({
@@ -62,7 +69,8 @@ export default function TVChartContainer({
   socketConfig,
   customPeriodConfig,
   customTimeFrames,
-  customExchangeName
+  customExchangeName,
+  customOverrideChartProps
 }: TVChartContainerProsp) {
   const chartContainerRef = useRef<HTMLDivElement | null>(null);
   const tvWidgetRef = useRef<IChartingLibraryWidget | null>(null);
@@ -138,6 +146,10 @@ export default function TVChartContainer({
   useEffect(() => {
     const widgetOptions = {
       ...defaultChartProps,
+      overrides: {
+        ...defaultChartProps.overrides,
+        ...(customOverrideChartProps || {})
+      },
       debug: true,
       timezone: getTradingViewTimeZone(),
       symbol: symbolRef.current, // Using ref to avoid unnecessary re-renders on symbol change and still have access to the latest symbol

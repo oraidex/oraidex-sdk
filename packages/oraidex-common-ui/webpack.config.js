@@ -55,7 +55,7 @@ module.exports = {
       amd: "socket.io-client",
       root: "io",
       umd: "socket.io-client"
-    },
+    }
     // "react-use-websocket": {
     //   commonjs: "react-use-websocket",
     //   commonjs2: "react-use-websocket",
@@ -63,13 +63,13 @@ module.exports = {
     //   root: "useWebSocket",
     //   umd: "react-use-websocket"
     // },
-    "@injectivelabs/sdk-ts": {
-      commonjs: "@injectivelabs/sdk-ts",
-      commonjs2: "@injectivelabs/sdk-ts",
-      amd: "@injectivelabs/sdk-ts",
-      root: "InjectiveLabs",
-      umd: "@injectivelabs/sdk-ts"
-    }
+    // "@injectivelabs/sdk-ts": {
+    //   commonjs: "@injectivelabs/sdk-ts",
+    //   commonjs2: "@injectivelabs/sdk-ts",
+    //   amd: "@injectivelabs/sdk-ts",
+    //   root: "InjectiveLabs",
+    //   umd: "@injectivelabs/sdk-ts"
+    // }
   },
   optimization: !isDevelopment
     ? {

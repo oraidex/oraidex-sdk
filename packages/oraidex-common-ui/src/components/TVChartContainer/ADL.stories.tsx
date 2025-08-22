@@ -2,6 +2,7 @@ import { Meta, StoryObj } from "@storybook/react";
 import React from "react";
 import TVChartContainer, { TVChartContainerProsp } from "./TVChartContainer";
 import { Bar } from "./helpers/types";
+import axios from "axios";
 
 const DATA_PAIRS = [
   {
@@ -40,6 +41,50 @@ const customTimeFrames = [
   { text: "1m", resolution: "240", description: "1 Month" },
   { text: "3m", resolution: "1440", description: "3 Months" }
 ];
+
+const MAP_TF_SECOND_NUMBER_TO_STRING = {
+  [60 * 1]: "1m",
+  [60 * 5]: "5m",
+  [60 * 15]: "15m",
+  [60 * 45]: "45m",
+  [60 * 60]: "1h",
+  [60 * 60 * 2]: "2h",
+  [60 * 60 * 4]: "4h",
+  [60 * 60 * 6]: "6h",
+  [60 * 60 * 8]: "8h",
+  [60 * 60 * 12]: "12h",
+  [60 * 60 * 24]: "1d"
+};
+
+const fetchDataChart = async (params: { pair: string; startTime: number; endTime: number; tf: number }) => {
+  const { pair, startTime, endTime, tf } = params;
+
+  try {
+    const timeframe = MAP_TF_SECOND_NUMBER_TO_STRING[tf];
+
+    const res = await axios.get(
+      `https://backend-release.agents.land/chart/ohlcv/ecsdsq91zCdS9wStAy7qzHSKQWKDqRdTMxgqGj7ct9e?timeframe=${timeframe}`,
+      {}
+    );
+
+    const data = [...(res.data.ohlcv || [])].map((i) => {
+      return {
+        ...i,
+        open: Number(i.open),
+        high: Number(i.high),
+        low: Number(i.low),
+        close: Number(i.close),
+        volume: Number(i.volume)
+      };
+    });
+
+    return data;
+  } catch (e) {
+    console.error("GetTokenChartPrice", e);
+    return [];
+  }
+};
+
 ADLChart.args = {
   theme: "dark",
   currentPair: DATA_PAIRS[0],
@@ -68,240 +113,143 @@ ADLChart.args = {
 
   // Custom time frames
   customTimeFrames: null,
+  fetchDataChart,
 
-  fetchDataChart: async (prams: { pair: string; startTime: number; endTime: number; tf: number }): Promise<Bar[]> => {
-    const { pair, startTime, endTime, tf } = prams;
-    console.log("params ADL", prams);
-
-    if (tf === 300) {
-      // 5 minutes
-      console.log("Handling 5 minute timeframe");
-      return [
-        {
-          open: 0.0000001764,
-          high: 0.0000001764,
-          low: 0.0000001764,
-          close: 0.0000001764,
-          volume: 21.484603799999974,
-          time: 1755764700
-        },
-        {
-          open: 0.0000001764,
-          high: 0.0000001299,
-          low: 0.0000001299,
-          close: 0.0000001299,
-          volume: 15.82385410362631,
-          time: 1755765000
-        },
-        {
-          open: 0.0000001299,
-          high: 0.0000004868,
-          low: 0.0000001385,
-          close: 0.0000004015,
-          volume: 467.1363022425914,
-          time: 1755771000
-        },
-        {
-          open: 0.0000004015,
-          high: 0.0000003363,
-          low: 0.0000001887,
-          close: 0.0000002461,
-          volume: 94.04308292588681,
-          time: 1755771300
-        }
-      ];
+  socketConfig: {
+    eventName: "updateOhlcv",
+    socketType: "socketio",
+    socketUrl: "https://backend-release.agents.land",
+    pairMapping: DATA_PAIRS,
+    reconnectInterval: 3000,
+    retryOnError: false,
+    reconnectAttempts: 5,
+    socketIOOptions: {
+      transports: ["websocket"],
+      autoConnect: true,
+      reconnection: true,
+      reconnectionAttempts: 5,
+      reconnectionDelay: 3000,
+      reconnectionDelayMax: 5000
     }
-
-    console.log("Using default data for timeframe:", tf);
-    return [
-      {
-        open: 0.0000001764,
-        high: 0.0000001764,
-        low: 0.0000001764,
-        close: 0.0000001764,
-        volume: 2100000000000.484603799999974,
-        time: 1755764940
-      },
-      {
-        open: 0.0000001764,
-        high: 0.0000001299,
-        low: 0.0000001299,
-        close: 0.0000001299,
-        volume: 15.82385410362631,
-        time: 1755765060
-      },
-      {
-        open: 0.0000001299,
-        high: 0.0000002107,
-        low: 0.0000001385,
-        close: 0.0000001866,
-        volume: 47.50443799379911,
-        time: 1755771000
-      },
-      {
-        open: 0.0000001866,
-        high: 0.0000002354,
-        low: 0.0000001672,
-        close: 0.0000001976,
-        volume: 79.48632810005907,
-        time: 1755771060
-      },
-      {
-        open: 0.0000001976,
-        high: 0.0000002465,
-        low: 0.0000001785,
-        close: 0.0000002113,
-        volume: 42.73754986507767,
-        time: 1755771120
-      },
-      {
-        open: 0.0000002113,
-        high: 0.000000285,
-        low: 0.0000002182,
-        close: 0.0000002667,
-        volume: 106.67999860517273,
-        time: 1755771180
-      },
-      {
-        open: 0.0000002667,
-        high: 0.0000004868,
-        low: 0.0000002319,
-        close: 0.0000004015,
-        volume: 190.7279876784828,
-        time: 1755771240
-      },
-      {
-        open: 0.0000004015,
-        high: 0.0000003363,
-        low: 0.0000002154,
-        close: 0.0000002154,
-        volume: 48.394105519939586,
-        time: 1755771300
-      },
-      {
-        open: 0.0000002154,
-        high: 0.0000002728,
-        low: 0.0000001887,
-        close: 0.0000002461,
-        volume: 45.64897740594722,
-        time: 1755771360
-      }
-    ];
   }
-
-  // socketConfig: {
-  //   wsUrl: BASE_SOCKET_URL.ORDERBOOK_STAGING
-  // }
 };
 
-// export const BtcUsdtODTChart: Story = (args: TVChartContainerProsp) => (
-//   <div style={{ height: "80vh" }}>
-//     <TVChartContainer {...args} />;
-//   </div>
-// );
-// BtcUsdtODTChart.args = {
-//   theme: "dark",
-//   currentPair: {
-//     symbol: "BTC/USDT",
-//     info: "orai10g6frpysmdgw5tdqke47als6f97aqmr8s3cljsvjce4n5enjftcqtamzsd - orai12hzjxfh77wl572gdzct2fxv2arxcwh6gykc7qh"
-//   },
-//   pairsChart: [
-//     {
-//       symbol: "BTC/USDT",
-//       info: "orai10g6frpysmdgw5tdqke47als6f97aqmr8s3cljsvjce4n5enjftcqtamzsd-orai12hzjxfh77wl572gdzct2fxv2arxcwh6gykc7qh"
-//     }
-//   ],
-//   setChartTimeFrame: (resolution) => {
-//     console.log({ resolutionUpdate: resolution });
-//   },
+// fetchDataChart: async (prams: { pair: string; startTime: number; endTime: number; tf: number }): Promise<Bar[]> => {
+//   const { pair, startTime, endTime, tf } = prams;
+//   console.log("params ADL", prams);
 
-//   baseUrl: BASE_API_URL.ORDERBOOK_STAGING,
-
-//   fetchDataChart: async (prams: { pair: string; startTime: number; endTime: number; tf: number }): Promise<Bar[]> => {
-//     const { pair, startTime, endTime, tf } = prams;
-//     console.log("params", prams);
-
-//     try {
-//       const res = await axios.get(BASE_API_URL.ORDERBOOK_STAGING + "/v1/candles/", {
-//         params: {
-//           pair: pair.split("-").join(" - "),
-//           startTime: Math.round(startTime / 60),
-//           endTime: Math.round(endTime / 60),
-//           tf: tf / 60
-//         }
-//       });
-
-//       return [...res.data].map((i) => {
-//         if (i.high > 200) {
-//           i.high = i.close + 1;
-//           i.open = i.close + 0.5;
-//         }
-
-//         return i;
-//       });
-//     } catch (e) {
-//       console.error("GetTokenChartPrice", e);
-//       return [];
-//     }
-//   },
-//   socketConfig: {
-//     wsUrl: BASE_SOCKET_URL.ORDERBOOK_STAGING,
-//     pairMapping: DATA_PAIRS
+//   if (tf === 300) {
+//     // 5 minutes
+//     console.log("Handling 5 minute timeframe");
+//     return [
+//       {
+//         open: 0.0000001764,
+//         high: 0.0000001764,
+//         low: 0.0000001764,
+//         close: 0.0000001764,
+//         volume: 21.484603799999974,
+//         time: 1755764700
+//       },
+//       {
+//         open: 0.0000001764,
+//         high: 0.0000001299,
+//         low: 0.0000001299,
+//         close: 0.0000001299,
+//         volume: 15.82385410362631,
+//         time: 1755765000
+//       },
+//       {
+//         open: 0.0000001299,
+//         high: 0.0000004868,
+//         low: 0.0000001385,
+//         close: 0.0000004015,
+//         volume: 467.1363022425914,
+//         time: 1755771000
+//       },
+//       {
+//         open: 0.0000004015,
+//         high: 0.0000003363,
+//         low: 0.0000001887,
+//         close: 0.0000002461,
+//         volume: 94.04308292588681,
+//         time: 1755771300
+//       }
+//     ];
 //   }
-// };
 
-// export const XOCHUsdtODTChart: Story = (args: TVChartContainerProsp) => (
-//   <div style={{ height: "80vh" }}>
-//     <TVChartContainer {...args} />;
-//   </div>
-// );
-// XOCHUsdtODTChart.args = {
-//   theme: "dark",
-//   currentPair: {
-//     symbol: "xOCH/USDT",
-//     info: "orai1lplapmgqnelqn253stz6kmvm3ulgdaytn89a8mz9y85xq8wd684s6xl3lt - orai12hzjxfh77wl572gdzct2fxv2arxcwh6gykc7qh"
-//   },
-//   pairsChart: [
+//   console.log("Using default data for timeframe:", tf);
+//   return [
 //     {
-//       symbol: "xOCH/USDT",
-//       info: "orai1lplapmgqnelqn253stz6kmvm3ulgdaytn89a8mz9y85xq8wd684s6xl3lt-orai12hzjxfh77wl572gdzct2fxv2arxcwh6gykc7qh"
+//       open: 0.0000001764,
+//       high: 0.0000001764,
+//       low: 0.0000001764,
+//       close: 0.0000001764,
+//       volume: 2100000000000.484603799999974,
+//       time: 1755764940
+//     },
+//     {
+//       open: 0.0000001764,
+//       high: 0.0000001299,
+//       low: 0.0000001299,
+//       close: 0.0000001299,
+//       volume: 15.82385410362631,
+//       time: 1755765060
+//     },
+//     {
+//       open: 0.0000001299,
+//       high: 0.0000002107,
+//       low: 0.0000001385,
+//       close: 0.0000001866,
+//       volume: 47.50443799379911,
+//       time: 1755771000
+//     },
+//     {
+//       open: 0.0000001866,
+//       high: 0.0000002354,
+//       low: 0.0000001672,
+//       close: 0.0000001976,
+//       volume: 79.48632810005907,
+//       time: 1755771060
+//     },
+//     {
+//       open: 0.0000001976,
+//       high: 0.0000002465,
+//       low: 0.0000001785,
+//       close: 0.0000002113,
+//       volume: 42.73754986507767,
+//       time: 1755771120
+//     },
+//     {
+//       open: 0.0000002113,
+//       high: 0.000000285,
+//       low: 0.0000002182,
+//       close: 0.0000002667,
+//       volume: 106.67999860517273,
+//       time: 1755771180
+//     },
+//     {
+//       open: 0.0000002667,
+//       high: 0.0000004868,
+//       low: 0.0000002319,
+//       close: 0.0000004015,
+//       volume: 190.7279876784828,
+//       time: 1755771240
+//     },
+//     {
+//       open: 0.0000004015,
+//       high: 0.0000003363,
+//       low: 0.0000002154,
+//       close: 0.0000002154,
+//       volume: 48.394105519939586,
+//       time: 1755771300
+//     },
+//     {
+//       open: 0.0000002154,
+//       high: 0.0000002728,
+//       low: 0.0000001887,
+//       close: 0.0000002461,
+//       volume: 45.64897740594722,
+//       time: 1755771360
 //     }
-//   ],
-//   setChartTimeFrame: (resolution) => {
-//     console.log({ resolutionUpdate: resolution });
-//   },
-
-//   baseUrl: BASE_API_URL.ORDERBOOK_STAGING,
-
-//   fetchDataChart: async (prams: { pair: string; startTime: number; endTime: number; tf: number }): Promise<Bar[]> => {
-//     const { pair, startTime, endTime, tf } = prams;
-//     console.log("params", prams);
-
-//     try {
-//       const res = await axios.get(BASE_API_URL.ORDERBOOK_STAGING + "/v1/candles/", {
-//         params: {
-//           pair: pair.split("-").join(" - "),
-//           startTime: Math.round(startTime / 60),
-//           endTime: Math.round(endTime / 60),
-//           tf: tf / 60
-//         }
-//       });
-
-//       return [...res.data].map((i) => {
-//         if (i.high > 200) {
-//           i.high = i.close + 1;
-//           i.open = i.close + 0.5;
-//         }
-
-//         return i;
-//       });
-//     } catch (e) {
-//       console.error("GetTokenChartPrice", e);
-//       return [];
-//     }
-//   },
-//   socketConfig: {
-//     wsUrl: BASE_SOCKET_URL.ORDERBOOK_STAGING,
-//     pairMapping: DATA_PAIRS
-//   }
-// };
+//   ];
+// },

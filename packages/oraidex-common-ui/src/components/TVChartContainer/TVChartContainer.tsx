@@ -14,7 +14,7 @@ import { TVDataProvider } from "./helpers/TVDataProvider";
 import { DEFAULT_LIBRARY_URL, SUPPORTED_RESOLUTIONS, TV_CHART_RELOAD_INTERVAL } from "./helpers/constants";
 import useTVDatafeed, { PairToken } from "./helpers/useTVDatafeed";
 import { getObjectKeyFromValue, getTradingViewTimeZone } from "./helpers/utils";
-import { useChartSocket } from "./helpers/useChartSocket";
+import { useChartSocket, SocketConfig } from "./helpers/useChartSocket";
 import { Bar, FetchChartDataParams } from "./helpers/types";
 import { CustomPeriodConfig } from "./helpers/useCustomPeriodParams";
 
@@ -40,12 +40,7 @@ export type TVChartContainerProsp = {
   baseUrl?: string;
   fetchDataChart?: (arg: FetchChartDataParams) => Promise<Bar[]>;
   customCssUrl?: string;
-  socketConfig?: {
-    wsUrl: string;
-    pairMapping?: PairToken[];
-    reconnectInterval?: number;
-    retryOnError?: boolean;
-  };
+  socketConfig?: SocketConfig;
   customPeriodConfig?: CustomPeriodConfig;
   customTimeFrames?: Array<{
     text: string;

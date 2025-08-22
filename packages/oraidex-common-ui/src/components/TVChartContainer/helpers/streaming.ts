@@ -56,8 +56,6 @@ function subscribeOnStream(
   _onResetCacheNeededCallback,
   lastDailyBar
 ) {
-  console.log("symbolInfo", symbolInfo);
-
   const parsedSymbol = parseFullSymbol(symbolInfo);
   const channelString = `${parsedSymbol.fromSymbol}/${parsedSymbol.toSymbol}`;
   const handler = {

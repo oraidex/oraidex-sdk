@@ -16,6 +16,7 @@ import useTVDatafeed, { PairToken } from "./helpers/useTVDatafeed";
 import { getObjectKeyFromValue, getTradingViewTimeZone } from "./helpers/utils";
 import { useChartSocket } from "./helpers/useChartSocket";
 import { Bar, FetchChartDataParams } from "./helpers/types";
+import { CustomPeriodConfig } from "./helpers/useCustomPeriodParams";
 
 export function useLocalStorageSerializeKey<T>(
   key: string | any[],
@@ -32,20 +33,26 @@ export function useLocalStorageSerializeKey<T>(
 
 export type TVChartContainerProsp = {
   libraryUrl?: string;
-  theme: "dark" | "light";
+  theme?: "light" | "dark";
   currentPair: PairToken;
   pairsChart: PairToken[];
   setChartTimeFrame?: (tf: number) => void;
   baseUrl?: string;
-  fetchDataChart?: (arg: FetchChartDataParams) => Promise<Bar[]>;
+  fetchDataChart: (arg: FetchChartDataParams) => Promise<Bar[]>;
   customCssUrl?: string;
   socketConfig?: {
     wsUrl: string;
-    pairMapping?: any[];
-    reconnectAttempts?: number;
+    pairMapping?: PairToken[];
     reconnectInterval?: number;
     retryOnError?: boolean;
   };
+  customPeriodConfig?: CustomPeriodConfig;
+  customTimeFrames?: Array<{
+    text: string;
+    resolution: string;
+    description: string;
+  }>;
+  customExchangeName?: string;
 };
 
 export default function TVChartContainer({
@@ -57,7 +64,10 @@ export default function TVChartContainer({
   baseUrl,
   fetchDataChart,
   customCssUrl,
-  socketConfig
+  socketConfig,
+  customPeriodConfig,
+  customTimeFrames,
+  customExchangeName
 }: TVChartContainerProsp) {
   const chartContainerRef = useRef<HTMLDivElement | null>(null);
   const tvWidgetRef = useRef<IChartingLibraryWidget | null>(null);
@@ -70,7 +80,9 @@ export default function TVChartContainer({
     pairsChart,
     setChartTimeFrame,
     baseUrl,
-    fetchDataChart
+    fetchDataChart,
+    customPeriodConfig,
+    customExchangeName
   });
   const isMobile = useMedia("(max-width: 550px)");
   const [chartReady, setChartReady] = useState(false);
@@ -143,12 +155,18 @@ export default function TVChartContainer({
       },
       interval: getObjectKeyFromValue(period, SUPPORTED_RESOLUTIONS),
       save_load_adapter: new SaveLoadAdapter(symbolRef.current, tvCharts, setTvCharts),
-      time_frames: [
+      time_frames: customTimeFrames || [
         { text: "6m", resolution: "6h" as ResolutionString, description: "6 Months" },
         { text: "1m", resolution: "1h" as ResolutionString, description: "1 Month" },
         { text: "2w", resolution: "1h" as ResolutionString, description: "2 Weeks" },
         { text: "1w", resolution: "1h" as ResolutionString, description: "1 Week" },
         { text: "1d", resolution: "15" as ResolutionString, description: "1 Day" }
+        // // Custom time frames
+        // { text: "3d", resolution: "1h" as ResolutionString, description: "3 Days" },
+        // { text: "12h", resolution: "30" as ResolutionString, description: "12 Hours" },
+        // { text: "6h", resolution: "15" as ResolutionString, description: "6 Hours" },
+        // { text: "2h", resolution: "5" as ResolutionString, description: "2 Hours" },
+        // { text: "30m", resolution: "1" as ResolutionString, description: "30 Minutes" }
       ]
     };
 

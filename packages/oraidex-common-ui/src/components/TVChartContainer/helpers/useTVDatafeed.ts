@@ -10,10 +10,13 @@ import { TVDataProvider } from "./TVDataProvider";
 import { SUPPORTED_RESOLUTIONS } from "./constants";
 import { Bar, FetchChartDataParams } from "./types";
 import { subscribeOnStream } from "./streaming";
+import { useCustomPeriodParams, CustomPeriodConfig } from "./useCustomPeriodParams";
 
 export type PairToken = {
   symbol: string;
   info: string;
+  priceScale?: number;
+  useRawVolume?: boolean;
 };
 
 const configurationData = {
@@ -32,6 +35,8 @@ type Props = {
   setChartTimeFrame?: (tf: number) => void;
   baseUrl?: string;
   fetchDataChart: (arg: FetchChartDataParams) => Promise<Bar[]>;
+  customPeriodConfig?: CustomPeriodConfig;
+  customExchangeName?: string;
 };
 
 export const EXCHANGE_NAME = "OraiDEX";
@@ -43,7 +48,9 @@ export default function useTVDatafeed({
   pairsChart,
   setChartTimeFrame,
   baseUrl,
-  fetchDataChart
+  fetchDataChart,
+  customPeriodConfig,
+  customExchangeName
 }: Props) {
   const intervalRef = useRef<ReturnType<typeof setInterval> | undefined>();
   const resetCacheRef = useRef<() => void | undefined>();
@@ -51,6 +58,9 @@ export default function useTVDatafeed({
   const tvDataProvider = useRef<TVDataProvider>();
   const shouldRefetchBars = useRef<boolean>(false);
   const lastBarsCache = new Map();
+
+  // Custom period params configuration
+  const { customizePeriodParams } = useCustomPeriodParams(customPeriodConfig);
 
   useEffect(() => {
     if (dataProvider && tvDataProvider.current !== dataProvider) {
@@ -77,14 +87,14 @@ export default function useTVDatafeed({
             ticker: symbolName,
             session: "24x7",
             minmov: 1,
-            pricescale: 100000,
+            pricescale: currentPair.priceScale || 100000,
             timezone: "Etc/UTC",
             has_intraday: true,
             has_daily: true,
             currency_code: symbolName?.split("/")[1],
             visible_plots_set: "ohlcv",
             data_status: "streaming",
-            exchange: EXCHANGE_NAME,
+            exchange: customExchangeName || EXCHANGE_NAME,
             has_no_volume: false,
             has_empty_bars: false // show - hide bar has empty volume,
           };
@@ -113,11 +123,16 @@ export default function useTVDatafeed({
             const pair = pairsChart.find((p) => p.symbol === symbolInfo.ticker);
             if (setChartTimeFrame) setChartTimeFrame(+resolution);
 
+            // Custom periodParams logic
+            const finalPeriodParams = customPeriodConfig
+              ? customizePeriodParams(periodParams, resolution)
+              : periodParams;
+
             const bars = await tvDataProvider.current?.getBars({
               pair,
               ticker,
               resolution,
-              periodParams,
+              periodParams: finalPeriodParams,
               shouldRefetchBars: shouldRefetchBars.current,
               baseUrl,
               fetchDataChart
@@ -159,5 +174,5 @@ export default function useTVDatafeed({
         }
       }
     };
-  }, [currentPair.info]);
+  }, [currentPair.info, customExchangeName]);
 }

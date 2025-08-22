@@ -14,7 +14,7 @@ jobs:
   # This workflow contains 1 job called "build"
 
   build:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         node-version: ["18"]

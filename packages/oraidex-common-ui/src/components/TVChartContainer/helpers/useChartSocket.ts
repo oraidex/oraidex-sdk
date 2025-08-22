@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import { WS_URL } from "./requests";
 import useWebSocket from "react-use-websocket";
 import { PairToken } from "./useTVDatafeed";
+import { io } from "socket.io-client";
 
 export type LastJsonMessageType = {
   data: any;
@@ -89,11 +90,54 @@ export const useChartSocket = ({
   // Socket.IO implementation
   useEffect(() => {
     if (socketType === "socketio" && socketIOUrl) {
+      const ohlcvHandler = (payload: any) => {
+        try {
+          const event =
+            Array.isArray(payload) && payload.length === 2 && typeof payload[0] === "string" ? payload[1] : payload;
+
+          console.log("event", { event, payload });
+
+          if (!event) return;
+
+          const { tokenMint, open, high, low, close, volume, minute } = event;
+
+          // Try to find the mapped pair
+          const mapped = (pairMapping || []).find((p: any) => {
+            // ADL story pairs expose `to` and `info` fields
+            return (
+              (p as any)?.to === tokenMint ||
+              (typeof (p as any)?.info === "string" && (p as any).info.endsWith(tokenMint)) ||
+              (typeof (p as any)?.id === "string" && (p as any).id.includes(tokenMint))
+            );
+          });
+
+          // Only handle if it matches current active pair (when we can determine it)
+          const mappedInfo = (mapped as any)?.info as string | undefined;
+          const isActivePair = mappedInfo ? mappedInfo === pairActive.info : true;
+
+          if (!isActivePair) return;
+
+          const timeInSeconds = typeof minute === "number" ? minute * 60 : undefined;
+          if (!timeInSeconds) return;
+
+          const tradeData = {
+            open,
+            high,
+            low,
+            close,
+            volume,
+            time: timeInSeconds,
+            pair: mappedInfo || pairActive.info
+          } as any;
+
+          setData(tradeData);
+          handleTradeEvent(tradeData, pairMapping);
+        } catch (err) {
+          console.error("useChartSocket: error handling updateOhlcv", err);
+        }
+      };
       const initSocketIO = async () => {
         try {
-          // Dynamic import for Socket.IO client
-          const { io } = await import("socket.io-client");
-
           const socket = io(socketIOUrl, {
             transports: ["websocket"], // "polling"
             autoConnect: true,
@@ -127,52 +171,7 @@ export const useChartSocket = ({
           });
 
           // Listen for ADL updateOhlcv events
-          socket.on(eventName || "updateOhlcv", (payload: any) => {
-            try {
-              const event =
-                Array.isArray(payload) && payload.length === 2 && typeof payload[0] === "string" ? payload[1] : payload;
-
-              console.log("event", { event, payload });
-
-              if (!event) return;
-
-              const { tokenMint, open, high, low, close, volume, minute } = event;
-
-              // Try to find the mapped pair
-              const mapped = (pairMapping || []).find((p: any) => {
-                // ADL story pairs expose `to` and `info` fields
-                return (
-                  (p as any)?.to === tokenMint ||
-                  (typeof (p as any)?.info === "string" && (p as any).info.endsWith(tokenMint)) ||
-                  (typeof (p as any)?.id === "string" && (p as any).id.includes(tokenMint))
-                );
-              });
-
-              // Only handle if it matches current active pair (when we can determine it)
-              const mappedInfo = (mapped as any)?.info as string | undefined;
-              const isActivePair = mappedInfo ? mappedInfo === pairActive.info : true;
-
-              if (!isActivePair) return;
-
-              const timeInSeconds = typeof minute === "number" ? minute * 60 : undefined;
-              if (!timeInSeconds) return;
-
-              const tradeData = {
-                open,
-                high,
-                low,
-                close,
-                volume,
-                time: timeInSeconds,
-                pair: mappedInfo || pairActive.info
-              } as any;
-
-              setData(tradeData);
-              handleTradeEvent(tradeData, pairMapping);
-            } catch (err) {
-              console.error("useChartSocket: error handling updateOhlcv", err);
-            }
-          });
+          socket.on(eventName || "updateOhlcv", ohlcvHandler);
 
           socketIORef.current = socket;
         } catch (error) {
@@ -184,6 +183,7 @@ export const useChartSocket = ({
 
       return () => {
         if (socketIORef.current) {
+          socketIORef.current.off(eventName || "updateOhlcv", ohlcvHandler);
           socketIORef.current.disconnect();
           socketIORef.current = null;
         }

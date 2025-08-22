@@ -48,14 +48,38 @@ module.exports = {
       amd: "react-dom",
       root: "ReactDOM",
       umd: "react-dom"
+    },
+    "socket.io-client": {
+      commonjs: "socket.io-client",
+      commonjs2: "socket.io-client",
+      amd: "socket.io-client",
+      root: "io",
+      umd: "socket.io-client"
+    },
+    // "react-use-websocket": {
+    //   commonjs: "react-use-websocket",
+    //   commonjs2: "react-use-websocket",
+    //   amd: "react-use-websocket",
+    //   root: "useWebSocket",
+    //   umd: "react-use-websocket"
+    // },
+    "@injectivelabs/sdk-ts": {
+      commonjs: "@injectivelabs/sdk-ts",
+      commonjs2: "@injectivelabs/sdk-ts",
+      amd: "@injectivelabs/sdk-ts",
+      root: "InjectiveLabs",
+      umd: "@injectivelabs/sdk-ts"
     }
   },
   optimization: !isDevelopment
     ? {
         minimize: true,
-        minimizer: [new TerserPlugin({ extractComments: false }), new CssMinimizerPlugin()]
+        minimizer: [new TerserPlugin({ extractComments: false }), new CssMinimizerPlugin()],
+        splitChunks: false
       }
-    : {},
+    : {
+        splitChunks: false
+      },
   resolve: {
     extensions: [".ts", ".tsx", ".js", ".jsx"],
     modules: [path.resolve(__dirname, "."), "node_modules"],
@@ -73,7 +97,8 @@ module.exports = {
       stream: require.resolve("stream-browserify"),
       https: require.resolve("https-browserify"),
       vm: require.resolve("vm-browserify")
-    }
+    },
+    fullySpecified: false
   },
   module: {
     rules: [

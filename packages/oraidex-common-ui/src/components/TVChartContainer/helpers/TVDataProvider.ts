@@ -105,7 +105,7 @@ export class TVDataProvider {
         fetchDataChart
       });
 
-      return bars.sort((a, b) => a.time - b.time).map(formatTimeInBarToMs);
+      return bars.sort((a, b) => a.time - b.time).map((e) => formatTimeInBarToMs(e, pair?.useRawVolume));
     } catch (e) {
       console.error("getBars", e);
       throw new Error("Failed to get history bars");
@@ -139,7 +139,7 @@ export class TVDataProvider {
 
     try {
       this.lastBar = await this.getLastBar({ pair, ticker, period, resolution, baseUrl, fetchDataChart });
-      this.lastBar = formatTimeInBarToMs(this.lastBar);
+      this.lastBar = formatTimeInBarToMs(this.lastBar, pair?.useRawVolume);
     } catch (error) {
       console.error(error);
     }

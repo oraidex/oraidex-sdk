@@ -56,12 +56,16 @@ function subscribeOnStream(
   _onResetCacheNeededCallback,
   lastDailyBar
 ) {
-  const parsedSymbol = parseFullSymbol(symbolInfo.full_name);
+  console.log("symbolInfo", symbolInfo);
+
+  const parsedSymbol = parseFullSymbol(symbolInfo);
   const channelString = `${parsedSymbol.fromSymbol}/${parsedSymbol.toSymbol}`;
   const handler = {
     id: subscriberUID,
     callback: onRealtimeCallback
   };
+
+  console.log("channelString", subscriberUID);
   let subscriptionItem = channelToSubscription.get(channelString);
   subscriptionItem = {
     subscriberUID,

@@ -82,17 +82,19 @@ export function getObjectKeyFromValue(value, object) {
   return Object.keys(object).find((key) => object[key] === value);
 }
 
-export function formatTimeInBarToMs(bar: Bar): Bar {
+export function formatTimeInBarToMs(bar: Bar, useRawVolume: boolean = false): Bar {
   return {
     ...bar,
     time: bar.time * 1000,
-    volume: bar.volume / 1e6
+    volume: useRawVolume ? bar.volume : bar.volume / 1e6
   };
 }
 
 export function getCurrentCandleTime(period: string) {
   const periodSeconds = CHART_PERIODS[period];
-  return Math.floor(Date.now() / 1000 / periodSeconds) * periodSeconds;
+  const candleTime = Math.floor(Date.now() / 1000 / periodSeconds) * periodSeconds;
+
+  return candleTime;
 }
 
 // calculate the starting timestamp of the current time bar in a time chart,
@@ -131,17 +133,20 @@ export function fillBarGaps(bars: Bar[], periodSeconds: number) {
 }
 
 // Returns all parts of the symbol
-export function parseFullSymbol(fullSymbol) {
-  const match = fullSymbol.match(/^(\w+):(\w+)\/(\w+)$/);
-  if (!match) {
+export function parseFullSymbol(symbolInfo) {
+  try {
+    const ticker = symbolInfo?.ticker || "";
+    const exchange = symbolInfo?.exchange || "";
+    const split = ticker?.split("/");
+    if (split.length !== 2) {
+      return null;
+    }
+
+    return { exchange, fromSymbol: split[0], toSymbol: split[1] };
+  } catch (e) {
+    console.log("error", e);
     return null;
   }
-
-  return {
-    exchange: match[1],
-    fromSymbol: match[2],
-    toSymbol: match[3]
-  };
 }
 
 export const parseChannelFromPair = (pair: string, pairMap: any[] = PAIRS) => {

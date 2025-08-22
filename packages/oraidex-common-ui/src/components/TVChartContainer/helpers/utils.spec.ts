@@ -99,11 +99,18 @@ describe.only("test-utils-func", () => {
     ["OraiDEX:ORAI-USDT", null],
     ["OraiDEX-ORAI-USDT", null],
     [
-      "OraiDEX:ORAI/USDT",
       {
-        exchange: "OraiDEX",
-        fromSymbol: "ORAI",
-        toSymbol: "USDT"
+        name: "SOL/213",
+        ticker: "SOL/213",
+        exchange: "ADL",
+        full_name: "ADL:SOL/213",
+        pro_name: "ADL:SOL/213",
+        currency_id: "213"
+      },
+      {
+        exchange: "ADL",
+        fromSymbol: "SOL",
+        toSymbol: "213"
       }
     ]
   ])("test-parseFullSymbol-with-symol-%s-should-return-%s", (fullSymbol, expectedResult) => {

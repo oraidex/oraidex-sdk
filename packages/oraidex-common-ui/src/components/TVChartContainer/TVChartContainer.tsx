@@ -38,7 +38,7 @@ export type TVChartContainerProsp = {
   pairsChart: PairToken[];
   setChartTimeFrame?: (tf: number) => void;
   baseUrl?: string;
-  fetchDataChart: (arg: FetchChartDataParams) => Promise<Bar[]>;
+  fetchDataChart?: (arg: FetchChartDataParams) => Promise<Bar[]>;
   customCssUrl?: string;
   socketConfig?: {
     wsUrl: string;

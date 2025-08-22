@@ -1,52 +1,59 @@
 # Oraidex Common UI
 
+A React UI library for Oraidex components including TradingView chart integration.
+
 ## Installation
 
-You can install this demo UI library using yarn:
+```bash
+npm install @oraichain/oraidex-common-ui
+```
 
+## Peer Dependencies
+
+This library requires the following peer dependencies to be installed in your project:
+
+```bash
+npm install react react-dom react-use-websocket socket.io-client
 ```
-yarn add @oraichain/oraidex-common-ui
-```
+
+### Required Versions
+
+- `react`: ^18.2.0
+- `react-dom`: ^18.2.0
+- `react-use-websocket`: ^4.5.0
+- `socket.io-client`: ^4.8.1
 
 ## Usage
 
-To use this UI library in your project, import the components you need from the library and use them in your React components.
-
-```jsx
-import React from "react";
-import { TVCharContainer } from "@oraichain/oraidex-common-ui";
+```tsx
+import { TVChartContainer } from "@oraichain/oraidex-common-ui";
 
 function App() {
   return (
-    <div>
-      <TVChartContainer
-        theme="light"
-        currentPair={{
-            symbol: 'ORAI/USDT',
-            info: 'orai-orai12hzjxfh77wl572gdzct2fxv2arxcwh6gykc7qh'
-        }}
-        pairsChart={[
-          {
-            symbol: 'ORAI/USDT',
-            info: 'orai-orai12hzjxfh77wl572gdzct2fxv2arxcwh6gykc7qh'
-          }
-        ]}
-      />
-    </div>
+    <TVChartContainer
+      currentPair={{ info: "BTC/USDT", symbol: "BTCUSDT" }}
+      period="1m"
+      socketConfig={{
+        socketType: "socketio",
+        socketUrl: "wss://your-socket-server.com",
+        eventName: "updateOhlcv"
+      }}
+    />
   );
 }
-
-export default App;
 ```
 
-### Steps
+## Socket Configuration
 
-- Fork the repository.
-- Clone the repository to your local machine.
-- Install the dependencies using `yarn`.
-- View the components in the browser using `yarn storybook`.
-- Make your changes.
-- Build the library using `yarn build`.
-- Commit the changes and push them to your forked repository.
-- Publish the package on [npm](https://www.npmjs.com/).
-- Install and use the package in your project.
+The library supports both WebSocket and Socket.IO connections. Make sure to install the required dependencies based on your socket type:
+
+- For WebSocket: `react-use-websocket` is required
+- For Socket.IO: `socket.io-client` is required
+
+## Troubleshooting
+
+If you encounter `ChunkLoadError` when using Socket.IO, ensure that:
+
+1. `socket.io-client` is installed as a dependency in your project
+2. You're using compatible versions of the peer dependencies
+3. Your bundler is configured to handle external dependencies correctly

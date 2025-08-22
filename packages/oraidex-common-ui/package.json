@@ -1,6 +1,6 @@
 {
   "name": "@oraichain/oraidex-common-ui",
-  "version": "1.0.26",
+  "version": "1.0.26-beta.1",
   "files": [
     "dist/"
   ],
@@ -47,6 +47,7 @@
   },
   "peerDependencies": {
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "socket.io-client": "^4.8.1"
   }
 }

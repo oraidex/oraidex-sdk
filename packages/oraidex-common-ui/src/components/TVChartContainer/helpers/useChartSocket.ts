@@ -134,87 +134,68 @@ export const useChartSocket = ({
     }
   };
 
-  // Socket.IO implementation
+  // Socket.IO implementation - Initialize socket
   useEffect(() => {
+    // FIXME: currently: allway create instance of socket.io
     if (socketType === "socketio" && socketIOUrl) {
-      const initSocketIO = async () => {
-        try {
-          // Clean up existing socket if any
-          if (socketIORef.current) {
-            socketIORef.current.off(eventName || "updateOhlcv", ohlcvHandler);
-            socketIORef.current.disconnect();
-            socketIORef.current = null;
-          }
+      const socket = io(socketIOUrl, {
+        transports: ["websocket"],
+        reconnectionAttempts: reconnectAttempts || WEBSOCKET_RECONNECT_ATTEMPTS,
+        reconnectionDelay: reconnectInterval || WEBSOCKET_RECONNECT_INTERVAL,
+        ...socketIOOptions
+      });
 
-          const socket = io(socketIOUrl, {
-            transports: ["websocket", "polling"], // Fallback to polling if websocket fails
-            autoConnect: false, // Don't auto connect, we'll connect manually
-            reconnection: true,
-            reconnectionAttempts: reconnectAttempts || WEBSOCKET_RECONNECT_ATTEMPTS,
-            reconnectionDelay: reconnectInterval || WEBSOCKET_RECONNECT_INTERVAL,
-            reconnectionDelayMax: 5000,
-            timeout: 20000, // Increase timeout
-            forceNew: true, // Force new connection
-            ...socketIOOptions
-          });
+      socket.on("connect", () => {
+        console.info("useChartSocket: Socket.IO connected - ", socketIOUrl, socket.id);
+        setIsConnected(true);
+      });
 
-          socket.on("connect", () => {
-            console.info("useChartSocket: Socket.IO connected - ", socketIOUrl);
-            setIsConnected(true);
-          });
+      socket.on("disconnect", (reason) => {
+        console.info("useChartSocket: Socket.IO disconnected", reason, socket.id);
+        setIsConnected(false);
+      });
 
-          socket.on("disconnect", (reason) => {
-            console.info("useChartSocket: Socket.IO disconnected", reason);
-            setIsConnected(false);
-          });
-
-          socket.on("connect_error", (error) => {
-            console.error("useChartSocket: Socket.IO connection error", error);
-            setIsConnected(false);
-          });
-
-          socket.on("reconnect_attempt", (attemptNumber) => {
-            console.info(`useChartSocket: Socket.IO reconnection attempt ${attemptNumber}`);
-          });
-
-          socket.on("reconnect_failed", () => {
-            console.error("useChartSocket: Socket.IO reconnection failed");
-            setIsConnected(false);
-          });
-
-          socket.on("error", (error) => {
-            console.error("useChartSocket: Socket.IO error", error);
-          });
-
-          // Listen for ADL updateOhlcv events
-          socket.on(eventName || "updateOhlcv", ohlcvHandler);
-
-          socketIORef.current = socket;
-
-          // Connect manually after setting up all event handlers
-          socket.connect();
-        } catch (error) {
-          console.error("useChartSocket: Failed to initialize Socket.IO", error);
+      socket.on("connect_error", (error) => {
+        if (socket.active) {
+          // temporary failure, the socket will automatically try to reconnect
+          console.warn("useChartSocket: Temporary connection error, attempting to reconnect...", error.message);
+        } else {
+          // the connection was denied by the server
+          console.error("useChartSocket: Connection denied by server", error.message);
           setIsConnected(false);
         }
-      };
+      });
 
-      initSocketIO();
+      socketIORef.current = socket;
 
       return () => {
         if (socketIORef.current) {
-          try {
-            socketIORef.current.off(eventName || "updateOhlcv", ohlcvHandler);
-            socketIORef.current.disconnect();
-            socketIORef.current = null;
-            setIsConnected(false);
-          } catch (error) {
-            console.error("useChartSocket: Error during cleanup", error);
-          }
+          socketIORef.current.off("connect");
+          socketIORef.current.off("disconnect");
+          socketIORef.current.off("connect_error");
+          socketIORef.current.disconnect();
+          socketIORef.current = null;
+          setIsConnected(false);
         }
       };
     }
-  }, [socketType, socketIOUrl, eventName, reconnectAttempts, reconnectInterval, socketIOOptions]);
+    // FIXME: socketConfig,... is constant so no need add to dependency array
+    // }, [socketType, socketIOUrl, reconnectAttempts, reconnectInterval, socketIOOptions]);
+  }, []);
+
+  // Socket.IO implementation - Handle events
+  useEffect(() => {
+    if (socketType === "socketio" && socketIORef.current) {
+      const socket = socketIORef.current;
+
+      // Listen for ADL updateOhlcv events
+      socket.on(eventName || "updateOhlcv", ohlcvHandler);
+
+      return () => {
+        socket.off(eventName || "updateOhlcv", ohlcvHandler);
+      };
+    }
+  }, [socketType, eventName]);
 
   // WebSocket subscription logic
   useEffect(() => {

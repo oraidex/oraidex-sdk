@@ -48,14 +48,14 @@ module.exports = {
       amd: "react-dom",
       root: "ReactDOM",
       umd: "react-dom"
-    },
-    "socket.io-client": {
-      commonjs: "socket.io-client",
-      commonjs2: "socket.io-client",
-      amd: "socket.io-client",
-      root: "io",
-      umd: "socket.io-client"
     }
+    // "socket.io-client": {
+    //   commonjs: "socket.io-client",
+    //   commonjs2: "socket.io-client",
+    //   amd: "socket.io-client",
+    //   root: "io",
+    //   umd: "socket.io-client"
+    // }
     // "react-use-websocket": {
     //   commonjs: "react-use-websocket",
     //   commonjs2: "react-use-websocket",

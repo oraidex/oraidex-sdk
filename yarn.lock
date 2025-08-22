@@ -2930,7 +2930,7 @@
   integrity sha512-INpHnhL970OCkR7I71Kssb2aLl2l4Y/x8W6FlyRO0KmC8GHjxc/hlNB1t44BiI7lkOYmcWMRQoC8dwParsp1RQ==
 
 "@oraichain/oraidex-common-ui@file:/Users/nguyenthequang/Desktop/quangnt/src-code/oraichain/defi/oraidex-sdk/packages/oraidex-common-ui":
-  version "1.0.25"
+  version "1.0.26-beta.2"
   resolved "file:packages/oraidex-common-ui"
   dependencies:
     axios "0.26.1"
@@ -2940,7 +2940,6 @@
     react-dom "^18.2.0"
     react-use "^17.4.0"
     react-use-websocket "^4.5.0"
-    socket.io-client "^4.8.1"
 
 "@oraichain/oraidex-common@^1.0.10", "@oraichain/oraidex-common@^1.0.78", "@oraichain/oraidex-common@file:/Users/nguyenthequang/Desktop/quangnt/src-code/oraichain/defi/oraidex-sdk/packages/oraidex-common":
   version "1.0.85"
@@ -2972,6 +2971,8 @@
 
 "@oraichain/oraidex-contracts-sdk@latest":
   version "1.0.56"
+  resolved "https://registry.npmjs.org/@oraichain/oraidex-contracts-sdk/-/oraidex-contracts-sdk-1.0.56.tgz"
+  integrity sha512-AoVpOKO7aSuwTlILdspBX4pTSNoMQ64xzOxxcvMNdE3oRKdhGCtEpSjjbNHt9rH1WTBX0BkwnFirssEyFYf56w==
 
 "@oraichain/oraidex-universal-swap@1.0.14":
   version "1.0.14"
@@ -16421,6 +16422,7 @@ uuid@^9.0.0:
 
 uWebSockets.js@uNetworking/uWebSockets.js#v20.32.0:
   version "20.32.0"
+  resolved "git+ssh://git@github.com/uNetworking/uWebSockets.js.git#21c0e41a662c27bcc29b64f3e9d7f0bdaa6d7ee7"
 
 v8-compile-cache-lib@^3.0.1:
   version "3.0.1"

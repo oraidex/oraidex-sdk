@@ -49,7 +49,7 @@ export const useChartSocket = ({
     retryOnError = true,
     reconnectAttempts,
     reconnectInterval,
-    wsUrl: socketUrl,
+    wsUrl,
     socketUrl: socketIOUrl,
     socketType = "websocket",
     pairMapping = PAIRS as unknown as PairToken[],
@@ -59,10 +59,10 @@ export const useChartSocket = ({
 
   // WebSocket implementation
   const { lastJsonMessage, sendJsonMessage } = useWebSocket<LastJsonMessageType>(
-    socketType === "websocket" ? socketUrl || WS_URL : null,
+    socketType === "websocket" ? wsUrl || WS_URL : null,
     {
       onOpen: () => {
-        console.info("useChartSocket: connect WebSocket - ", socketUrl);
+        console.info("useChartSocket: connect WebSocket - ", wsUrl);
         setIsConnected(true);
       },
       onClose: () => {
@@ -75,76 +75,86 @@ export const useChartSocket = ({
       },
       shouldReconnect: () => true,
       onError: (error) => {
-        if (!socketUrl) {
+        if (!wsUrl) {
           console.warn("useChartSocket: Not have socketUrl option in websocket!", JSON.stringify(error));
           return;
         }
         console.error("useChartSocket: Have something went wrong with connection.", JSON.stringify(error));
       },
-      reconnectAttempts: !socketUrl ? 0 : reconnectAttempts || WEBSOCKET_RECONNECT_ATTEMPTS,
-      reconnectInterval: !socketUrl ? 0 : reconnectInterval || WEBSOCKET_RECONNECT_INTERVAL,
+      reconnectAttempts: !wsUrl ? 0 : reconnectAttempts || WEBSOCKET_RECONNECT_ATTEMPTS,
+      reconnectInterval: !wsUrl ? 0 : reconnectInterval || WEBSOCKET_RECONNECT_INTERVAL,
       retryOnError: !!retryOnError
     }
   );
 
+  const ohlcvHandler = (payload: any) => {
+    try {
+      const event =
+        Array.isArray(payload) && payload.length === 2 && typeof payload[0] === "string" ? payload[1] : payload;
+
+      console.log("event", { event, payload });
+
+      if (!event) return;
+
+      const { tokenMint, open, high, low, close, volume, minute } = event;
+
+      // Try to find the mapped pair
+      const mapped = (pairMapping || []).find((p: any) => {
+        // ADL story pairs expose `to` and `info` fields
+        return (
+          (p as any)?.to === tokenMint ||
+          (typeof (p as any)?.info === "string" && (p as any).info.endsWith(tokenMint)) ||
+          (typeof (p as any)?.id === "string" && (p as any).id.includes(tokenMint))
+        );
+      });
+
+      // Only handle if it matches current active pair (when we can determine it)
+      const mappedInfo = (mapped as any)?.info as string | undefined;
+      const isActivePair = mappedInfo ? mappedInfo === pairActive.info : true;
+
+      if (!isActivePair) return;
+
+      const timeInSeconds = typeof minute === "number" ? minute * 60 : undefined;
+      if (!timeInSeconds) return;
+
+      const tradeData = {
+        open,
+        high,
+        low,
+        close,
+        volume,
+        time: timeInSeconds,
+        pair: mappedInfo || pairActive.info
+      } as any;
+
+      setData(tradeData);
+      handleTradeEvent(tradeData, pairMapping);
+    } catch (err) {
+      console.error("useChartSocket: error handling updateOhlcv", err);
+    }
+  };
+
   // Socket.IO implementation
   useEffect(() => {
     if (socketType === "socketio" && socketIOUrl) {
-      const ohlcvHandler = (payload: any) => {
-        try {
-          const event =
-            Array.isArray(payload) && payload.length === 2 && typeof payload[0] === "string" ? payload[1] : payload;
-
-          console.log("event", { event, payload });
-
-          if (!event) return;
-
-          const { tokenMint, open, high, low, close, volume, minute } = event;
-
-          // Try to find the mapped pair
-          const mapped = (pairMapping || []).find((p: any) => {
-            // ADL story pairs expose `to` and `info` fields
-            return (
-              (p as any)?.to === tokenMint ||
-              (typeof (p as any)?.info === "string" && (p as any).info.endsWith(tokenMint)) ||
-              (typeof (p as any)?.id === "string" && (p as any).id.includes(tokenMint))
-            );
-          });
-
-          // Only handle if it matches current active pair (when we can determine it)
-          const mappedInfo = (mapped as any)?.info as string | undefined;
-          const isActivePair = mappedInfo ? mappedInfo === pairActive.info : true;
-
-          if (!isActivePair) return;
-
-          const timeInSeconds = typeof minute === "number" ? minute * 60 : undefined;
-          if (!timeInSeconds) return;
-
-          const tradeData = {
-            open,
-            high,
-            low,
-            close,
-            volume,
-            time: timeInSeconds,
-            pair: mappedInfo || pairActive.info
-          } as any;
-
-          setData(tradeData);
-          handleTradeEvent(tradeData, pairMapping);
-        } catch (err) {
-          console.error("useChartSocket: error handling updateOhlcv", err);
-        }
-      };
       const initSocketIO = async () => {
         try {
+          // Clean up existing socket if any
+          if (socketIORef.current) {
+            socketIORef.current.off(eventName || "updateOhlcv", ohlcvHandler);
+            socketIORef.current.disconnect();
+            socketIORef.current = null;
+          }
+
           const socket = io(socketIOUrl, {
-            transports: ["websocket"], // "polling"
-            autoConnect: true,
+            transports: ["websocket", "polling"], // Fallback to polling if websocket fails
+            autoConnect: false, // Don't auto connect, we'll connect manually
             reconnection: true,
             reconnectionAttempts: reconnectAttempts || WEBSOCKET_RECONNECT_ATTEMPTS,
             reconnectionDelay: reconnectInterval || WEBSOCKET_RECONNECT_INTERVAL,
             reconnectionDelayMax: 5000,
+            timeout: 20000, // Increase timeout
+            forceNew: true, // Force new connection
             ...socketIOOptions
           });
 
@@ -153,13 +163,14 @@ export const useChartSocket = ({
             setIsConnected(true);
           });
 
-          socket.on("disconnect", () => {
-            console.info("useChartSocket: Socket.IO disconnected");
+          socket.on("disconnect", (reason) => {
+            console.info("useChartSocket: Socket.IO disconnected", reason);
             setIsConnected(false);
           });
 
           socket.on("connect_error", (error) => {
             console.error("useChartSocket: Socket.IO connection error", error);
+            setIsConnected(false);
           });
 
           socket.on("reconnect_attempt", (attemptNumber) => {
@@ -168,14 +179,23 @@ export const useChartSocket = ({
 
           socket.on("reconnect_failed", () => {
             console.error("useChartSocket: Socket.IO reconnection failed");
+            setIsConnected(false);
+          });
+
+          socket.on("error", (error) => {
+            console.error("useChartSocket: Socket.IO error", error);
           });
 
           // Listen for ADL updateOhlcv events
           socket.on(eventName || "updateOhlcv", ohlcvHandler);
 
           socketIORef.current = socket;
+
+          // Connect manually after setting up all event handlers
+          socket.connect();
         } catch (error) {
           console.error("useChartSocket: Failed to initialize Socket.IO", error);
+          setIsConnected(false);
         }
       };
 
@@ -183,23 +203,18 @@ export const useChartSocket = ({
 
       return () => {
         if (socketIORef.current) {
-          socketIORef.current.off(eventName || "updateOhlcv", ohlcvHandler);
-          socketIORef.current.disconnect();
-          socketIORef.current = null;
+          try {
+            socketIORef.current.off(eventName || "updateOhlcv", ohlcvHandler);
+            socketIORef.current.disconnect();
+            socketIORef.current = null;
+            setIsConnected(false);
+          } catch (error) {
+            console.error("useChartSocket: Error during cleanup", error);
+          }
         }
       };
     }
-  }, [
-    socketType,
-    socketIOUrl,
-    currentPair.info,
-    period,
-    pairMapping,
-    reconnectAttempts,
-    reconnectInterval,
-    socketIOOptions,
-    pairActive.info
-  ]);
+  }, [socketType, socketIOUrl, eventName, reconnectAttempts, reconnectInterval, socketIOOptions]);
 
   // WebSocket subscription logic
   useEffect(() => {
@@ -236,36 +251,6 @@ export const useChartSocket = ({
       };
     }
   }, [sendJsonMessage, currentPair, period, socketType]);
-
-  // // Socket.IO subscription logic
-  // useEffect(() => {
-  //   if (socketType === "socketio" && socketIORef.current && isConnected && currentPair && period) {
-  //     if (period !== currentPeriod || currentPair.info !== pairActive?.info) {
-  //       // Unsubscribe from previous pair/period
-  //       socketIORef.current.emit("unsubscribe", {
-  //         stream: `${pairActive.info}@${currentPeriod}`
-  //       });
-
-  //       setPeriod(period);
-  //       setPairActive(currentPair);
-  //     }
-
-  //     console.info("Socket.IO SUBSCRIBE", {
-  //       stream: `${currentPair.info}@${period}`
-  //     });
-
-  //     // Subscribe to new pair/period
-  //     socketIORef.current.emit("subscribe", {
-  //       stream: `${currentPair.info}@${period}`
-  //     });
-
-  //     return () => {
-  //       socketIORef.current.emit("unsubscribe", {
-  //         stream: `${currentPair.info}@${period}`
-  //       });
-  //     };
-  //   }
-  // }, [socketType, isConnected, currentPair, period, currentPeriod, pairActive]);
 
   // Handle WebSocket messages
   useEffect(() => {

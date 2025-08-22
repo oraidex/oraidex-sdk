@@ -196,7 +196,10 @@ export default function TVChartContainer({
         setChartReady(true);
         tvWidgetRef.current!.applyOverrides({
           ...defaultChartProps.overrides,
-          "paneProperties.background": theme === "dark" ? DARK_BACKGROUND_CHART : LIGHT_BACKGROUND_CHART,
+          "paneProperties.background":
+            theme === "dark"
+              ? customOverrideChartProps?.["paneProperties.background"] || DARK_BACKGROUND_CHART
+              : LIGHT_BACKGROUND_CHART,
           "scalesProperties.textColor": theme === "dark" ? "#fff" : "#000",
           "scalesProperties.lineColor": theme === "dark" ? "#515151" : "#bdbdbd"
         });

@@ -1,6 +1,6 @@
 {
   "name": "@oraichain/oraidex-common-ui",
-  "version": "1.0.26-beta.3",
+  "version": "1.0.27",
   "files": [
     "dist/"
   ],

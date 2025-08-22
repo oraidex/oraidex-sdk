@@ -1,6 +1,6 @@
 {
   "name": "@oraichain/oraidex-common-ui",
-  "version": "1.0.25",
+  "version": "1.0.26",
   "files": [
     "dist/"
   ],
@@ -14,13 +14,14 @@
   },
   "license": "MIT",
   "dependencies": {
-    "date-fns": "^3.2.0",
-    "axios-extensions": "3.1.3",
     "axios": "0.26.1",
+    "axios-extensions": "3.1.3",
+    "date-fns": "^3.2.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-use": "^17.4.0",
-    "react-use-websocket": "^4.5.0"
+    "react-use-websocket": "^4.5.0",
+    "socket.io-client": "^4.8.1"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.24.4",
@@ -32,8 +33,8 @@
     "@storybook/react": "7.5.3",
     "@storybook/react-webpack5": "7.5.3",
     "@types/react": "18.2.2",
-    "css-minimizer-webpack-plugin": "6.0.0",
     "crypto-browserify": "^3.12.0",
+    "css-minimizer-webpack-plugin": "6.0.0",
     "https-browserify": "^1.0.0",
     "mini-css-extract-plugin": "^2.8.1",
     "storybook": "7.5.3",

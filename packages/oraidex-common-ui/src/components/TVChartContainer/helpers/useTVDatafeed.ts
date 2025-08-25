@@ -13,8 +13,8 @@ import { subscribeOnStream } from "./streaming";
 import { useCustomPeriodParams, CustomPeriodConfig } from "./useCustomPeriodParams";
 
 export type PairToken = {
-  from: string;
-  to: string;
+  from?: string;
+  to?: string;
   symbol: string;
   info: string;
   priceScale?: number;

@@ -35,13 +35,13 @@ export const useChartSocket = ({
   period,
   socketConfig
 }: {
-  currentPair: PairToken;
+  currentPair: { info: string; symbol: string; to?: string };
   period: string;
   socketConfig?: SocketConfig;
 }) => {
   const [currentData, setData] = useState(null);
   const [currentPeriod, setPeriod] = useState<string>(period);
-  const [pairActive, setPairActive] = useState<PairToken>(currentPair);
+  const [pairActive, setPairActive] = useState<{ info: string; symbol: string; to?: string }>(currentPair);
   const [isConnected, setIsConnected] = useState(false);
   const socketIORef = useRef<any>(null);
 
@@ -98,7 +98,10 @@ export const useChartSocket = ({
 
       const { tokenMint, open, high, low, close, volume, minute } = event;
 
-      const isCurrentSubscribeToken = tokenMint?.toLowerCase() === (pairActive || currentPair)?.to?.toLowerCase();
+      const toToken =
+        (pairActive || currentPair)?.to || (pairActive || currentPair)?.info?.split("-")?.[1]?.trim() || "";
+
+      const isCurrentSubscribeToken = tokenMint?.toLowerCase() === toToken?.toLowerCase();
 
       if (!isCurrentSubscribeToken) return;
 

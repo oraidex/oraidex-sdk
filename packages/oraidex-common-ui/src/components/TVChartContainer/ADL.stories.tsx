@@ -6,15 +6,15 @@ import axios from "axios";
 
 const DATA_PAIRS = [
   {
-    id: "1704-sol-8mGGF37Yqp8fmb2BvVJuZKVxBMs4qbqvSw4W4KdnS6DF",
-    symbol: "SOL/213",
+    id: "1704-sol-1dDy8iyZYTQhcnErp1nRCeHSuaw42QcUUyAAJLxc9qs",
+    symbol: "SOL/KOKO",
     from: "11111111111111111111111111111111",
-    to: "8mGGF37Yqp8fmb2BvVJuZKVxBMs4qbqvSw4W4KdnS6DF",
+    to: "1dDy8iyZYTQhcnErp1nRCeHSuaw42QcUUyAAJLxc9qs",
     fromDecimal: 9,
     toDecimal: 6,
     priceScale: 1e12,
     useRawVolume: true,
-    info: "sol-8mGGF37Yqp8fmb2BvVJuZKVxBMs4qbqvSw4W4KdnS6DF"
+    info: "sol-1dDy8iyZYTQhcnErp1nRCeHSuaw42QcUUyAAJLxc9qs"
   }
 ];
 
@@ -63,7 +63,7 @@ const fetchDataChart = async (params: { pair: string; startTime: number; endTime
     const timeframe = MAP_TF_SECOND_NUMBER_TO_STRING[tf];
 
     const res = await axios.get(
-      `https://backend-release.agents.land/chart/ohlcv/ecsdsq91zCdS9wStAy7qzHSKQWKDqRdTMxgqGj7ct9e?timeframe=${timeframe}`,
+      `https://backend-release.agents.land/chart/ohlcv/1dDy8iyZYTQhcnErp1nRCeHSuaw42QcUUyAAJLxc9qs?timeframe=${timeframe}`,
       {}
     );
 

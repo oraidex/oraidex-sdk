@@ -35,13 +35,13 @@ export const useChartSocket = ({
   period,
   socketConfig
 }: {
-  currentPair: { info: string; symbol: string };
+  currentPair: PairToken;
   period: string;
   socketConfig?: SocketConfig;
 }) => {
   const [currentData, setData] = useState(null);
   const [currentPeriod, setPeriod] = useState<string>(period);
-  const [pairActive, setPairActive] = useState<{ info: string; symbol: string }>(currentPair);
+  const [pairActive, setPairActive] = useState<PairToken>(currentPair);
   const [isConnected, setIsConnected] = useState(false);
   const socketIORef = useRef<any>(null);
 
@@ -92,27 +92,15 @@ export const useChartSocket = ({
       const event =
         Array.isArray(payload) && payload.length === 2 && typeof payload[0] === "string" ? payload[1] : payload;
 
-      console.log("event", { event, payload });
+      // console.log("event", { event, payload });
 
       if (!event) return;
 
       const { tokenMint, open, high, low, close, volume, minute } = event;
 
-      // Try to find the mapped pair
-      const mapped = (pairMapping || []).find((p: any) => {
-        // ADL story pairs expose `to` and `info` fields
-        return (
-          (p as any)?.to === tokenMint ||
-          (typeof (p as any)?.info === "string" && (p as any).info.endsWith(tokenMint)) ||
-          (typeof (p as any)?.id === "string" && (p as any).id.includes(tokenMint))
-        );
-      });
+      const isCurrentSubscribeToken = tokenMint?.toLowerCase() === (pairActive || currentPair)?.to?.toLowerCase();
 
-      // Only handle if it matches current active pair (when we can determine it)
-      const mappedInfo = (mapped as any)?.info as string | undefined;
-      const isActivePair = mappedInfo ? mappedInfo === pairActive.info : true;
-
-      if (!isActivePair) return;
+      if (!isCurrentSubscribeToken) return;
 
       const timeInSeconds = typeof minute === "number" ? minute * 60 : undefined;
       if (!timeInSeconds) return;
@@ -124,7 +112,7 @@ export const useChartSocket = ({
         close,
         volume,
         time: timeInSeconds,
-        pair: mappedInfo || pairActive.info
+        pair: pairActive.info
       } as any;
 
       setData(tradeData);

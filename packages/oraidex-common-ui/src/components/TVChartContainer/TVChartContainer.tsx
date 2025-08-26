@@ -55,6 +55,9 @@ export type TVChartContainerProsp = {
   }>;
   customExchangeName?: string;
   customOverrideChartProps?: Overrides;
+  customFormatters?: {
+    priceFormatterFactory?: (symbolInfo: any, minTick: any) => any;
+  };
 };
 
 export default function TVChartContainer({
@@ -70,7 +73,8 @@ export default function TVChartContainer({
   customPeriodConfig,
   customTimeFrames,
   customExchangeName,
-  customOverrideChartProps
+  customOverrideChartProps,
+  customFormatters
 }: TVChartContainerProsp) {
   const chartContainerRef = useRef<HTMLDivElement | null>(null);
   const tvWidgetRef = useRef<IChartingLibraryWidget | null>(null);
@@ -149,6 +153,9 @@ export default function TVChartContainer({
       overrides: {
         ...defaultChartProps.overrides,
         ...(customOverrideChartProps || {})
+      },
+      custom_formatters: {
+        ...(customFormatters || {})
       },
       debug: true,
       timezone: getTradingViewTimeZone(),
